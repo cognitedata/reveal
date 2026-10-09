@@ -9,7 +9,7 @@ import {
 } from './renderOptionsHelpers';
 import type { PropType } from '../../utilities/reflection';
 import type { DeviceDescriptor } from '@reveal/utilities';
-import { AntiAliasingMode } from '@reveal/rendering';
+import { AntiAliasingMode, defaultRenderOptions, getSsaoParametersForQuality } from '@reveal/rendering';
 import { Log } from '@reveal/logger';
 import type { LogLevelNumbers } from 'loglevel';
 
@@ -52,6 +52,17 @@ describe(determineAntiAliasingMode.name, () => {
 });
 
 describe(determineSsaoRenderParameters.name, () => {
+  let currentLogLevel: LogLevelNumbers;
+
+  beforeAll(() => {
+    currentLogLevel = Log.getLevel();
+    Log.setLevel('ERROR');
+  });
+
+  afterAll(() => {
+    Log.setLevel(currentLogLevel);
+  });
+
   const mobileDevice: DeviceDescriptor = { deviceType: 'mobile' };
   const tabletDevice: DeviceDescriptor = { deviceType: 'tablet' };
   const desktopDevice: DeviceDescriptor = { deviceType: 'desktop' };
@@ -61,14 +72,51 @@ describe(determineSsaoRenderParameters.name, () => {
     DeviceDescriptor,
     ReturnType<typeof determineSsaoRenderParameters>
   ][] = [
-    [undefined, mobileDevice, { sampleSize: 0, depthCheckBias: 0.0125, sampleRadius: 1.0 }],
-    [undefined, tabletDevice, { sampleSize: 0, depthCheckBias: 0.0125, sampleRadius: 1.0 }],
-    [undefined, desktopDevice, { sampleSize: 32, depthCheckBias: 0.0125, sampleRadius: 1.0 }]
+    [undefined, mobileDevice, getSsaoParametersForQuality('disabled')],
+    [undefined, tabletDevice, getSsaoParametersForQuality('disabled')],
+    ['veryhigh', mobileDevice, getSsaoParametersForQuality('disabled')],
+    ['medium', tabletDevice, getSsaoParametersForQuality('disabled')],
+    [undefined, desktopDevice, getSsaoParametersForQuality('medium')],
+    ['medium', desktopDevice, getSsaoParametersForQuality('medium')],
+    ['high', desktopDevice, getSsaoParametersForQuality('high')],
+    ['veryhigh', desktopDevice, getSsaoParametersForQuality('veryhigh')],
+    ['disabled', desktopDevice, getSsaoParametersForQuality('disabled')]
   ];
 
   test.each(testCases)('ssao params %p on device %p, returns %p', (modeHint, device, expectedResult) => {
     const result = determineSsaoRenderParameters(modeHint, device);
     expect(result).toEqual(expectedResult);
+  });
+
+  test('default on desktop is the same as the default render options', () => {
+    expect(determineSsaoRenderParameters(undefined, desktopDevice)).toEqual(defaultRenderOptions.ssaoRenderParameters);
+  });
+
+  test('disabled has no samples, enabled qualities have samples', () => {
+    expect(determineSsaoRenderParameters('disabled', desktopDevice).sampleSize).toBe(0);
+    for (const quality of ['medium', 'high', 'veryhigh'] as const) {
+      expect(determineSsaoRenderParameters(quality, desktopDevice).sampleSize).toBeGreaterThan(0);
+    }
+  });
+
+  test('higher qualities do not use fewer samples or lower resolution', () => {
+    const medium = determineSsaoRenderParameters('medium', desktopDevice);
+    const high = determineSsaoRenderParameters('high', desktopDevice);
+    const veryHigh = determineSsaoRenderParameters('veryhigh', desktopDevice);
+
+    expect(medium.halfResolution).toBe(true);
+    expect(high.halfResolution).toBe(false);
+    expect(veryHigh.halfResolution).toBe(false);
+    expect(high.sampleSize).toBeGreaterThanOrEqual(medium.sampleSize);
+    expect(veryHigh.sampleSize).toBeGreaterThanOrEqual(high.sampleSize);
+    expect(veryHigh.denoiseSampleSize).toBeGreaterThanOrEqual(high.denoiseSampleSize);
+  });
+
+  test('returns a copy that can be modified without affecting later results', () => {
+    const result = determineSsaoRenderParameters('high', desktopDevice);
+    result.sampleSize = 1;
+
+    expect(determineSsaoRenderParameters('high', desktopDevice).sampleSize).not.toBe(1);
   });
 });
 
