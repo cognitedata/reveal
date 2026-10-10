@@ -6,11 +6,11 @@ __metadata:
   cacheKey: 10
 
 "@azure/msal-browser@npm:^5.0.0":
-  version: 5.24.0
-  resolution: "@azure/msal-browser@npm:5.24.0"
+  version: 5.25.0
+  resolution: "@azure/msal-browser@npm:5.25.0"
   dependencies:
     "@azure/msal-common": "npm:16.14.2"
-  checksum: 10/9fe2f5a75281e1239ad66fdbdb620d84e41967e2b12a241f843313d6851a873c33d5bf1126c7f510e23688434614b14cf421b0bcbbe5696b346e0102af3f8a03
+  checksum: 10/b04b35f31350a424bb6a33a48d45c3ed2ca08ea196937381375b826928de5cc55359500e7b9bbdd630f49a9965f95ad54090f11ddfab844d8187eab9dacbb76b
   languageName: node
   linkType: hard
 
