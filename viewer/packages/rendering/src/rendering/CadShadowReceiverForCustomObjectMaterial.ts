@@ -213,13 +213,7 @@ function rememberSurfaces(owner: object, mesh: SurfaceMesh, install: boolean): v
   mesh.material = Array.isArray(mesh.material) ? next : next[0];
 }
 
-function rememberSurface(
-  owner: object,
-  mesh: SurfaceMesh,
-  material: object,
-  index: number,
-  install: boolean
-): object {
+function rememberSurface(owner: object, mesh: SurfaceMesh, material: object, index: number, install: boolean): object {
   if (material instanceof CadShadowReceiverForCustomObjectMaterial || sideOf(material) === BackSide) return material;
   const receiver = new CadShadowReceiverForCustomObjectMaterial(colorOf(material), mapOf(material));
   copyDrawState(material, receiver);
