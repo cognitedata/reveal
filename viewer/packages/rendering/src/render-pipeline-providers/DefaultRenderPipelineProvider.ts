@@ -147,6 +147,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     });
     this._postProcessingPass.setReceiversForCustomObjectsEnabled(enableShadows);
     sceneHandler.onCustomObjectAdded = customObject => this._postProcessingPass.adoptCustomObject(customObject);
+    sceneHandler.onCustomObjectRemoved = customObject => this._postProcessingPass.releaseCustomObject(customObject);
 
     this._blitToScreenMaterial = new RawShaderMaterial({
       vertexShader: blitShaders.vertex,

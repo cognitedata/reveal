@@ -144,13 +144,22 @@ export class PostProcessingPass implements RenderPass {
 
   public adoptCustomObject(customObject: ICustomObject): void {
     if (this._cadShadowPass === undefined) return;
-    CadShadowReceiverForCustomObjectMaterial.adoptReceivers([customObject], this._receiversForCustomObjectsEnabled);
+    CadShadowReceiverForCustomObjectMaterial.adoptReceivers(
+      this,
+      [customObject],
+      this._receiversForCustomObjectsEnabled
+    );
+  }
+
+  public releaseCustomObject(customObject: ICustomObject): void {
+    if (this._cadShadowPass === undefined) return;
+    CadShadowReceiverForCustomObjectMaterial.releaseReceivers(this, [customObject]);
   }
 
   public setReceiversForCustomObjectsEnabled(enabled: boolean): void {
     if (this._receiversForCustomObjectsEnabled === enabled) return;
     this._receiversForCustomObjectsEnabled = enabled;
-    CadShadowReceiverForCustomObjectMaterial.setShadowMaterialsVisible(enabled);
+    CadShadowReceiverForCustomObjectMaterial.setShadowMaterialsVisible(this, enabled);
   }
 
   public render(renderer: WebGLRenderer, camera: Camera): void {
@@ -189,6 +198,7 @@ export class PostProcessingPass implements RenderPass {
 
   public dispose(): void {
     this._cadShadowPass?.dispose();
+    CadShadowReceiverForCustomObjectMaterial.releaseOwner(this);
     CadShadowReceiverForCustomObjectMaterial.setFrameShadowMap(undefined);
     this._postProcessingObjects.forEach(postProcessingObject => {
       postProcessingObject.geometry.dispose();

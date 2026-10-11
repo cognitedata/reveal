@@ -96,7 +96,7 @@ describe(CadShadowReceiverForCustomObjectMaterial.name, () => {
       .returns(true)
       .object();
 
-    CadShadowReceiverForCustomObjectMaterial.adoptReceivers([customObject]);
+    CadShadowReceiverForCustomObjectMaterial.adoptReceivers({}, [customObject]);
 
     expect(mesh.material).toBeInstanceOf(CadShadowReceiverForCustomObjectMaterial);
     const receiver = mesh.material as unknown as CadShadowReceiverForCustomObjectMaterial;
@@ -116,21 +116,40 @@ describe(CadShadowReceiverForCustomObjectMaterial.name, () => {
       .returns(true)
       .object();
 
-    CadShadowReceiverForCustomObjectMaterial.adoptReceivers([customObject], false);
+    const owner = {};
+    CadShadowReceiverForCustomObjectMaterial.adoptReceivers(owner, [customObject], false);
 
     expect(mesh.material).toBe(source);
 
-    CadShadowReceiverForCustomObjectMaterial.setShadowMaterialsVisible(true);
+    CadShadowReceiverForCustomObjectMaterial.setShadowMaterialsVisible(owner, true);
 
     expect(mesh.material).toBeInstanceOf(CadShadowReceiverForCustomObjectMaterial);
     const receiver = mesh.material;
 
-    CadShadowReceiverForCustomObjectMaterial.setShadowMaterialsVisible(false);
+    CadShadowReceiverForCustomObjectMaterial.setShadowMaterialsVisible(owner, false);
 
     expect(mesh.material).toBe(source);
 
-    CadShadowReceiverForCustomObjectMaterial.setShadowMaterialsVisible(true);
+    CadShadowReceiverForCustomObjectMaterial.setShadowMaterialsVisible(owner, true);
 
     expect(mesh.material).toBe(receiver);
+  });
+
+  test('leaves the receivers of another owner untouched', () => {
+    const source = new MeshBasicMaterial({ color: '#223344' });
+    const mesh = new Mesh(new PlaneGeometry(6, 4), source);
+    mesh.rotation.x = -Math.PI / 2;
+    const customObject = new Mock<ICustomObject>()
+      .setup(p => p.object)
+      .returns(mesh)
+      .setup(p => p.receiveShadow)
+      .returns(true)
+      .object();
+
+    const owner = {};
+    CadShadowReceiverForCustomObjectMaterial.adoptReceivers(owner, [customObject], false);
+    CadShadowReceiverForCustomObjectMaterial.setShadowMaterialsVisible({}, true);
+
+    expect(mesh.material).toBe(source);
   });
 });

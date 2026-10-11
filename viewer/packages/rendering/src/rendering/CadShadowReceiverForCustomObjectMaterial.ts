@@ -33,20 +33,43 @@ export class CadShadowReceiverForCustomObjectMaterial extends RawShaderMaterial 
    * The original material stays on the mesh while shadows are off.
    * @internal
    */
-  public static adoptReceivers(customObjects: ICustomObject[], install = true): void {
+  public static adoptReceivers(owner: object, customObjects: ICustomObject[], install = true): void {
     for (const customObject of customObjects) {
       if (customObject.receiveShadow === false) continue;
       customObject.object.updateMatrixWorld(true);
       customObject.object.traverse(node => {
         if (!isSurfaceMesh(node) || !isUpFacingPlane(node)) return;
-        rememberSurfaces(node, install);
+        rememberSurfaces(owner, node, install);
       });
     }
   }
 
+  /**
+   * Restores the original materials of the custom objects and forgets their receivers.
+   * @internal
+   */
+  public static releaseReceivers(owner: object, customObjects: ICustomObject[]): void {
+    const meshes = new Set<object>();
+    for (const customObject of customObjects) {
+      customObject.object.traverse(node => {
+        if (isSurfaceMesh(node)) meshes.add(node);
+      });
+    }
+    forgetSurfaces(owner, meshes);
+  }
+
+  /**
+   * Restores the original materials of every receiver the owner adopted.
+   * @internal
+   */
+  public static releaseOwner(owner: object): void {
+    forgetSurfaces(owner, undefined);
+  }
+
   /** @internal */
-  public static setShadowMaterialsVisible(visible: boolean): void {
+  public static setShadowMaterialsVisible(owner: object, visible: boolean): void {
     for (const replacement of replacements) {
+      if (replacement.owner !== owner) continue;
       const current = materialAt(replacement.mesh, replacement.slot);
       if (current !== replacement.receiver && current !== replacement.original) continue;
       assignMaterial(replacement.mesh, replacement.slot, visible ? replacement.receiver : replacement.original);
@@ -145,6 +168,7 @@ const axis = new Vector3();
 const replacements: Replacement[] = [];
 
 type Replacement = {
+  owner: object;
   mesh: SurfaceMesh;
   slot: number | undefined;
   original: object;
@@ -183,19 +207,44 @@ function isUpFacingPlane(mesh: SurfaceMesh): boolean {
   return axis.y > 0.75;
 }
 
-function rememberSurfaces(mesh: SurfaceMesh, install: boolean): void {
+function rememberSurfaces(owner: object, mesh: SurfaceMesh, install: boolean): void {
   const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-  const next = materials.map((material, index) => rememberSurface(mesh, material, index, install));
+  const next = materials.map((material, index) => rememberSurface(owner, mesh, material, index, install));
   if (!install) return;
   mesh.material = Array.isArray(mesh.material) ? next : next[0];
 }
 
-function rememberSurface(mesh: SurfaceMesh, material: object, index: number, install: boolean): object {
+function rememberSurface(
+  owner: object,
+  mesh: SurfaceMesh,
+  material: object,
+  index: number,
+  install: boolean
+): object {
   if (material instanceof CadShadowReceiverForCustomObjectMaterial || sideOf(material) === INSIDE_SIDE) return material;
   const receiver = new CadShadowReceiverForCustomObjectMaterial(colorOf(material), mapOf(material));
   copyDrawState(material, receiver);
-  replacements.push({ mesh, slot: Array.isArray(mesh.material) ? index : undefined, original: material, receiver });
+  replacements.push({
+    owner,
+    mesh,
+    slot: Array.isArray(mesh.material) ? index : undefined,
+    original: material,
+    receiver
+  });
   return install ? receiver : material;
+}
+
+function forgetSurfaces(owner: object, meshes: Set<object> | undefined): void {
+  for (let index = replacements.length - 1; index >= 0; index--) {
+    const replacement = replacements[index];
+    if (replacement.owner !== owner) continue;
+    if (meshes !== undefined && !meshes.has(replacement.mesh)) continue;
+    if (materialAt(replacement.mesh, replacement.slot) === replacement.receiver) {
+      assignMaterial(replacement.mesh, replacement.slot, replacement.original);
+    }
+    replacement.receiver.dispose();
+    replacements.splice(index, 1);
+  }
 }
 
 function materialAt(mesh: SurfaceMesh, slot: number | undefined): object {

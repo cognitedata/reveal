@@ -14,6 +14,7 @@ export class SceneHandler {
   private readonly _pointCloudModels: { pointCloudNode: Object3D; modelIdentifier: symbol }[];
   private readonly _customObjects: ICustomObject[];
   public onCustomObjectAdded: ((customObject: ICustomObject) => void) | undefined;
+  public onCustomObjectRemoved: ((customObject: ICustomObject) => void) | undefined;
 
   get scene(): Scene {
     return this._scene;
@@ -80,6 +81,7 @@ export class SceneHandler {
   public removeCustomObject(customObject: ICustomObject): void {
     this.scene.remove(customObject.object);
     remove(this._customObjects, customObject);
+    this.onCustomObjectRemoved?.(customObject);
   }
 
   public dispose(): void {
