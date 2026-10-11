@@ -9,7 +9,7 @@ import type { CadMaterialManager } from '../CadMaterialManager';
 import type { RenderPass } from '../RenderPass';
 import type { RenderPipelineProvider } from '../RenderPipelineProvider';
 import { createFullScreenTriangleMesh, createRenderTarget, hasStyledNodes } from '../utilities/renderUtilities';
-import type { RenderTargetData } from './types';
+import type { CadNodeLike, RenderTargetData } from './types';
 import type { RenderOptions } from '../rendering/types';
 import { AntiAliasingMode, defaultRenderOptions } from '../rendering/types';
 import { CadGeometryRenderPipelineProvider } from './CadGeometryRenderPipelineProvider';
@@ -19,7 +19,6 @@ import { SSAOPass } from '../render-passes/SSAOPass';
 import { blitShaders } from '../rendering/shaders';
 import type { SceneHandler, ICustomObject } from '@reveal/utilities';
 import { WebGLRendererStateHelper } from '@reveal/utilities';
-import type { SectorScene } from '@reveal/cad-parsers';
 import { PointCloudRenderPipelineProvider } from './PointCloudRenderPipelineProvider';
 import type { PointCloudMaterialManager } from '../PointCloudMaterialManager';
 import type { SettableRenderTarget } from '../rendering/SettableRenderTarget';
@@ -292,15 +291,17 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
   }
 }
 
-type CadNodeLike = Partial<{ sectorScene: SectorScene; rootSector: Object3D }>;
+function isCadNodeLike(node: Object3D): node is CadNodeLike {
+  const { sectorScene, rootSector } = node as Partial<CadNodeLike>;
+  return sectorScene !== undefined && rootSector !== undefined;
+}
 
 function getCadWorldBounds(cadNode: Object3D, target: Box3): Box3 {
-  const { sectorScene, rootSector } = cadNode as CadNodeLike;
-  if (sectorScene === undefined || rootSector === undefined) {
+  if (!isCadNodeLike(cadNode)) {
     return target.makeEmpty().expandByObject(cadNode);
   }
 
   // Instanced primitives only carry template-sized geometry bounds, so use sector metadata instead.
-  target.copy(sectorScene.getBoundsOfMostGeometry());
-  return target.applyMatrix4(rootSector.matrixWorld);
+  target.copy(cadNode.sectorScene.getBoundsOfMostGeometry());
+  return target.applyMatrix4(cadNode.rootSector.matrixWorld);
 }

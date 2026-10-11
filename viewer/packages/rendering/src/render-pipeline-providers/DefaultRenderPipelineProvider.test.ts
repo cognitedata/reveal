@@ -281,5 +281,5 @@ describe(DefaultRenderPipelineProvider.name, () => {
 });
 
 function createCadMaterialManagerMock(): IMock<CadMaterialManager> {
-  return new Mock<CadMaterialManager>().setup(p => p.setCadLightingEnabled(It.IsAny())).returns();
+  return new Mock<CadMaterialManager>().setup(p => p.setCadLightingEnabled(It.IsAny<boolean>())).returns();
 }

@@ -14,6 +14,7 @@ import {
   Scene,
   Texture
 } from 'three';
+import { assert } from 'vitest';
 import { Mock } from 'moq.ts';
 import type { ICustomObject } from '@reveal/utilities';
 import { CadShadowReceiverForCustomObjectMaterial } from './CadShadowReceiverForCustomObjectMaterial';
@@ -98,8 +99,8 @@ describe(CadShadowReceiverForCustomObjectMaterial.name, () => {
 
     CadShadowReceiverForCustomObjectMaterial.adoptReceivers({}, [customObject]);
 
-    expect(mesh.material).toBeInstanceOf(CadShadowReceiverForCustomObjectMaterial);
-    const receiver = mesh.material as unknown as CadShadowReceiverForCustomObjectMaterial;
+    const receiver = mesh.material;
+    assert(receiver instanceof CadShadowReceiverForCustomObjectMaterial);
     expect(receiver.uniforms.tReceiver.value).toBe(map);
     expect((receiver.uniforms.tReceiverTransform.value as Matrix3).elements).toEqual([...map.matrix.elements]);
     expect(receiver.uniforms.receiverColor.value).toEqual(source.color);
