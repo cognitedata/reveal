@@ -232,6 +232,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
 
   /**
    * Gets whether CAD shadows are currently enabled.
+   * @beta
    */
   public get shadowsEnabled(): boolean {
     return this.revealManager.shadowsEnabled;
@@ -242,6 +243,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * that matches them. Turning shadows on changes the CAD look even where no shadow is
    * cast, including ghosted nodes. The GPU resources are allocated the first time shadows
    * are enabled.
+   * @beta
    */
   public set shadowsEnabled(enabled: boolean) {
     this.revealManager.shadowsEnabled = enabled;

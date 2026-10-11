@@ -185,6 +185,7 @@ export interface Cognite3DViewerOptions {
    * ghosted nodes. Defaults to false. Can also be toggled at runtime through
    * {@link Cognite3DViewer.shadowsEnabled}.
    * GPU resources for shadows are only allocated the first time they are enabled.
+   * @beta
    */
   enableShadows?: boolean;
 

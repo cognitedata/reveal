@@ -567,6 +567,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     setLogLevel(level: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'silent' | 'none'): void;
     setResolutionOptions(options: ResolutionOptions): void;
     setViewState(state: ViewerState): Promise<void>;
+    // @beta
     get shadowsEnabled(): boolean;
     set shadowsEnabled(enabled: boolean);
     worldToScreen(point: Vector3, normalize?: boolean): Vector2 | null;
@@ -582,6 +583,7 @@ export interface Cognite3DViewerOptions {
     enableEdges?: boolean;
     enableFloorIcons?: boolean;
     enableHtmlClusters?: boolean;
+    // @beta
     enableShadows?: boolean;
     // @beta
     hasEventListeners?: boolean;
