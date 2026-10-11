@@ -2,7 +2,7 @@
  * Copyright 2026 Cognite AS
  */
 
-import type { Camera, ColorRepresentation, Side, Texture, WebGLRenderer, Scene } from 'three';
+import type { Blending, Camera, ColorRepresentation, Side, Texture, WebGLRenderer, Scene } from 'three';
 import { Color, GLSL3, Matrix3, Matrix4, RawShaderMaterial, Vector3 } from 'three';
 import type { ICustomObject } from '@reveal/utilities';
 import type { CadShadowMap } from '../render-pipeline-providers/types';
@@ -238,7 +238,17 @@ function copyDrawState(source: object, receiver: CadShadowReceiverForCustomObjec
     depthTest?: boolean;
     depthWrite?: boolean;
     side?: Side;
+    blending?: Blending;
+    visible?: boolean;
+    polygonOffset?: boolean;
+    polygonOffsetFactor?: number;
+    polygonOffsetUnits?: number;
   };
+  if (typeof state.blending === 'number') receiver.blending = state.blending;
+  if (typeof state.visible === 'boolean') receiver.visible = state.visible;
+  if (typeof state.polygonOffset === 'boolean') receiver.polygonOffset = state.polygonOffset;
+  if (typeof state.polygonOffsetFactor === 'number') receiver.polygonOffsetFactor = state.polygonOffsetFactor;
+  if (typeof state.polygonOffsetUnits === 'number') receiver.polygonOffsetUnits = state.polygonOffsetUnits;
   if (typeof state.transparent === 'boolean') receiver.transparent = state.transparent;
   if (typeof state.opacity === 'number') receiver.opacity = state.opacity;
   if (typeof state.depthTest === 'boolean') receiver.depthTest = state.depthTest;
