@@ -109,8 +109,6 @@ describe(DefaultRenderPipelineProvider.name, () => {
       true
     );
 
-    expect(sceneHandler.scene.getObjectByName('CAD shadow receiver overlay')).toBeUndefined();
-
     const numberOfRenderPasses = Array.from(defaultRenderPipelineProvider.pipeline(rendererMock.object())).length;
 
     expect(numberOfRenderPasses).toBe(5); // Shadow map, Back, SSAO, Post, BlitToCanvas

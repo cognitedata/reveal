@@ -3,7 +3,7 @@
  */
 
 import type { Blending, Camera, ColorRepresentation, Side, Texture, WebGLRenderer, Scene } from 'three';
-import { Color, GLSL3, Matrix3, Matrix4, RawShaderMaterial, Vector3 } from 'three';
+import { BackSide, Color, GLSL3, Matrix3, Matrix4, RawShaderMaterial, Vector3 } from 'three';
 import type { ICustomObject } from '@reveal/utilities';
 import type { CadShadowMap } from '../render-pipeline-providers/types';
 import { CAD_LIGHT_WORLD, CAD_SHADOW_STRENGTH } from './cadLighting';
@@ -162,7 +162,6 @@ export class CadShadowReceiverForCustomObjectMaterial extends RawShaderMaterial 
   }
 }
 
-const INSIDE_SIDE = 1;
 const size = new Vector3();
 const axis = new Vector3();
 const replacements: Replacement[] = [];
@@ -221,7 +220,7 @@ function rememberSurface(
   index: number,
   install: boolean
 ): object {
-  if (material instanceof CadShadowReceiverForCustomObjectMaterial || sideOf(material) === INSIDE_SIDE) return material;
+  if (material instanceof CadShadowReceiverForCustomObjectMaterial || sideOf(material) === BackSide) return material;
   const receiver = new CadShadowReceiverForCustomObjectMaterial(colorOf(material), mapOf(material));
   copyDrawState(material, receiver);
   replacements.push({
