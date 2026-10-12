@@ -136,7 +136,14 @@ export function getBlitMaterial(options: BlitOptions): RawShaderMaterial {
 }
 
 export function getPointCloudPostProcessingMaterial(options: PointCloudPostProcessingOptions): RawShaderMaterial {
-  const { logDepthTexture, texture, depthTexture, pointBlending, edlOptions } = options;
+  const {
+    logDepthTexture,
+    texture,
+    depthTexture,
+    pointBlending,
+    edlOptions,
+    gapFillRadius: requestedGapFillRadius = DEFAULT_POINTCLOUD_GAP_FILL_RADIUS
+  } = options;
 
   let uniforms: ThreeUniforms = {
     tLogDepth: { value: logDepthTexture },
@@ -150,7 +157,7 @@ export function getPointCloudPostProcessingMaterial(options: PointCloudPostProce
     defines['points_blend'] = true;
   }
 
-  const gapFillRadius = Math.max(0, Math.floor(DEFAULT_POINTCLOUD_GAP_FILL_RADIUS));
+  const gapFillRadius = Math.max(0, Math.floor(requestedGapFillRadius));
   if (gapFillRadius > 0) {
     defines['fill_gaps'] = true;
     defines['FILL_GAPS_RADIUS'] = gapFillRadius;

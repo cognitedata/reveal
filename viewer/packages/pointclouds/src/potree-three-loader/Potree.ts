@@ -67,6 +67,7 @@ export class Potree implements IPotree {
   private readonly _rendererSize: Vector2 = new Vector2();
   private readonly _modelDataProvider: ModelDataProvider;
   private readonly _materialManager: PointCloudMaterialManager;
+  private readonly _lodDitherBand: number;
 
   private _throttledUpdateFunc = throttle(
     (pointClouds: PointCloudOctree[], camera: Camera, renderer: WebGLRenderer) =>
@@ -85,9 +86,14 @@ export class Potree implements IPotree {
   maxNumNodesLoading: number = MAX_NUM_NODES_LOADING;
   lru: LRU = new LRU(this._pointBudget);
 
-  constructor(modelDataProvider: ModelDataProvider, pointCloudMaterialManager: PointCloudMaterialManager) {
+  constructor(
+    modelDataProvider: ModelDataProvider,
+    pointCloudMaterialManager: PointCloudMaterialManager,
+    lodDitherBand: number = DEFAULT_POINTCLOUD_LOD_DITHER_BAND
+  ) {
     this._modelDataProvider = modelDataProvider;
     this._materialManager = pointCloudMaterialManager;
+    this._lodDitherBand = lodDitherBand;
   }
 
   reset(): void {
@@ -314,7 +320,7 @@ export class Potree implements IPotree {
     // even when budget is 0
     this.updateVisibilityForNode(queueItem.node, updateInfo, queueItem, sceneParams);
 
-    const ditherBand = Math.max(0, Math.min(1, DEFAULT_POINTCLOUD_LOD_DITHER_BAND));
+    const ditherBand = Math.max(0, Math.min(1, this._lodDitherBand));
     const softBudgetStart = this.pointBudget * (1 - ditherBand);
 
     while ((queueItem = priorityQueue.pop()) !== undefined) {
