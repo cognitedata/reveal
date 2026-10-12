@@ -36,6 +36,10 @@ uniform sampler2D tDiffuse;
 		#elif defined(use_edl)
 			return exp2(texture(tDiffuse, uv).a * 10.0);
 		#else
+			// worldPerPixelUnitDepth is 0 for an orthographic camera, whose depth is linear.
+			if (worldPerPixelUnitDepth <= 0.0) {
+				return cameraNear + windowDepth * (cameraFar - cameraNear);
+			}
 			float ndcZ = windowDepth * 2.0 - 1.0;
 			return (2.0 * cameraNear * cameraFar) / (cameraFar + cameraNear - ndcZ * (cameraFar - cameraNear));
 		#endif

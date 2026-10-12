@@ -3,7 +3,7 @@
  */
 
 import type { Camera, Material, Mesh, Scene, ShaderMaterial, WebGLRenderer } from 'three';
-import { PerspectiveCamera } from 'three';
+import { OrthographicCamera, PerspectiveCamera } from 'three';
 import type { PostProcessingObjectsVisibilityParameters } from './types';
 import { transparentBlendOptions } from './types';
 import type { RenderPass } from '../RenderPass';
@@ -129,8 +129,10 @@ export class PostProcessingPass implements RenderPass {
       uniforms.worldPerPixelUnitDepth = {
         value: (2 * Math.tan((camera.fov * Math.PI) / 360)) / Math.max(1, height)
       };
-    } else {
-      // Orthographic: gap size does not grow with distance, so disable the gate.
+    } else if (camera instanceof OrthographicCamera) {
+      uniforms.cameraNear = { value: camera.near };
+      uniforms.cameraFar = { value: camera.far };
+      // Gap size does not grow with distance, so disable the gate.
       uniforms.worldPerPixelUnitDepth = { value: 0 };
     }
 

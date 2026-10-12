@@ -80,10 +80,12 @@ describe(PostProcessingPass.name, () => {
     expect(uniforms.worldPerPixelUnitDepth.value).toBeGreaterThan(0);
   });
 
-  test('disables the gap-fill distance gate for an orthographic camera', () => {
-    pass.render(createRenderer(), new OrthographicCamera());
+  test('passes near and far but disables the gap-fill distance gate for an orthographic camera', () => {
+    pass.render(createRenderer(), new OrthographicCamera(-1, 1, 1, -1, 0.5, 2000));
 
     const uniforms = getPointCloudBlitUniforms(scene);
+    expect(uniforms.cameraNear.value).toBe(0.5);
+    expect(uniforms.cameraFar.value).toBe(2000);
     expect(uniforms.worldPerPixelUnitDepth.value).toBe(0);
   });
 });
