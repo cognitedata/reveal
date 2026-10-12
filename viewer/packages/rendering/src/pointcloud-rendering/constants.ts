@@ -59,12 +59,5 @@ export const DEFAULT_POINTCLOUD_GAP_FILL_GRAZE_TOLERANCE = 3.0;
  * filled).
  */
 export const DEFAULT_POINTCLOUD_GAP_FILL_MIN_COVERAGE_WEIGHT = 0.2;
-/**
- * Fraction of the point budget over which the LOD frontier is dithered. Nodes whose points
- * fall in the last `band` fraction of the budget render only a stochastically chosen subset of
- * their points, ramping from all to none, so the deepest visible nodes fade in as the camera
- * approaches instead of popping in whole. 0 disables dithering (hard budget cutoff, unchanged).
- */
-export const DEFAULT_POINTCLOUD_LOD_DITHER_BAND = 0;
 export const OBJECT_STYLING_TEXTURE_WIDTH = 256;
 export const OBJECT_STYLING_TEXTURE_HEIGHT = 256;

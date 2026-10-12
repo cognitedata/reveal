@@ -8,7 +8,6 @@ export class PointCloudOctreeNode extends EventDispatcher implements IPointCloud
   geometryNode: IPointCloudTreeGeometryNode;
   sceneNode: Points;
   pcIndex: number | undefined = undefined;
-  keepFraction = 1;
   readonly children: (IPointCloudTreeNodeBase | null)[];
   readonly loaded = true;
   readonly isTreeNode: boolean = true;

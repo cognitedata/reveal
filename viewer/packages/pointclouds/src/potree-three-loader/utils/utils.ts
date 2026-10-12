@@ -84,7 +84,6 @@ export function makeOnBeforeRender(
 
     materialUniforms.level.value = node.level;
     materialUniforms.isLeafNode.value = node.isLeafNode;
-    materialUniforms.keepFraction.value = node.keepFraction;
 
     const vnStart = pointCloudMaterial.visibleNodeTextureOffsets.get(node.name);
     if (vnStart !== undefined) {
