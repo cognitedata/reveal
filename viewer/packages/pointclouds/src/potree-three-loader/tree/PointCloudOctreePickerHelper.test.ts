@@ -1,10 +1,11 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import type { WebGLRenderTarget, WebGLRenderer } from 'three';
-import { PerspectiveCamera, Vector3 } from 'three';
-import type { RenderedNode } from './PointCloudOctreePickerHelper';
+import type { WebGLRenderer } from 'three';
+import { PerspectiveCamera, Scene, Vector3, WebGLRenderTarget } from 'three';
+import type { IPickState, RenderedNode } from './PointCloudOctreePickerHelper';
 import { PointCloudOctreePickerHelper } from './PointCloudOctreePickerHelper';
+import type { PointCloudMaterial } from '@reveal/rendering';
 
 import { Mock, It, Times } from 'moq.ts';
 
@@ -107,6 +108,28 @@ describe('PointCloudOctreePickerHelper', () => {
         ),
       Times.Once()
     );
+  });
+
+  test('updatePickRenderTarget replaces the render target only when its size changes', () => {
+    const pickState: IPickState = {
+      renderTarget: new WebGLRenderTarget(4, 4),
+      material: new Mock<PointCloudMaterial>().object(),
+      scene: new Scene()
+    };
+    const original = pickState.renderTarget;
+    const disposeSpy = vi.spyOn(original, 'dispose');
+
+    PointCloudOctreePickerHelper.updatePickRenderTarget(pickState, 4, 4);
+
+    expect(pickState.renderTarget).toBe(original);
+    expect(disposeSpy).not.toHaveBeenCalled();
+
+    PointCloudOctreePickerHelper.updatePickRenderTarget(pickState, 8, 16);
+
+    expect(pickState.renderTarget).not.toBe(original);
+    expect(disposeSpy).toHaveBeenCalledOnce();
+    expect(pickState.renderTarget.width).toBe(8);
+    expect(pickState.renderTarget.height).toBe(16);
   });
 
   test('computeBitSplit() returns the legacy 8 bits for small node sets', () => {

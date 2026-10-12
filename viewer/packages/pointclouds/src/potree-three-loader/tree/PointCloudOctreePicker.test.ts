@@ -20,8 +20,14 @@ const MINIMAL_PIXEL_BUFFER_SIZE = 4;
 
 function createMockPickState(): IPickState {
   return {
-    renderTarget: new Mock<WebGLRenderTarget>().object(),
-    material: new Mock<PointCloudMaterial>().object(),
+    renderTarget: new Mock<WebGLRenderTarget>()
+      .setup(t => t.dispose())
+      .returns(undefined)
+      .object(),
+    material: new Mock<PointCloudMaterial>()
+      .setup(m => m.dispose())
+      .returns(undefined)
+      .object(),
     scene: new Scene()
   };
 }
@@ -198,6 +204,99 @@ describe(PointCloudOctreePicker.name, () => {
       expect(renderSpy.mock.calls[1][3]).toBeUndefined();
     });
 
+    test('dispose() clears the cache so a subsequent pick triggers a rebuild', async () => {
+      const { renderSpy } = setupPickerHelperMocks(renderedNodes);
+      const picker = new PointCloudOctreePicker(createMockRenderer());
+
+      await picker.pick(camera, ray, [octree]);
+      expect(renderSpy).toHaveBeenCalledTimes(1);
+
+      picker.dispose();
+      await picker.pick(camera, ray, [octree]);
+
+      expect(renderSpy).toHaveBeenCalledTimes(2);
+      expect(renderSpy.mock.calls[1][3]).toBeUndefined();
+    });
+
+    test('camera projection change makes the cache unusable and triggers a rebuild', async () => {
+      const { renderSpy } = setupPickerHelperMocks(renderedNodes);
+      const picker = new PointCloudOctreePicker(createMockRenderer());
+
+      await picker.pick(camera, ray, [octree]);
+      expect(renderSpy).toHaveBeenCalledTimes(1);
+
+      // Same position/orientation, but a changed projection (e.g. fov/zoom) changes
+      // projectionMatrix without touching matrixWorld.
+      camera.fov = 30;
+      camera.updateProjectionMatrix();
+      await picker.pick(camera, ray, [octree]);
+
+      expect(renderSpy).toHaveBeenCalledTimes(2);
+      expect(renderSpy.mock.calls[1][3]).toBeUndefined();
+    });
+
+    test('renderer resize makes the cache unusable and triggers a rebuild', async () => {
+      const { renderSpy } = setupPickerHelperMocks(renderedNodes);
+      let width = RENDER_TARGET_WIDTH;
+      const renderer = new Mock<WebGLRenderer>()
+        .setup(webgl => webgl.getDrawingBufferSize)
+        .returns((target: Vector2) => target.set(width, RENDER_TARGET_HEIGHT))
+        .object();
+      const picker = new PointCloudOctreePicker(renderer);
+
+      await picker.pick(camera, ray, [octree]);
+      expect(renderSpy).toHaveBeenCalledTimes(1);
+
+      width = RENDER_TARGET_WIDTH + 1;
+      await picker.pick(camera, ray, [octree]);
+
+      expect(renderSpy).toHaveBeenCalledTimes(2);
+      expect(renderSpy.mock.calls[1][3]).toBeUndefined();
+    });
+
+    test('a different set of octrees makes the cache unusable and triggers a rebuild', async () => {
+      const { renderSpy } = setupPickerHelperMocks(renderedNodes);
+      const picker = new PointCloudOctreePicker(createMockRenderer());
+
+      await picker.pick(camera, ray, [octree]);
+      expect(renderSpy).toHaveBeenCalledTimes(1);
+
+      const otherOctree = createFakeOctree();
+      await picker.pick(camera, ray, [otherOctree]);
+
+      expect(renderSpy).toHaveBeenCalledTimes(2);
+      expect(renderSpy.mock.calls[1][3]).toBeUndefined();
+    });
+
+    test('a node unloaded by LOD updates since the cache was built makes the cache unusable and triggers a rebuild', async () => {
+      const { renderSpy } = setupPickerHelperMocks(renderedNodes);
+      const picker = new PointCloudOctreePicker(createMockRenderer());
+
+      await picker.pick(camera, ray, [octree]);
+      expect(renderSpy).toHaveBeenCalledTimes(1);
+
+      // Simulate an LOD update unloading the node's geometry after the cache was built - hits
+      // in the stale cache could then not be resolved back to a position.
+      Object.defineProperty(renderedNodes[0].node.sceneNode, 'geometry', { value: undefined });
+      await picker.pick(camera, ray, [octree]);
+
+      expect(renderSpy).toHaveBeenCalledTimes(2);
+      expect(renderSpy.mock.calls[1][3]).toBeUndefined();
+    });
+
+    test('buildCache declines when the node/point count cannot be bit-packed, falls back to windowed', async () => {
+      const hugeOctree = createFakeOctree(20_000_000);
+      const { renderSpy } = setupPickerHelperMocks([{ node: hugeOctree.visibleNodes[0], octree: hugeOctree }]);
+      const picker = new PointCloudOctreePicker(createMockRenderer());
+
+      await picker.pick(camera, ray, [hugeOctree]);
+
+      // Bit-packing overflow: the cache is never built, so the pick falls back to the
+      // ray-culled windowed path.
+      expect(renderSpy).toHaveBeenCalledTimes(1);
+      expect(renderSpy.mock.calls[0][3]).toBe(ray);
+    });
+
     test('invalidation while the cache readback is in flight discards the result and falls back', async () => {
       const { renderSpy, readPixelsSpy } = setupPickerHelperMocks(renderedNodes);
       const picker = new PointCloudOctreePicker(createMockRenderer());
@@ -223,6 +322,36 @@ describe(PointCloudOctreePicker.name, () => {
       const { renderSpy } = setupPickerHelperMocks(renderedNodes);
       const picker = new PointCloudOctreePicker(createMockRenderer());
       const params = { onBeforePickRender: () => {} };
+
+      await picker.pick(camera, ray, [octree], params);
+      await picker.pick(camera, ray, [octree], params);
+
+      expect(renderSpy).toHaveBeenCalledTimes(2);
+      expect(renderSpy.mock.calls[0][3]).toBe(ray);
+      expect(renderSpy.mock.calls[1][3]).toBe(ray);
+    });
+
+    test('cameraInMotion skips the rebuild even after the holdoff elapses', async () => {
+      const { renderSpy } = setupPickerHelperMocks(renderedNodes);
+      const picker = new PointCloudOctreePicker(createMockRenderer());
+
+      await picker.pick(camera, ray, [octree]);
+      expect(renderSpy.mock.calls[0][3]).toBeUndefined();
+
+      picker.invalidateCache();
+      nowSpy.mockReturnValue(10_100); // past REBUILD_HOLDOFF_MS
+      await picker.pick(camera, ray, [octree], { cameraInMotion: true });
+
+      // A known-in-motion camera never triggers a rebuild, regardless of the holdoff, so the
+      // pick falls back to the windowed, ray-culled path.
+      expect(renderSpy).toHaveBeenCalledTimes(2);
+      expect(renderSpy.mock.calls[1][3]).toBe(ray);
+    });
+
+    test('forceWindowedPick bypasses the cache', async () => {
+      const { renderSpy } = setupPickerHelperMocks(renderedNodes);
+      const picker = new PointCloudOctreePicker(createMockRenderer());
+      const params = { forceWindowedPick: true };
 
       await picker.pick(camera, ray, [octree], params);
       await picker.pick(camera, ray, [octree], params);

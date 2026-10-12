@@ -124,6 +124,10 @@ export class RevealManager {
     return this._cadManager.needsRedraw || this._pointCloudManager.needsRedraw || this._resizeHandler.needsRedraw;
   }
 
+  get cameraInMotion(): boolean {
+    return this._cameraInMotion;
+  }
+
   public update(camera: PerspectiveCamera): void {
     this._cadManager.updateCamera(camera, this._cameraInMotion);
 

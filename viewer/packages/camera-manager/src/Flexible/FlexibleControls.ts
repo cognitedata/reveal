@@ -910,7 +910,9 @@ export class FlexibleControls {
     this._prevTime = currentTime;
     this._prevCoords.copy(currentCoords);
 
-    const scrollCursor = await this.getPickedPointByPixelCoordinates(currentCoords);
+    // forceWindowedPick=true: this fires on every qualifying wheel tick of a continuous zoom
+    // gesture, avoiding a full-frame pick-cache rebuild.
+    const scrollCursor = await this.getPickedPointByPixelCoordinates(currentCoords, true);
     this.setScrollCursor(scrollCursor);
     this._prevTime = currentTime;
     return;

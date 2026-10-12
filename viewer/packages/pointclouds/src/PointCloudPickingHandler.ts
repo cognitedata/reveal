@@ -63,7 +63,9 @@ export class PointCloudPickingHandler {
       // how many point clouds are in the scene.
       const allOctrees = visibleNodes.map(n => n.octree);
       const pick = await this._picker.pick(camera, this._raycaster.ray, allOctrees, {
-        pickWindowSize: PointCloudPickingHandler.PickingWindowSize
+        pickWindowSize: PointCloudPickingHandler.PickingWindowSize,
+        cameraInMotion: input.cameraInMotion ?? false,
+        forceWindowedPick: input.forceWindowedPick ?? false
       });
 
       if (pick === null || !isPointVisibleByPlanes(input.clippingPlanes, pick.position)) {
