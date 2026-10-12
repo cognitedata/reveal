@@ -1,0 +1,54 @@
+---
+id: cad-shadows
+title: CAD shadows
+description: Enable sun shading and projected shadows for CAD models
+---
+
+CAD shadows add a world-space sun and a projected shadow to CAD geometry. The feature is off by default. An application turns it on with the viewer options or with `Cognite3DViewer.shadowsEnabled`.
+
+Turning shadows on also turns on the sun shading that matches them. A face gets brighter when it looks toward the sun and darker when it looks away, including on surfaces that are not covered by a cast shadow and on ghosted nodes. A fully covered surface is darkened and stays partly lit. Point clouds and 360 images are left unchanged.
+
+The API is marked `@beta`.
+
+## Enable shadows
+
+Pass `enableShadows` when creating the viewer:
+
+```jsx
+const viewer = new Cognite3DViewer({
+  sdk: client,
+  domElement,
+  enableShadows: true
+});
+```
+
+The same flag can be changed after the viewer exists. Assigning it requests a redraw:
+
+```js
+viewer.shadowsEnabled = true;
+viewer.shadowsEnabled = false;
+```
+
+The GPU resources for the shadow map are allocated the first time shadows are enabled. Turning them off keeps those resources until the viewer is disposed.
+
+The examples application exposes the same switch in the **Rendering** folder as **CAD shadows**. Opening that application with `?shadows=true` starts with shadows on.
+
+## Custom objects
+
+CAD geometry casts the shadow and receives it. A custom object does not, unless the application opts in.
+
+`viewer.addObject3D` wraps the mesh in a `CustomObject` with `receiveShadow` left at its default, `false`. To receive the shadow, construct the `CustomObject` yourself, set `receiveShadow` to `true`, and add it with `addCustomObject`:
+
+```jsx
+import { CustomObject } from '@cognite/reveal';
+
+const floor = new CustomObject(planeMesh);
+floor.receiveShadow = true;
+viewer.addCustomObject(floor);
+```
+
+Reveal only applies that shadow to a thin, up-facing surface:
+
+- The mesh bounding box must be flat. Its shortest side is at most a quarter of its longest side.
+- After the mesh world transform, that short side must point mostly upward. Its world Y component must be greater than 0.75. A horizontal plane qualifies. A box or a vertical wall does not.
+- A material drawn on the back side, such as a skybox, stays on its own material, so the shadow does not cover the sky.
