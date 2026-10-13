@@ -15,18 +15,31 @@ import { isPointVisibleByPlanes } from '@reveal/utilities';
 import type { ClassicDataSourceType, DMDataSourceType, DataSourceType } from '@reveal/data-providers';
 import { isClassicPointCloudVolume, isDMPointCloudVolume } from '@reveal/data-providers';
 import type { IntersectPointCloudNodeResult } from './types';
+import type { EdlOptions } from '@reveal/rendering';
+import { POINT_SIZE_REFERENCE_SCREEN_HEIGHT, shouldApplyEdl } from '@reveal/rendering';
 
 export class PointCloudPickingHandler {
   private readonly _normalized = new Vector2();
+  private readonly _drawingBufferSize = new Vector2();
   private readonly _raycaster = new Raycaster();
+  private readonly _renderer: WebGLRenderer;
   private readonly _picker: PointCloudOctreePicker;
+  private readonly _edlOptions: EdlOptions | undefined;
   private readonly _mutex = new Mutex();
 
   // To solve https://cognitedata.atlassian.net/browse/REV-523
   private static readonly PickingWindowSize = 5;
 
-  constructor(renderer: WebGLRenderer) {
+  /**
+   * @param renderer Renderer used for the pick render.
+   * @param edlOptions EDL options the point clouds are rendered with, if any. EDL shades empty pixels
+   * within its radius of a point, closing small gaps on screen that the pick render (which has no EDL)
+   * still sees as empty, so the pick window is widened to cover that radius.
+   */
+  constructor(renderer: WebGLRenderer, edlOptions?: EdlOptions) {
+    this._renderer = renderer;
     this._picker = new PointCloudOctreePicker(renderer);
+    this._edlOptions = edlOptions;
   }
 
   dispose(): void {
@@ -63,7 +76,7 @@ export class PointCloudPickingHandler {
       // how many point clouds are in the scene.
       const allOctrees = visibleNodes.map(n => n.octree);
       const pick = await this._picker.pick(camera, this._raycaster.ray, allOctrees, {
-        pickWindowSize: PointCloudPickingHandler.PickingWindowSize,
+        pickWindowSize: this.getPickWindowSize(),
         cameraInMotion: input.cameraInMotion ?? false,
         forceWindowedPick: input.forceWindowedPick ?? false
       });
@@ -81,6 +94,19 @@ export class PointCloudPickingHandler {
     } finally {
       release();
     }
+  }
+
+  /**
+   * Pick window size in drawing buffer pixels. Odd, so the window is centered on the pick position.
+   */
+  private getPickWindowSize(): number {
+    if (this._edlOptions === undefined || !shouldApplyEdl(this._edlOptions)) {
+      return PointCloudPickingHandler.PickingWindowSize;
+    }
+    // The EDL radius is given in pixels at the reference screen height, like point sizes.
+    const { y: drawingBufferHeight } = this._renderer.getDrawingBufferSize(this._drawingBufferSize);
+    const edlRadiusPixels = (this._edlOptions.radius * drawingBufferHeight) / POINT_SIZE_REFERENCE_SCREEN_HEIGHT;
+    return Math.max(PointCloudPickingHandler.PickingWindowSize, 2 * Math.ceil(edlRadiusPixels) + 1);
   }
 }
 

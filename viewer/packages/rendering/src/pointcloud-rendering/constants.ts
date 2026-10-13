@@ -18,5 +18,8 @@ export const PERSPECTIVE_CAMERA = 'PerspectiveCamera';
 export const COLOR_BLACK: Color = new Color(0, 0, 0);
 export const COLOR_WHITE: Color = new Color(1, 1, 1);
 export const DEFAULT_EDL_NEIGHBOURS_COUNT = 16;
+// Screen height (in pixels) at which point sizes and the EDL radius are given in pixels. Must match
+// point_size_relative_to_screen_height in glsl/base/pointSizeRelativeToScreen.glsl.
+export const POINT_SIZE_REFERENCE_SCREEN_HEIGHT = 1080;
 export const OBJECT_STYLING_TEXTURE_WIDTH = 256;
 export const OBJECT_STYLING_TEXTURE_HEIGHT = 256;

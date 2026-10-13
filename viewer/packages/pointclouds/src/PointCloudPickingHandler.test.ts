@@ -3,7 +3,7 @@
  */
 import type { WebGLRenderer } from 'three';
 import { PerspectiveCamera, Plane, Ray, Vector2, Vector3 } from 'three';
-import { Mock } from 'moq.ts';
+import { It, Mock } from 'moq.ts';
 import { vi } from 'vitest';
 
 import { PointCloudPickingHandler } from './PointCloudPickingHandler';
@@ -259,6 +259,37 @@ describe(PointCloudPickingHandler.name, () => {
       expect.objectContaining({ cameraInMotion: false, forceWindowedPick: false })
     );
   });
+
+  test('intersectPointClouds uses the default pick window when EDL options are not given', async () => {
+    const node = createPointCloudNode();
+    const pickSpy = vi.spyOn(PointCloudOctreePicker.prototype, 'pick').mockResolvedValue(null);
+
+    await handler.intersectPointClouds([node], createMockIntersectInput());
+
+    expect(pickSpy.mock.calls[0][3]?.pickWindowSize).toBe(5);
+  });
+
+  test.each([
+    { edlOptions: { radius: 2.2, strength: 0.5 }, drawingBufferHeight: 1080, expectedWindowSize: 7 },
+    { edlOptions: { radius: 2.2, strength: 0.5 }, drawingBufferHeight: 2160, expectedWindowSize: 11 },
+    { edlOptions: { radius: 1, strength: 0.5 }, drawingBufferHeight: 1080, expectedWindowSize: 5 },
+    { edlOptions: { radius: 0, strength: 0 }, drawingBufferHeight: 2160, expectedWindowSize: 5 }
+  ])(
+    'intersectPointClouds widens the pick window to cover the EDL radius (%o)',
+    async ({ edlOptions, drawingBufferHeight, expectedWindowSize }) => {
+      const renderer = new Mock<WebGLRenderer>()
+        .setup(r => r.getDrawingBufferSize(It.IsAny()))
+        .callback(({ args: [target] }) => target.set(drawingBufferHeight, drawingBufferHeight))
+        .object();
+      const edlHandler = new PointCloudPickingHandler(renderer, edlOptions);
+      const node = createPointCloudNode();
+      const pickSpy = vi.spyOn(PointCloudOctreePicker.prototype, 'pick').mockResolvedValue(null);
+
+      await edlHandler.intersectPointClouds([node], createMockIntersectInput());
+
+      expect(pickSpy.mock.calls[0][3]?.pickWindowSize).toBe(expectedWindowSize);
+    }
+  );
 
   test('invalidatePickCache delegates to the picker', () => {
     const invalidateSpy = vi
