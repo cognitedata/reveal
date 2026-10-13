@@ -91,6 +91,7 @@ export class CadShadowReceiverForCustomObjectMaterial extends RawShaderMaterial 
         cadShadowMatrix: { value: new Matrix4() },
         cadShadowLightDirection: { value: CAD_LIGHT_WORLD.clone() },
         cadShadowTexelWorld: { value: 1 },
+        cadShadowStableTexelWorld: { value: 1 },
         cadShadowDepthRange: { value: 1 },
         cadShadowStrength: { value: CAD_SHADOW_STRENGTH },
         cadShadowTerminatorFade: { value: 0 }
@@ -140,6 +141,7 @@ export class CadShadowReceiverForCustomObjectMaterial extends RawShaderMaterial 
     uniforms.cadShadowMatrix.value.copy(shadowMap.matrix);
     uniforms.cadCameraMatrixWorld.value.copy(camera.matrixWorld);
     uniforms.cadShadowTexelWorld.value = shadowMap.texelWorldSize;
+    uniforms.cadShadowStableTexelWorld.value = shadowMap.stableTexelWorldSize;
     uniforms.cadShadowDepthRange.value = shadowMap.depthRange;
     this.refreshMapTransform();
   }

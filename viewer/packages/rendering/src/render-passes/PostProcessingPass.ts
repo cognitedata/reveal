@@ -65,7 +65,6 @@ export class PostProcessingPass implements RenderPass {
             undefined,
             cadShadowPassDependencies
           );
-
     const backBlitMaterial = getBlitMaterial({
       texture: postProcessingPipelineOptions.back.texture,
       depthTexture: postProcessingPipelineOptions.back.depthTexture,
@@ -194,6 +193,8 @@ export class PostProcessingPass implements RenderPass {
     CadShadowReceiverForCustomObjectMaterial.setFrameShadowMap(this._cadShadowMap);
     uniforms.cadShadowEnabled.value = true;
     uniforms.tCadShadow.value = this._cadShadowPass.texture;
+
+    this._cadShadowPass.probeFocus(renderer, camera);
   }
 
   public dispose(): void {

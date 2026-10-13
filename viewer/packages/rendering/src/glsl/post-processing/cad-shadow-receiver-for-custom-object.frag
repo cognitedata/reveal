@@ -23,7 +23,7 @@ void main() {
 
     float occlusion = 0.0;
     if (cadShadowApply > 0.5) {
-        occlusion = cadShadowShapeEdge(cadShadowOcclusion(vWorldPosition, normalize(vWorldNormal), cadShadowDepthBias()));
+        occlusion = cadShadowShapeEdge(cadShadowOcclusion(vWorldPosition, normalize(vWorldNormal), 1.0));
     }
     fragColor = vec4(color * (1.0 - occlusion * cadShadowStrength), 1.0);
 }

@@ -49,6 +49,8 @@ function createShadowMap(enabled: boolean): CadShadowMap {
     .returns(new Matrix4())
     .setup(p => p.texelWorldSize)
     .returns(1)
+    .setup(p => p.stableTexelWorldSize)
+    .returns(1)
     .setup(p => p.depthRange)
     .returns(1)
     .object();

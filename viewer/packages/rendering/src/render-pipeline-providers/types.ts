@@ -15,8 +15,10 @@ export type CadShadowMap = {
   readonly depthTexture: Texture;
   readonly matrix: Matrix4;
   readonly texelWorldSize: number;
+  readonly stableTexelWorldSize: number;
   readonly depthRange: number;
   readonly enabled: boolean;
+  setFocusDistance?(distance: number | undefined, readbackPending: boolean): void;
 };
 
 export type RenderTargetData = {

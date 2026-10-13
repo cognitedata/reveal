@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { Material, Mesh, Object3D, Scene, WebGLRenderTarget, WebGLRenderer } from 'three';
+import type { Material, Mesh, Object3D, Scene, Vector3, WebGLRenderTarget, WebGLRenderer } from 'three';
 import { Box3, Color, GLSL3, RawShaderMaterial, Vector2 } from 'three';
 import { cloneDeep } from 'lodash-es';
 import type { CadMaterialManager } from '../CadMaterialManager';
@@ -276,6 +276,14 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
 
   private shouldRenderPointClouds(): boolean {
     return this._pointCloudModels.length > 0;
+  }
+
+  public setShadowFocus(focus: Vector3): void {
+    this._shadowMapPass.setFocusPoint(focus);
+  }
+
+  public get needsRedraw(): boolean {
+    return this._shadowMapPass.focusNeedsRedraw;
   }
 
   private updateShadowCasterBounds(): void {

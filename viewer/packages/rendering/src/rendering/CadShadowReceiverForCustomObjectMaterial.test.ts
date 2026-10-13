@@ -31,6 +31,8 @@ describe(CadShadowReceiverForCustomObjectMaterial.name, () => {
     .returns(new DepthTexture(1, 1))
     .setup(p => p.texelWorldSize)
     .returns(0.25)
+    .setup(p => p.stableTexelWorldSize)
+    .returns(0.25)
     .setup(p => p.depthRange)
     .returns(10)
     .object();
