@@ -4,6 +4,7 @@
 import { It, Mock } from 'moq.ts';
 import type { IUniform, WebGLRenderer } from 'three';
 import {
+  Camera,
   Mesh,
   OrthographicCamera,
   PerspectiveCamera,
@@ -67,25 +68,50 @@ describe(PostProcessingPass.name, () => {
     expect(uniforms.screenHeight.value).toBe(POINT_CLOUD_HEIGHT);
   });
 
-  test('derives the gap-fill distance gate from the perspective camera near, far and fov', () => {
+  test('updates the existing uniform objects in place instead of replacing them', () => {
+    const uniforms = getPointCloudBlitUniforms(scene);
+    const uniformsBefore = { ...uniforms };
+
+    pass.render(createRenderer(), new PerspectiveCamera());
+
+    for (const name of ['screenWidth', 'screenHeight', 'cameraNear', 'cameraFar', 'worldPerPixel']) {
+      expect(uniforms[name]).toBe(uniformsBefore[name]);
+    }
+  });
+
+  test('derives the gap-fill distance gate from the perspective camera near, far, fov and zoom', () => {
     const camera = new PerspectiveCamera(50, 1, 0.5, 2000);
+    camera.zoom = 2;
 
     pass.render(createRenderer(), camera);
 
     const uniforms = getPointCloudBlitUniforms(scene);
-    const expectedWorldPerPixelUnitDepth = (2 * Math.tan((camera.fov * Math.PI) / 360)) / POINT_CLOUD_HEIGHT;
+    const expectedWorldPerPixel = (2 * Math.tan((camera.fov * Math.PI) / 360)) / 2 / POINT_CLOUD_HEIGHT;
     expect(uniforms.cameraNear.value).toBe(0.5);
     expect(uniforms.cameraFar.value).toBe(2000);
-    expect(uniforms.worldPerPixelUnitDepth.value).toBeCloseTo(expectedWorldPerPixelUnitDepth);
-    expect(uniforms.worldPerPixelUnitDepth.value).toBeGreaterThan(0);
+    expect(uniforms.orthographicCamera.value).toBe(false);
+    expect(uniforms.worldPerPixel.value).toBeCloseTo(expectedWorldPerPixel);
   });
 
-  test('passes near and far but disables the gap-fill distance gate for an orthographic camera', () => {
-    pass.render(createRenderer(), new OrthographicCamera(-1, 1, 1, -1, 0.5, 2000));
+  test('derives a constant world size per pixel for an orthographic camera', () => {
+    const camera = new OrthographicCamera(-10, 10, 10, -10, 0.5, 2000);
+    camera.zoom = 4;
+
+    pass.render(createRenderer(), camera);
 
     const uniforms = getPointCloudBlitUniforms(scene);
     expect(uniforms.cameraNear.value).toBe(0.5);
     expect(uniforms.cameraFar.value).toBe(2000);
-    expect(uniforms.worldPerPixelUnitDepth.value).toBe(0);
+    expect(uniforms.orthographicCamera.value).toBe(true);
+    expect(uniforms.worldPerPixel.value).toBeCloseTo(20 / 4 / POINT_CLOUD_HEIGHT);
+  });
+
+  test('disables the gap-fill distance gate when switching to an unknown camera type', () => {
+    pass.render(createRenderer(), new OrthographicCamera(-1, 1, 1, -1, 0.5, 2000));
+    pass.render(createRenderer(), new Camera());
+
+    const uniforms = getPointCloudBlitUniforms(scene);
+    expect(uniforms.orthographicCamera.value).toBe(false);
+    expect(uniforms.worldPerPixel.value).toBe(0);
   });
 });

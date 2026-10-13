@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { Camera, Material, Mesh, Scene, ShaderMaterial, WebGLRenderer } from 'three';
+import type { Camera, IUniform, Material, Mesh, Scene, ShaderMaterial, WebGLRenderer } from 'three';
 import { OrthographicCamera, PerspectiveCamera } from 'three';
 import type { PostProcessingObjectsVisibilityParameters } from './types';
 import { transparentBlendOptions } from './types';
@@ -114,26 +114,30 @@ export class PostProcessingPass implements RenderPass {
   }
 
   public render(renderer: WebGLRenderer, camera: Camera): void {
-    // Both EDL and gap filling need the current render size in the normalize shader. Updating
-    // unconditionally is harmless when neither is enabled (the uniforms are simply unused).
+    // Both EDL and gap filling need the current render size in the normalize shader. The
+    // uniforms only exist when one of them is enabled, so the setters skip missing ones.
     const uniforms = this._pointcloudBlitMaterial.uniforms;
-    const height = this._postProcessingOptions.pointCloud.height;
-    uniforms.screenWidth = { value: this._postProcessingOptions.pointCloud.width };
-    uniforms.screenHeight = { value: height };
+    const height = Math.max(1, this._postProcessingOptions.pointCloud.height);
+    setUniformValue(uniforms, 'screenWidth', this._postProcessingOptions.pointCloud.width);
+    setUniformValue(uniforms, 'screenHeight', this._postProcessingOptions.pointCloud.height);
 
     // Distance gate for the gap fill: pass the camera params it needs to turn a pixel reach
     // into a world-space gap size at the surrounding surface's depth (see normalize.frag).
     if (camera instanceof PerspectiveCamera) {
-      uniforms.cameraNear = { value: camera.near };
-      uniforms.cameraFar = { value: camera.far };
-      uniforms.worldPerPixelUnitDepth = {
-        value: (2 * Math.tan((camera.fov * Math.PI) / 360)) / Math.max(1, height)
-      };
+      setUniformValue(uniforms, 'cameraNear', camera.near);
+      setUniformValue(uniforms, 'cameraFar', camera.far);
+      setUniformValue(uniforms, 'orthographicCamera', false);
+      setUniformValue(uniforms, 'worldPerPixel', (2 * Math.tan((camera.fov * Math.PI) / 360)) / camera.zoom / height);
     } else if (camera instanceof OrthographicCamera) {
-      uniforms.cameraNear = { value: camera.near };
-      uniforms.cameraFar = { value: camera.far };
-      // Gap size does not grow with distance, so disable the gate.
-      uniforms.worldPerPixelUnitDepth = { value: 0 };
+      setUniformValue(uniforms, 'cameraNear', camera.near);
+      setUniformValue(uniforms, 'cameraFar', camera.far);
+      setUniformValue(uniforms, 'orthographicCamera', true);
+      // A pixel covers the same world size at every depth.
+      setUniformValue(uniforms, 'worldPerPixel', (camera.top - camera.bottom) / camera.zoom / height);
+    } else {
+      // Unknown projection: the world size of a pixel can't be derived, so disable the gate.
+      setUniformValue(uniforms, 'orthographicCamera', false);
+      setUniformValue(uniforms, 'worldPerPixel', 0);
     }
 
     renderer.sortObjects = true;
@@ -147,5 +151,13 @@ export class PostProcessingPass implements RenderPass {
       (postProcessingObject.material as Material).dispose();
       this._scene.remove(postProcessingObject);
     });
+  }
+}
+
+/** Updates a uniform in place (no per-frame allocation), ignoring uniforms the material doesn't declare. */
+function setUniformValue(uniforms: { [uniform: string]: IUniform }, name: string, value: unknown): void {
+  const uniform = uniforms[name];
+  if (uniform !== undefined) {
+    uniform.value = value;
   }
 }

@@ -11,7 +11,10 @@ uniform sampler2D tDiffuse;
 #if defined(fill_gaps)
 	uniform float cameraNear;
 	uniform float cameraFar;
-	uniform float worldPerPixelUnitDepth; // world units per screen pixel at eye depth 1; 0 = orthographic
+	uniform bool orthographicCamera;
+	// World units per screen pixel: at one unit of eye depth for a perspective camera, constant
+	// for an orthographic one. 0 disables the world-size gate (unknown camera type).
+	uniform float worldPerPixel;
 #endif
 
 #if defined(use_edl)
@@ -26,23 +29,48 @@ uniform sampler2D tDiffuse;
 	uniform sampler2D tLogDepth;
 #endif
 
+// Smallest colour weight a point-blended pixel can be normalized by without blowing up.
+#define MIN_BLEND_WEIGHT 1.0e-6
+
 #if defined(fill_gaps)
+	#define FILL_GAPS_DIAMETER (2 * FILL_GAPS_RADIUS + 1)
+	#define FILL_GAPS_TAPS (FILL_GAPS_DIAMETER * FILL_GAPS_DIAMETER)
+	#define FILL_GAPS_EMPTY -1.0
+
+	// The fill runs in non-uniform control flow (only gap pixels take it), where implicit
+	// derivatives - and so the mip level texture() picks - are undefined. Every lookup in it
+	// uses textureLod at level 0 instead.
+
 	// View-space distance at a pixel. The point shader writes log2(viewDist)/10 into an alpha
 	// channel for EDL; reusing it keeps this stable at all ranges, unlike the hardware depth
 	// buffer whose precision collapses far from the camera.
 	float gapFillEyeDistance(vec2 uv, float windowDepth) {
 		#if defined(use_edl) && defined(points_blend)
-			return exp2(texture(tLogDepth, uv).a * 10.0);
+			return exp2(textureLod(tLogDepth, uv, 0.0).a * 10.0);
 		#elif defined(use_edl)
-			return exp2(texture(tDiffuse, uv).a * 10.0);
+			return exp2(textureLod(tDiffuse, uv, 0.0).a * 10.0);
 		#else
-			// worldPerPixelUnitDepth is 0 for an orthographic camera, whose depth is linear.
-			if (worldPerPixelUnitDepth <= 0.0) {
+			if (orthographicCamera) {
 				return cameraNear + windowDepth * (cameraFar - cameraNear);
 			}
 			float ndcZ = windowDepth * 2.0 - 1.0;
 			return (2.0 * cameraNear * cameraFar) / (cameraFar + cameraNear - ndcZ * (cameraFar - cameraNear));
 		#endif
+	}
+
+	// View-space distance of a covered neighbour, or FILL_GAPS_EMPTY if it is empty or off screen.
+	// Off-screen taps would otherwise clamp to the edge texel and count it several times over.
+	float gapFillNeighbourEye(vec2 uv) {
+		if (any(lessThan(uv, vec2(0.0))) || any(greaterThan(uv, vec2(1.0)))) {
+			return FILL_GAPS_EMPTY;
+		}
+
+		float neighbourDepth = textureLod(tDepth, uv, 0.0).r;
+		if (neighbourDepth >= 1.0) {
+			return FILL_GAPS_EMPTY;
+		}
+
+		return gapFillEyeDistance(uv, neighbourDepth);
 	}
 #endif
 
@@ -57,6 +85,8 @@ void main() {
 	float depth = texture(tDepth, vUv).r;
 	vec4 color = texture(tDiffuse, vUv);
 	bool shouldDiscard = depth >= 1.0;
+	// Pixel the output colour and EDL depth are taken from - moves to the source pixel on a gap fill.
+	vec2 sourceUv = vUv;
 
 	#if defined(fill_gaps) && defined(points_blend)
 		// The depth pre-pass writes full opaque depth for any pixel inside a point's circular
@@ -67,7 +97,9 @@ void main() {
 	#endif
 
 	#if defined(points_blend)
-		color = color / color.w;
+		// A pixel with no colour weight has nothing to show, even if the depth pre-pass covered it.
+		shouldDiscard = shouldDiscard || color.w <= 0.0;
+		color = color / max(color.w, MIN_BLEND_WEIGHT);
 	#endif
 
 	outputColor = vec4(color.rgb, 1.0);
@@ -95,35 +127,55 @@ void main() {
 			vec2 filledUv = vUv;
 			bool filled = false;
 
+			// Eye distance per tap of the current step, filled by pass 1 and reused by pass 2 so
+			// the window is only sampled once.
+			float neighbourEyes[FILL_GAPS_TAPS];
+
 			for (int stepIndex = 0; stepIndex < FILL_GAPS_STEPS; stepIndex++) {
-				int step = 1 << stepIndex;
+				int stride = 1 << stepIndex;
 
 				// Pass 1: find the nearest covered neighbour in this window. This anchors what
 				// "same surface" means below, BEFORE we look at the rest of the window - so a
 				// background surface glimpsed past a thin foreground feature (a pole against a
 				// railing behind it) never gets a vote in what counts as coverage.
-				vec2 bestUv = vUv;
+				//
+				// The pixel the colour is copied from is tracked separately: under point blending
+				// it must carry real colour weight, or normalizing it reads garbage.
 				float nearEye = 1.0e30;
+				float sourceEye = 1.0e30;
+				vec2 sourceCandidateUv = vUv;
 				bool anyCovered = false;
 
 				for (int y = -FILL_GAPS_RADIUS; y <= FILL_GAPS_RADIUS; y++) {
 					for (int x = -FILL_GAPS_RADIUS; x <= FILL_GAPS_RADIUS; x++) {
+						int tap = (y + FILL_GAPS_RADIUS) * FILL_GAPS_DIAMETER + (x + FILL_GAPS_RADIUS);
+						neighbourEyes[tap] = FILL_GAPS_EMPTY;
+
 						if (x == 0 && y == 0) {
 							continue;
 						}
 
-						vec2 uvNeighbour = vUv + vec2(float(x * step), float(y * step)) * texel;
-						float neighbourDepth = texture(tDepth, uvNeighbour).r;
+						vec2 uvNeighbour = vUv + vec2(float(x * stride), float(y * stride)) * texel;
+						float neighbourEye = gapFillNeighbourEye(uvNeighbour);
+						neighbourEyes[tap] = neighbourEye;
 
-						if (neighbourDepth >= 1.0) {
+						if (neighbourEye == FILL_GAPS_EMPTY) {
 							continue;
 						}
 
 						anyCovered = true;
-						float neighbourEye = gapFillEyeDistance(uvNeighbour, neighbourDepth);
-						if (neighbourEye < nearEye) {
-							nearEye = neighbourEye;
-							bestUv = uvNeighbour;
+						nearEye = min(nearEye, neighbourEye);
+
+						#if defined(points_blend)
+							float neighbourWeight = textureLod(tDiffuse, uvNeighbour, 0.0).w;
+							bool canSource = neighbourWeight >= max(float(FILL_GAPS_MIN_COVERAGE_WEIGHT), MIN_BLEND_WEIGHT);
+						#else
+							bool canSource = true;
+						#endif
+
+						if (canSource && neighbourEye < sourceEye) {
+							sourceEye = neighbourEye;
+							sourceCandidateUv = uvNeighbour;
 						}
 					}
 				}
@@ -132,17 +184,21 @@ void main() {
 					continue;
 				}
 
-				float reachPixels = float(step * FILL_GAPS_RADIUS);
-				float worldWindow = max(worldPerPixelUnitDepth, 0.0) * nearEye * reachPixels;
+				float reachPixels = float(stride * FILL_GAPS_RADIUS);
+				float worldPerPixelAtSurface = orthographicCamera ? worldPerPixel : worldPerPixel * nearEye;
+				float worldWindow = max(worldPerPixelAtSurface, 0.0) * reachPixels;
 
 				// 1. Camera-distance gate: only bridge a hole up to this size in the WORLD.
 				//    A fixed world size projects to many pixels up close, few from far away.
-				bool withinWorldGap = worldPerPixelUnitDepth <= 0.0 || worldWindow <= float(FILL_GAPS_MAX_WORLD_GAP);
+				bool withinWorldGap = worldPerPixel <= 0.0 || worldWindow <= float(FILL_GAPS_MAX_WORLD_GAP);
 
 				// Spread a real (even steeply grazing) surface could have over this window -
 				// used to tell the nearest surface apart from anything behind it, before
 				// coverage is counted.
 				float allowedSpread = nearEye * float(FILL_GAPS_DEPTH_TOL) + float(FILL_GAPS_GRAZE_TOL) * worldWindow;
+
+				// The colour source has to lie on that same nearest surface.
+				bool sourceOnSurface = sourceEye - nearEye <= allowedSpread;
 
 				// Pass 2: coverage restricted to neighbours that read as the SAME surface as the
 				// nearest one found above. Coverage per diagonal quadrant, so we only fill a
@@ -157,18 +213,13 @@ void main() {
 
 				for (int y = -FILL_GAPS_RADIUS; y <= FILL_GAPS_RADIUS; y++) {
 					for (int x = -FILL_GAPS_RADIUS; x <= FILL_GAPS_RADIUS; x++) {
-						if (x == 0 && y == 0) {
+						int tap = (y + FILL_GAPS_RADIUS) * FILL_GAPS_DIAMETER + (x + FILL_GAPS_RADIUS);
+						float neighbourEye = neighbourEyes[tap];
+
+						if (neighbourEye == FILL_GAPS_EMPTY) {
 							continue;
 						}
 
-						vec2 uvNeighbour = vUv + vec2(float(x * step), float(y * step)) * texel;
-						float neighbourDepth = texture(tDepth, uvNeighbour).r;
-
-						if (neighbourDepth >= 1.0) {
-							continue;
-						}
-
-						float neighbourEye = gapFillEyeDistance(uvNeighbour, neighbourDepth);
 						if (neighbourEye - nearEye > allowedSpread) {
 							continue; // Different surface (e.g. background behind a thin feature) - ignore.
 						}
@@ -183,8 +234,8 @@ void main() {
 
 				bool surrounded = coveredPP > 0 && coveredPN > 0 && coveredNP > 0 && coveredNN > 0;
 
-				if (withinWorldGap && covered >= FILL_GAPS_MIN_COVERED && surrounded) {
-					filledUv = bestUv;
+				if (withinWorldGap && sourceOnSurface && covered >= FILL_GAPS_MIN_COVERED && surrounded) {
+					filledUv = sourceCandidateUv;
 					filled = true;
 					break;
 				}
@@ -193,11 +244,12 @@ void main() {
 			}
 
 			if (filled) {
-				color = texture(tDiffuse, filledUv);
+				sourceUv = filledUv;
+				color = textureLod(tDiffuse, filledUv, 0.0);
 				#if defined(points_blend)
-					color = color / color.w;
+					color = color / max(color.w, MIN_BLEND_WEIGHT);
 				#endif
-				depth = texture(tDepth, filledUv).r;
+				depth = textureLod(tDepth, filledUv, 0.0).r;
 				shouldDiscard = false;
 				outputColor = vec4(color.rgb, 1.0);
 				gl_FragDepth = depth;
@@ -207,7 +259,9 @@ void main() {
 
 	#if defined(use_edl)
 		#if defined (points_blend)
-			float edlDepth = texture(tLogDepth, vUv).a;
+			// Read at the source pixel: a filled gap has no log depth of its own, and reading 0
+			// there would make EDL treat it as outside the cloud and shade it black.
+			float edlDepth = textureLod(tLogDepth, sourceUv, 0.0).a;
 			vec2 obs = calculateObscurance(edlDepth, screenWidth, screenHeight,
 						       neighbours, radius, vUv, tDepth, tLogDepth);
 		#else

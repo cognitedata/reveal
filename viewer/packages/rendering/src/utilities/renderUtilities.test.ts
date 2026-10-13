@@ -42,7 +42,8 @@ describe(getPointCloudPostProcessingMaterial.name, () => {
     expect(material.uniforms.screenHeight.value).toBe(1);
     expect(material.uniforms.cameraNear.value).toBe(0.1);
     expect(material.uniforms.cameraFar.value).toBe(1000);
-    expect(material.uniforms.worldPerPixelUnitDepth.value).toBe(0);
+    expect(material.uniforms.orthographicCamera.value).toBe(false);
+    expect(material.uniforms.worldPerPixel.value).toBe(0);
   });
 
   test.each([0, -3])('disables gap filling when the requested radius is %s', gapFillRadius => {
@@ -51,7 +52,7 @@ describe(getPointCloudPostProcessingMaterial.name, () => {
     expect(material.defines['fill_gaps']).toBeUndefined();
     expect(material.defines['FILL_GAPS_RADIUS']).toBeUndefined();
     expect(material.uniforms.cameraNear).toBeUndefined();
-    expect(material.uniforms.worldPerPixelUnitDepth).toBeUndefined();
+    expect(material.uniforms.worldPerPixel).toBeUndefined();
   });
 
   test.each<[number, number, number]>([

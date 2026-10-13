@@ -175,9 +175,10 @@ export function getPointCloudPostProcessingMaterial(options: PointCloudPostProce
       screenHeight: { value: 1 },
       cameraNear: { value: 0.1 },
       cameraFar: { value: 1000 },
-      // World units per screen pixel at one unit of eye depth (perspective); 0 for an
-      // orthographic camera. Used to size the grazing-surface depth tolerance.
-      worldPerPixelUnitDepth: { value: 0 }
+      orthographicCamera: { value: false },
+      // World units per screen pixel: at one unit of eye depth for a perspective camera, constant
+      // for an orthographic one. Sizes the world-gap gate and grazing tolerance; 0 disables them.
+      worldPerPixel: { value: 0 }
     };
   }
 
