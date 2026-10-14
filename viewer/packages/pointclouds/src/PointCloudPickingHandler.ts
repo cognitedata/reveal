@@ -29,6 +29,8 @@ export class PointCloudPickingHandler {
 
   // To solve https://cognitedata.atlassian.net/browse/REV-523
   private static readonly PickingWindowSize = 5;
+  // Covers the max EDL radius (5) on a 4320px high drawing buffer (8K display): 2 * ceil(5 * 4320 / 1080) + 1.
+  private static readonly MaxPickingWindowSize = 41;
 
   /**
    * @param renderer Renderer used for the pick render.
@@ -106,7 +108,11 @@ export class PointCloudPickingHandler {
     // The EDL radius is given in pixels at the reference screen height, like point sizes.
     const { y: drawingBufferHeight } = this._renderer.getDrawingBufferSize(this._drawingBufferSize);
     const edlRadiusPixels = (this._edlOptions.radius * drawingBufferHeight) / POINT_SIZE_REFERENCE_SCREEN_HEIGHT;
-    return Math.max(PointCloudPickingHandler.PickingWindowSize, 2 * Math.ceil(edlRadiusPixels) + 1);
+    const windowSize = 2 * Math.ceil(edlRadiusPixels) + 1;
+    return Math.min(
+      PointCloudPickingHandler.MaxPickingWindowSize,
+      Math.max(PointCloudPickingHandler.PickingWindowSize, windowSize)
+    );
   }
 }
 

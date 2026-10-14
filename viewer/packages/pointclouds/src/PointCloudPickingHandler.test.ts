@@ -273,7 +273,12 @@ describe(PointCloudPickingHandler.name, () => {
     { edlOptions: { radius: 2.2, strength: 0.5 }, drawingBufferHeight: 1080, expectedWindowSize: 7 },
     { edlOptions: { radius: 2.2, strength: 0.5 }, drawingBufferHeight: 2160, expectedWindowSize: 11 },
     { edlOptions: { radius: 1, strength: 0.5 }, drawingBufferHeight: 1080, expectedWindowSize: 5 },
-    { edlOptions: { radius: 0, strength: 0 }, drawingBufferHeight: 2160, expectedWindowSize: 5 }
+    { edlOptions: { radius: 0, strength: 0 }, drawingBufferHeight: 2160, expectedWindowSize: 5 },
+    { edlOptions: { radius: 2.2, strength: 0 }, drawingBufferHeight: 2160, expectedWindowSize: 5 },
+    { edlOptions: { radius: 0, strength: 0.5 }, drawingBufferHeight: 2160, expectedWindowSize: 5 },
+    { edlOptions: { radius: 5, strength: 0.5 }, drawingBufferHeight: 2160, expectedWindowSize: 21 },
+    { edlOptions: { radius: 5, strength: 0.5 }, drawingBufferHeight: 4320, expectedWindowSize: 41 },
+    { edlOptions: { radius: 5, strength: 0.5 }, drawingBufferHeight: 8640, expectedWindowSize: 41 }
   ])(
     'intersectPointClouds widens the pick window to cover the EDL radius (%o)',
     async ({ edlOptions, drawingBufferHeight, expectedWindowSize }) => {
