@@ -153,10 +153,7 @@ export class SectorDownloadScheduler {
     sectorIdentifier: string
   ): Promise<ConsumedSector> {
     const { abortSignal, abort } = this.createAbortSignal();
-    const sectorDownload = downloadSector(sector, abortSignal).catch(error => {
-      Log.error('Failed to load sector', sector, 'error:', error);
-      return this.createDiscardedConsumedSector(sector);
-    });
+    const sectorDownload = this.downloadOrDiscard(downloadSector, sector, abortSignal);
     this._pendingSectorDownloads.set(sectorIdentifier, { consumedSector: sectorDownload, abort });
     this.processNextQueuedSectorDownload(sectorDownload, sectorIdentifier);
     return sectorDownload;
@@ -180,13 +177,24 @@ export class SectorDownloadScheduler {
       const { sector, downloadSector, queuedDeferredPromise } = queuedSector;
 
       const { abortSignal, abort } = this.createAbortSignal();
-      const sectorDownload = downloadSector(sector, abortSignal);
+      const sectorDownload = this.downloadOrDiscard(downloadSector, sector, abortSignal);
       this._pendingSectorDownloads.set(nextSectorIdentifier, { consumedSector: sectorDownload, abort });
       sectorDownload.then(consumedSector => {
         queuedDeferredPromise.resolve(consumedSector);
       });
 
       this.processNextQueuedSectorDownload(sectorDownload, nextSectorIdentifier);
+    });
+  }
+
+  private downloadOrDiscard(
+    downloadSector: (sector: WantedSector, signal: AbortSignal) => Promise<ConsumedSector>,
+    sector: WantedSector,
+    abortSignal: AbortSignal
+  ): Promise<ConsumedSector> {
+    return downloadSector(sector, abortSignal).catch(error => {
+      Log.error('Failed to load sector', sector, 'error:', error);
+      return this.createDiscardedConsumedSector(sector);
     });
   }
 
