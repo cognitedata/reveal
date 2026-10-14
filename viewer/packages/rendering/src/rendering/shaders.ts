@@ -47,8 +47,11 @@ import pointCloudNormalizeVert from '../glsl/pointcloud/normalize.vert';
 import pointCloudFrag from '../glsl/pointcloud/pointcloud.frag';
 import pointCloudVert from '../glsl/pointcloud/pointcloud.vert';
 
-import ssaoFrag from '../glsl/post-processing/pure-depth-ssao.frag';
-import ssaoVert from '../glsl/post-processing/passthrough.vert';
+import passthroughVert from '../glsl/post-processing/passthrough.vert';
+import aoDepthDownsampleFrag from '../glsl/post-processing/ambient-occlusion/n8ao-depth-downsample.frag';
+import aoFrag from '../glsl/post-processing/ambient-occlusion/n8ao-ambient-occlusion.frag';
+import aoDenoiseFrag from '../glsl/post-processing/ambient-occlusion/n8ao-denoise.frag';
+import aoUpsampleFrag from '../glsl/post-processing/ambient-occlusion/n8ao-upsample.frag';
 
 import blitFrag from '../glsl/post-processing/blit.frag';
 import blitVert from '../glsl/post-processing/unit-orthographic-passthrough.vert';
@@ -160,11 +163,18 @@ export const pointCloudShaders: PointCloudShaders = {
 };
 
 /**
- * Screen space ambient occlusion shader
+ * Screen space ambient occlusion shaders, see AmbientOcclusionPass.
  */
-export const ssaoShaders: ShaderPair = {
-  fragment: ssaoFrag,
-  vertex: ssaoVert
+export const ambientOcclusionShaders: {
+  depthDownsample: ShaderPair;
+  ambientOcclusion: ShaderPair;
+  denoise: ShaderPair;
+  upsample: ShaderPair;
+} = {
+  depthDownsample: { fragment: aoDepthDownsampleFrag, vertex: passthroughVert },
+  ambientOcclusion: { fragment: aoFrag, vertex: passthroughVert },
+  denoise: { fragment: aoDenoiseFrag, vertex: passthroughVert },
+  upsample: { fragment: aoUpsampleFrag, vertex: passthroughVert }
 };
 
 export const blitShaders: ShaderPair = {

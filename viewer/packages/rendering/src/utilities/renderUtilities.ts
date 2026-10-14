@@ -110,7 +110,7 @@ export function getBlitMaterial(options: BlitOptions): RawShaderMaterial {
   }
 
   if (ssaoTexture) {
-    defines['SSAO_BLUR'] = true;
+    defines['SSAO'] = true;
     uniforms['tSsao'] = { value: ssaoTexture };
   }
 
@@ -219,9 +219,7 @@ function setAlphaOverride(overrideAlpha: number | undefined, uniforms: ThreeUnif
 
 function setBlitEffect(effect: BlitEffect | undefined, defines: any) {
   const blitEffect = effect ?? BlitEffect.None;
-  if (blitEffect === BlitEffect.GaussianBlur) {
-    defines['GAUSSIAN_BLUR'] = true;
-  } else if (blitEffect === BlitEffect.Fxaa) {
+  if (blitEffect === BlitEffect.Fxaa) {
     defines['FXAA'] = true;
   }
 }

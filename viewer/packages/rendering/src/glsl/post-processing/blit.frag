@@ -6,7 +6,7 @@ uniform sampler2D tDiffuse;
 uniform sampler2D tDepth;
 #endif
 
-#if defined(SSAO_BLUR)
+#if defined(SSAO)
 uniform sampler2D tSsao;
 #endif
 
@@ -24,10 +24,6 @@ in float near;
 in float far;
 
 out vec4 fragColor;
-
-#if defined(SSAO_BLUR)
-#include gaussian-blur.glsl;
-#endif
 
 #if defined(FXAA)
 #include fxaa.glsl;
@@ -56,8 +52,9 @@ void main() {
   fragColor = fxaa(tDiffuse);
 #else
   fragColor = diffuse;
-  #if defined(SSAO_BLUR)
-    fragColor *= gaussianBlur(tSsao, vUv);
+  #if defined(SSAO)
+    // Ambient occlusion factor, already denoised and at full resolution (see AmbientOcclusionPass)
+    fragColor.rgb *= texture(tSsao, vUv).r;
   #endif
   #if defined(EDGES)
     float edgeStrength = edgeDetectionFilter(tDiffuse);

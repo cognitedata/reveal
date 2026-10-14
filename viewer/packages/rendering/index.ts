@@ -6,8 +6,8 @@ export type { CadMaterial } from './src/CadMaterialManager';
 export { CadMaterialManager, createCadMaterial } from './src/CadMaterialManager';
 export { PointCloudMaterialManager } from './src/PointCloudMaterialManager';
 
-export type { RenderOptions, SsaoParameters, EdlOptions } from './src/rendering/types';
-export { defaultRenderOptions, SsaoSampleQuality, AntiAliasingMode } from './src/rendering/types';
+export type { RenderOptions, SsaoParameters, SsaoQuality, EdlOptions } from './src/rendering/types';
+export { defaultRenderOptions, getSsaoParametersForQuality, AntiAliasingMode } from './src/rendering/types';
 
 export * from './src/pointcloud-rendering/constants';
 export * from './src/pointcloud-rendering/enums';

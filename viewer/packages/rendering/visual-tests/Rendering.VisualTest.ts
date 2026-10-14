@@ -91,9 +91,15 @@ export default class RenderingVisualTestFixture extends StreamingVisualTestFixtu
     antiAliasingGui.open();
 
     const ssaoOptionsGui = this.gui.addFolder('SSAO');
-    ssaoOptionsGui.add(renderOptions.ssaoRenderParameters, 'sampleRadius', 0, 30).onChange(updateRenderOptions);
-    ssaoOptionsGui.add(renderOptions.ssaoRenderParameters, 'sampleSize', 0, 256, 1).onChange(updateRenderOptions);
-    ssaoOptionsGui.add(renderOptions.ssaoRenderParameters, 'depthCheckBias', 0, 1).onChange(updateRenderOptions);
+    const ssaoParameters = renderOptions.ssaoRenderParameters;
+    ssaoOptionsGui.add(ssaoParameters, 'sampleSize', 0, 128, 1).onChange(updateRenderOptions);
+    ssaoOptionsGui.add(ssaoParameters, 'halfResolution').onChange(updateRenderOptions);
+    ssaoOptionsGui.add(ssaoParameters, 'screenSpaceRadius', 1, 128).onChange(updateRenderOptions);
+    ssaoOptionsGui.add(ssaoParameters, 'distanceFalloff', 0.01, 2).onChange(updateRenderOptions);
+    ssaoOptionsGui.add(ssaoParameters, 'intensity', 0, 10).onChange(updateRenderOptions);
+    ssaoOptionsGui.add(ssaoParameters, 'denoiseSampleSize', 0, 32, 1).onChange(updateRenderOptions);
+    ssaoOptionsGui.add(ssaoParameters, 'denoiseRadius', 0, 32).onChange(updateRenderOptions);
+    ssaoOptionsGui.add(ssaoParameters, 'denoiseIterations', 0, 4, 1).onChange(updateRenderOptions);
     ssaoOptionsGui.open();
 
     this.setupBackgroundColorGUI(renderer);

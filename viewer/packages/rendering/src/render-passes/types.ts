@@ -16,7 +16,6 @@ export type BlendOptions = {
 
 export enum BlitEffect {
   None,
-  GaussianBlur,
   Fxaa
 }
 
