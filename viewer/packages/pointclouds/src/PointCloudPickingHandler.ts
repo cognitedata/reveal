@@ -3,9 +3,11 @@
  */
 
 import type { WebGLRenderer } from 'three';
-import { Raycaster, Vector2 } from 'three';
+import { MathUtils, Raycaster, Vector2 } from 'three';
 
 import type { IntersectInput } from '@reveal/model-base';
+import type { EdlOptions } from '@reveal/rendering';
+import { shouldApplyEdl } from '@reveal/rendering';
 import type { PointCloudNode } from './PointCloudNode';
 import { Mutex } from 'async-mutex';
 
@@ -23,10 +25,48 @@ export class PointCloudPickingHandler {
   private readonly _mutex = new Mutex();
 
   // To solve https://cognitedata.atlassian.net/browse/REV-523
-  private static readonly PickingWindowSize = 5;
+  private static readonly MinPickingWindowSize = 5;
+  // Covers the examples' max EDL radius (10) on a 2880px high drawing buffer: 2 * ceil(10 * 2880 / 1080) + 1.
+  private static readonly MaxPickingWindowSize = 55;
+  // EDL radius is given in pixels at this drawing buffer height (see point_size_relative_to_screen_height).
+  private static readonly EdlReferenceHeight = 1080;
 
-  constructor(renderer: WebGLRenderer) {
+  private readonly _renderer: WebGLRenderer;
+  private readonly _edlOptions: EdlOptions | undefined;
+  private readonly _drawingBufferSize = new Vector2();
+
+  constructor(renderer: WebGLRenderer, edlOptions?: EdlOptions) {
+    this._renderer = renderer;
+    this._edlOptions = edlOptions;
     this._picker = new PointCloudOctreePicker(renderer);
+  }
+
+  /**
+   * EDL is a post-process the pick pass doesn't run, and it draws an outline up to `radius` around
+   * every point, closing gaps on screen that are still empty in the pick buffer. The window must be
+   * wide enough to reach the point behind such a filled gap.
+   */
+  static computePickWindowSize(edlOptions: EdlOptions | undefined, drawingBufferHeight: number): number {
+    if (edlOptions === undefined || !shouldApplyEdl(edlOptions)) {
+      return PointCloudPickingHandler.MinPickingWindowSize;
+    }
+    const edlReachPx = Math.ceil(
+      (edlOptions.radius * drawingBufferHeight) / PointCloudPickingHandler.EdlReferenceHeight
+    );
+    const windowSize = 2 * edlReachPx + 1;
+    return MathUtils.clamp(
+      windowSize,
+      PointCloudPickingHandler.MinPickingWindowSize,
+      PointCloudPickingHandler.MaxPickingWindowSize
+    );
+  }
+
+  private getPickWindowSize(): number {
+    if (this._edlOptions === undefined || !shouldApplyEdl(this._edlOptions)) {
+      return PointCloudPickingHandler.MinPickingWindowSize;
+    }
+    const drawingBufferHeight = this._renderer.getDrawingBufferSize(this._drawingBufferSize).y;
+    return PointCloudPickingHandler.computePickWindowSize(this._edlOptions, drawingBufferHeight);
   }
 
   dispose(): void {
@@ -63,7 +103,7 @@ export class PointCloudPickingHandler {
       // how many point clouds are in the scene.
       const allOctrees = visibleNodes.map(n => n.octree);
       const pick = await this._picker.pick(camera, this._raycaster.ray, allOctrees, {
-        pickWindowSize: PointCloudPickingHandler.PickingWindowSize,
+        pickWindowSize: this.getPickWindowSize(),
         cameraInMotion: input.cameraInMotion ?? false,
         forceWindowedPick: input.forceWindowedPick ?? false
       });

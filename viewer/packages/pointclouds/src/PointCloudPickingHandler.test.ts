@@ -3,7 +3,7 @@
  */
 import type { WebGLRenderer } from 'three';
 import { PerspectiveCamera, Plane, Ray, Vector2, Vector3 } from 'three';
-import { Mock } from 'moq.ts';
+import { It, Mock } from 'moq.ts';
 import { vi } from 'vitest';
 
 import { PointCloudPickingHandler } from './PointCloudPickingHandler';
@@ -268,5 +268,54 @@ describe(PointCloudPickingHandler.name, () => {
     handler.invalidatePickCache();
 
     expect(invalidateSpy).toHaveBeenCalledTimes(1);
+  });
+
+  describe('computePickWindowSize()', () => {
+    test('keeps the minimum window when EDL options are not provided', () => {
+      expect(PointCloudPickingHandler.computePickWindowSize(undefined, 2160)).toBe(5);
+    });
+
+    test.each([
+      { radius: 0, strength: 0.5 },
+      { radius: 2.2, strength: 0 }
+    ])('keeps the minimum window when EDL is disabled (%o)', edlOptions => {
+      expect(PointCloudPickingHandler.computePickWindowSize(edlOptions, 2160)).toBe(5);
+    });
+
+    test.each([
+      { height: 1080, expected: 7 },
+      { height: 2160, expected: 11 },
+      { height: 2880, expected: 13 }
+    ])('covers the EDL outline for a $height px drawing buffer', ({ height, expected }) => {
+      expect(PointCloudPickingHandler.computePickWindowSize({ radius: 2.2, strength: 0.5 }, height)).toBe(expected);
+    });
+
+    test('never shrinks below the minimum window for small radii or buffers', () => {
+      expect(PointCloudPickingHandler.computePickWindowSize({ radius: 0.5, strength: 0.5 }, 500)).toBe(5);
+    });
+
+    test('returns an odd window capped at the maximum', () => {
+      const size = PointCloudPickingHandler.computePickWindowSize({ radius: 50, strength: 0.5 }, 4320);
+      expect(size).toBe(55);
+      expect(size % 2).toBe(1);
+    });
+  });
+
+  test('intersectPointClouds uses a window sized from the EDL outline and drawing buffer height', async () => {
+    const renderer = new Mock<WebGLRenderer>()
+      .setup(r => r.getDrawingBufferSize(It.IsAny()))
+      .callback(({ args: [target] }) => target.set(1920, 2160))
+      .object();
+    const edlHandler = new PointCloudPickingHandler(renderer, { radius: 2.2, strength: 0.5 });
+    const pickSpy = vi.spyOn(PointCloudOctreePicker.prototype, 'pick').mockResolvedValue(null);
+
+    await edlHandler.intersectPointClouds([createPointCloudNode()], createMockIntersectInput());
+
+    expect(pickSpy).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.anything(),
+      expect.anything(),
+      expect.objectContaining({ pickWindowSize: 11 })
+    );
   });
 });

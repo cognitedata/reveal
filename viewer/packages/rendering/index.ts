@@ -23,6 +23,7 @@ export { type Materials, initializeDefinesAndUniforms, forEachMaterial } from '.
 export type { OctreeMaterialParams } from './src/pointcloud-rendering';
 export { PointCloudMaterial } from './src/pointcloud-rendering';
 
+export { shouldApplyEdl } from './src/render-pipeline-providers/pointCloudParameterUtils';
 export { DefaultRenderPipelineProvider } from './src/render-pipeline-providers/DefaultRenderPipelineProvider';
 export { CadGeometryRenderModePipelineProvider } from './src/render-pipeline-providers/CadGeometryRenderModePipelineProvider';
 
