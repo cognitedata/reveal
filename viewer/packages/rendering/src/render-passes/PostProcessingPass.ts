@@ -2,7 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { Camera, Material, Mesh, RawShaderMaterial, Scene, ShaderMaterial, WebGLRenderer } from 'three';
+import type { Camera, IUniform, Material, Mesh, RawShaderMaterial, Scene, ShaderMaterial, WebGLRenderer } from 'three';
+import { OrthographicCamera, PerspectiveCamera } from 'three';
 import type { PostProcessingObjectsVisibilityParameters } from './types';
 import { transparentBlendOptions } from './types';
 import type { RenderPass } from '../RenderPass';
@@ -14,9 +15,8 @@ import {
   getPointCloudPostProcessingMaterial,
   RenderLayer
 } from '../utilities/renderUtilities';
-import type { CadShadowMap, PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
-import { shouldApplyEdl } from '../render-pipeline-providers/pointCloudParameterUtils';
 import { CadShadowPass, type CadShadowPassFactories } from './CadShadowPass';
+import type { CadShadowMap, PointCloudBlitUniformName, PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
 
 /**
  * Single pass that applies post processing effects and
@@ -57,11 +57,11 @@ export class PostProcessingPass implements RenderPass {
       shadowOptions === undefined
         ? undefined
         : new CadShadowPass(
-            postProcessingPipelineOptions.back.depthTexture,
-            shadowOptions.map,
-            undefined,
-            cadShadowPassDependencies
-          );
+          postProcessingPipelineOptions.back.depthTexture,
+          shadowOptions.map,
+          undefined,
+          cadShadowPassDependencies
+        );
 
     const backBlitMaterial = getBlitMaterial({
       texture: postProcessingPipelineOptions.back.texture,
@@ -140,9 +140,30 @@ export class PostProcessingPass implements RenderPass {
   }
 
   public render(renderer: WebGLRenderer, camera: Camera): void {
-    if (shouldApplyEdl(this._postProcessingOptions.edlOptions)) {
-      this._pointcloudBlitMaterial.uniforms.screenWidth = { value: this._postProcessingOptions.pointCloud.width };
-      this._pointcloudBlitMaterial.uniforms.screenHeight = { value: this._postProcessingOptions.pointCloud.height };
+    // Both EDL and gap filling need the current render size in the normalize shader. The
+    // uniforms only exist when one of them is enabled, so the setters skip missing ones.
+    const uniforms = this._pointcloudBlitMaterial.uniforms;
+    const height = Math.max(1, this._postProcessingOptions.pointCloud.height);
+    setUniformValue(uniforms, 'screenWidth', this._postProcessingOptions.pointCloud.width);
+    setUniformValue(uniforms, 'screenHeight', this._postProcessingOptions.pointCloud.height);
+
+    // Distance gate for the gap fill: pass the camera params it needs to turn a pixel reach
+    // into a world-space gap size at the surrounding surface's depth (see normalize.frag).
+    if (camera instanceof PerspectiveCamera) {
+      setUniformValue(uniforms, 'cameraNear', camera.near);
+      setUniformValue(uniforms, 'cameraFar', camera.far);
+      setUniformValue(uniforms, 'orthographicCamera', false);
+      setUniformValue(uniforms, 'worldPerPixel', (2 * Math.tan((camera.fov * Math.PI) / 360)) / camera.zoom / height);
+    } else if (camera instanceof OrthographicCamera) {
+      setUniformValue(uniforms, 'cameraNear', camera.near);
+      setUniformValue(uniforms, 'cameraFar', camera.far);
+      setUniformValue(uniforms, 'orthographicCamera', true);
+      // A pixel covers the same world size at every depth.
+      setUniformValue(uniforms, 'worldPerPixel', (camera.top - camera.bottom) / camera.zoom / height);
+    } else {
+      // Unknown projection: the world size of a pixel can't be derived, so disable the gate.
+      setUniformValue(uniforms, 'orthographicCamera', false);
+      setUniformValue(uniforms, 'worldPerPixel', 0);
     }
 
     renderer.sortObjects = true;
@@ -177,5 +198,17 @@ export class PostProcessingPass implements RenderPass {
       (postProcessingObject.material as Material).dispose();
       this._scene.remove(postProcessingObject);
     });
+  }
+}
+
+/** Updates a uniform in place (no per-frame allocation), ignoring uniforms the material doesn't declare. */
+function setUniformValue(
+  uniforms: { [uniform: string]: IUniform },
+  name: PointCloudBlitUniformName,
+  value: number | boolean
+): void {
+  const uniform = uniforms[name];
+  if (uniform !== undefined) {
+    uniform.value = value;
   }
 }

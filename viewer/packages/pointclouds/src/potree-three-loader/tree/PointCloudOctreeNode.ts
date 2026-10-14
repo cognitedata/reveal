@@ -29,9 +29,11 @@ export class PointCloudOctreeNode extends EventDispatcher implements IPointCloud
     const node = this.sceneNode;
 
     if (node.geometry instanceof BufferGeometry) {
-      const attributes = node.geometry.attributes;
+      // three.js frees the attribute buffers by iterating geometry.attributes, so
+      // dispose before clearing them.
+      node.geometry.dispose();
 
-      // tslint:disable-next-line:forin
+      const attributes = node.geometry.attributes;
       for (const key in attributes) {
         if (key === 'position') {
           delete (attributes[key] as any).array;
@@ -40,7 +42,6 @@ export class PointCloudOctreeNode extends EventDispatcher implements IPointCloud
         delete attributes[key];
       }
 
-      node.geometry.dispose();
       node.geometry = undefined as any;
     }
   }

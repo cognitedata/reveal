@@ -41,3 +41,6 @@ export type PostProcessingPipelineOptions = CadGeometryRenderTargets &
     pointBlending?: boolean;
     edlOptions: EdlOptions;
   };
+
+export type PointCloudBlitUniformName =
+  'screenWidth' | 'screenHeight' | 'cameraNear' | 'cameraFar' | 'orthographicCamera' | 'worldPerPixel';

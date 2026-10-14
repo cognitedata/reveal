@@ -25,23 +25,23 @@
     "buffer": "^6.0.3",
     "dat.gui": "^0.7.7",
     "lodash": "^4.17.21",
-    "react": "19.2.8",
-    "react-dom": "19.2.8",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
     "stats.js": "0.17.0",
     "styled-components": "6.5.3"
   },
   "devDependencies": {
     "@types/dat.gui": "^0.7.5",
     "@types/lodash": "^4.14.190",
-    "@types/react": "19.2.18",
-    "@types/react-dom": "19.2.7",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
     "@types/stats.js": "^0.17.0",
-    "@types/three": "^0.185.0",
+    "@types/three": "^0.186.0",
     "css-loader": "^7.0.0",
     "dotenv-webpack": "^9.0.0",
     "html-webpack-plugin": "^5.5.0",
     "prettier": "^3.0.0",
-    "three": "0.185.1",
+    "three": "0.186.1",
     "ts-loader": "9.6.2",
     "typescript": "^6.0.0",
     "webpack": "^5.101.0",
@@ -63,9 +63,5 @@
       "last 1 safari version"
     ]
   },
-  "packageManager": "yarn@4.18.0",
-  "resolutions": {
-    "tar": "^7.5.11",
-    "serialize-javascript": "^7.0.3"
-  }
+  "packageManager": "yarn@4.18.1"
 }
