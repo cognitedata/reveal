@@ -18,6 +18,7 @@ import { SectorLoader } from './SectorLoader';
 import type { IMock } from 'moq.ts';
 import { Mock } from 'moq.ts';
 import { Log } from '@reveal/logger';
+import { DeferredPromise } from '@reveal/utilities';
 import type { LogLevelNumbers } from 'loglevel';
 import type { CadNode } from '@reveal/cad-model';
 
@@ -129,6 +130,45 @@ describe('SectorLoader', () => {
 
     // Assert
     expect(updateStateFn).toHaveBeenCalledTimes(model.scene.sectorCount - 1);
+  });
+
+  test('loadSectors starts the next batch before the slowest download of the previous batch completes', async () => {
+    // Arrange
+    const largeModel = createCadModelMetadata(9, generateV9SectorTree(3, 5)); // 31 sectors, i.e. more than one batch
+    stateHandler.addModel(largeModel.modelIdentifier.revealInternalId);
+    const downloads = new Map<number, DeferredPromise<ConsumedSector>>();
+    const cadNode = new Mock<CadNode>()
+      .setup(p => p.cadModelMetadata)
+      .returns(largeModel)
+      .setup(p => p.visible)
+      .returns(true)
+      .setup(p => p.loadSector)
+      .returns(sector => {
+        const download = new DeferredPromise<ConsumedSector>();
+        downloads.set(sector.metadata.id, download);
+        return download;
+      })
+      .setup(p => p.clippingPlanes)
+      .returns([]);
+    input.models = [cadNode.object()];
+
+    // Act
+    const loading = asyncIteratorToArray(loader.loadSectors(input));
+    await vi.waitFor(() => expect(downloads.size).toBe(20));
+    const [slowestId, ...otherIds] = [...downloads.keys()];
+    otherIds.forEach(id =>
+      downloads
+        .get(id)!
+        .resolve(createConsumedSector(createWantedSector(largeModel, largeModel.scene.getSectorById(id)!)))
+    );
+
+    // Assert
+    await vi.waitFor(() => expect(downloads.size).toBe(largeModel.scene.sectorCount));
+    for (const [id, download] of downloads) {
+      download.resolve(createConsumedSector(createWantedSector(largeModel, largeModel.scene.getSectorById(id)!)));
+    }
+    expect(downloads.has(slowestId)).toBeTruthy();
+    expect(await loading).toHaveLength(largeModel.scene.sectorCount);
   });
 
   test('loadSectors marks sectors with errors as discarded', async () => {

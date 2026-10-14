@@ -92,14 +92,23 @@ export class SectorLoader {
     this._batchId++;
     const currentBatchId = this._batchId;
 
-    for (const batch of chunk(changedSectors, SectorLoadingBatchSize)) {
+    const startBatch = async (batch: WantedSector[]): Promise<Promise<ConsumedSector>[]> => {
       if (currentBatchId !== this._batchId) {
         // Stop processing this batch as a new batch has started, and will discard results from old batches.
         this._progressHelper.reportNewSectorsLoaded(batch.length);
-        continue;
+        return [];
       }
       const filteredSectors = await this.filterSectors(sectorCullerInput, batch, sectorCuller, this._progressHelper);
-      const consumedPromises = this.startLoadingBatch(filteredSectors, cadModels);
+      return this.startLoadingBatch(filteredSectors, cadModels);
+    };
+
+    const batches = chunk(changedSectors, SectorLoadingBatchSize);
+    let loadingBatch = batches.length > 0 ? startBatch(batches[0]) : undefined;
+    for (let i = 0; loadingBatch !== undefined; i++) {
+      const consumedPromises = await loadingBatch;
+      // Queue the next batch before consuming this one, so the download scheduler can start its sectors
+      // as soon as a slot frees up instead of waiting for the slowest download in this batch.
+      loadingBatch = i + 1 < batches.length ? startBatch(batches[i + 1]) : undefined;
       for await (const consumed of PromiseUtils.raceUntilAllCompleted(consumedPromises)) {
         const resolvedSector = consumed.result;
         if (currentBatchId === this._batchId && resolvedSector !== undefined) {
