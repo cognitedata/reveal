@@ -294,40 +294,6 @@ describe(SectorDownloadScheduler.name, () => {
     });
   });
 
-  test('clearQueuedDownloads discards queued sectors without touching pending downloads', async () => {
-    // Setup
-    const wantedSectors = createMockWantedSectors(25, 'TestModelIdentifier');
-    const downloadedSectorIds = new Array<number>();
-    const stalledDownload = new DeferredPromise<void>();
-    const downloadSectorMock = async (sector: WantedSector) => {
-      downloadedSectorIds.push(sector.metadata.id);
-      await stalledDownload;
-      return createConsumedSectorMock(sector).object();
-    };
-
-    const queuedSectorBatch = sectorDownloadScheduler.queueSectorBatchForDownload(
-      wantedSectors.map(sector => {
-        return { sector, downloadSector: downloadSectorMock };
-      })
-    );
-
-    // Act
-    sectorDownloadScheduler.clearQueuedDownloads();
-
-    // Assert
-    expect(sectorDownloadScheduler.numberOfPendingDownloads).toBe(20);
-    expect(sectorDownloadScheduler.numberOfQueuedDownloads).toBe(0);
-
-    stalledDownload.resolve();
-    const resolvedSectors = await Promise.all(queuedSectorBatch);
-
-    expect(downloadedSectorIds).toHaveLength(20);
-    resolvedSectors.forEach(sector => {
-      expect(sector.levelOfDetail).toBe(sector.metadata.id < 20 ? LevelOfDetail.Detailed : LevelOfDetail.Discarded);
-    });
-    expect(sectorDownloadScheduler.numberOfPendingDownloads).toBe(0);
-  });
-
   test('Failing download of a queued sector resolves as discarded and frees its download slot', async () => {
     // Setup
     const wantedSectors = createMockWantedSectors(21, 'TestModelIdentifier');

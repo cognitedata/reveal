@@ -134,69 +134,28 @@ describe('SectorLoader', () => {
 
   test('loadSectors starts the next batch before the slowest download of the previous batch completes', async () => {
     // Arrange
-    const largeModel = createCadModelMetadata(9, generateV9SectorTree(3, 5)); // 31 sectors, i.e. more than one batch
-    stateHandler.addModel(largeModel.modelIdentifier.revealInternalId);
-    const downloads = new Map<number, DeferredPromise<ConsumedSector>>();
-    const cadNode = new Mock<CadNode>()
-      .setup(p => p.cadModelMetadata)
-      .returns(largeModel)
-      .setup(p => p.visible)
-      .returns(true)
-      .setup(p => p.loadSector)
-      .returns(sector => {
-        const download = new DeferredPromise<ConsumedSector>();
-        downloads.set(sector.metadata.id, download);
-        return download;
-      })
-      .setup(p => p.clippingPlanes)
-      .returns([]);
-    input.models = [cadNode.object()];
+    const { largeModel, cadNode, downloads, completeDownload } = createModelWithControlledDownloads();
 
     // Act
-    const loading = asyncIteratorToArray(loader.loadSectors(input));
+    const loading = asyncIteratorToArray(loader.loadSectors({ ...input, models: [cadNode] }));
     await vi.waitFor(() => expect(downloads.size).toBe(20));
-    const [slowestId, ...otherIds] = [...downloads.keys()];
-    otherIds.forEach(id =>
-      downloads
-        .get(id)!
-        .resolve(createConsumedSector(createWantedSector(largeModel, largeModel.scene.getSectorById(id)!)))
-    );
+    [...downloads.keys()].slice(1).forEach(completeDownload); // the first download stays in progress
 
     // Assert
     await vi.waitFor(() => expect(downloads.size).toBe(largeModel.scene.sectorCount));
-    for (const [id, download] of downloads) {
-      download.resolve(createConsumedSector(createWantedSector(largeModel, largeModel.scene.getSectorById(id)!)));
-    }
-    expect(downloads.has(slowestId)).toBeTruthy();
+    [...downloads.keys()].forEach(completeDownload);
     expect(await loading).toHaveLength(largeModel.scene.sectorCount);
   });
 
   test('loadSectors does not start queued downloads from a previous load once a new load starts', async () => {
     // Arrange
-    const largeModel = createCadModelMetadata(9, generateV9SectorTree(3, 5)); // 31 sectors, i.e. more than one batch
-    stateHandler.addModel(largeModel.modelIdentifier.revealInternalId);
-    const downloads = new Map<number, DeferredPromise<ConsumedSector>>();
-    const largeCadNode = new Mock<CadNode>()
-      .setup(p => p.cadModelMetadata)
-      .returns(largeModel)
-      .setup(p => p.visible)
-      .returns(true)
-      .setup(p => p.loadSector)
-      .returns(sector => {
-        const download = new DeferredPromise<ConsumedSector>();
-        downloads.set(sector.metadata.id, download);
-        return download;
-      })
-      .setup(p => p.clippingPlanes)
-      .returns([]);
-    const firstLoading = asyncIteratorToArray(loader.loadSectors({ ...input, models: [largeCadNode.object()] }));
+    const { cadNode, downloads, completeDownload } = createModelWithControlledDownloads();
+    const firstLoading = asyncIteratorToArray(loader.loadSectors({ ...input, models: [cadNode] }));
     await vi.waitFor(() => expect(downloads.size).toBe(20));
 
     // Act
     const secondLoading = asyncIteratorToArray(loader.loadSectors(input));
-    for (const [id, download] of downloads) {
-      download.resolve(createConsumedSector(createWantedSector(largeModel, largeModel.scene.getSectorById(id)!)));
-    }
+    [...downloads.keys()].forEach(completeDownload);
 
     // Assert
     expect(await secondLoading).toHaveLength(model.scene.sectorCount);
@@ -232,6 +191,35 @@ describe('SectorLoader', () => {
     const discarded = result.filter(x => x.levelOfDetail === LevelOfDetail.Discarded);
     expect(discarded.length).toBe(1);
   });
+
+  /**
+   * Creates a model with more sectors than fit in one batch, whose downloads only complete
+   * when completeDownload is called for the sector.
+   */
+  function createModelWithControlledDownloads() {
+    const largeModel = createCadModelMetadata(9, generateV9SectorTree(3, 5)); // 31 sectors
+    stateHandler.addModel(largeModel.modelIdentifier.revealInternalId);
+    const downloads = new Map<number, DeferredPromise<ConsumedSector>>();
+    const cadNode = new Mock<CadNode>()
+      .setup(p => p.cadModelMetadata)
+      .returns(largeModel)
+      .setup(p => p.visible)
+      .returns(true)
+      .setup(p => p.loadSector)
+      .returns(sector => {
+        const download = new DeferredPromise<ConsumedSector>();
+        downloads.set(sector.metadata.id, download);
+        return download;
+      })
+      .setup(p => p.clippingPlanes)
+      .returns([])
+      .object();
+    const completeDownload = (id: number) =>
+      downloads
+        .get(id)!
+        .resolve(createConsumedSector(createWantedSector(largeModel, largeModel.scene.getSectorById(id)!)));
+    return { largeModel, cadNode, downloads, completeDownload };
+  }
 });
 
 class StubRepository implements SectorRepository {
