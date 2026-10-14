@@ -8,6 +8,7 @@ export { PointCloudMaterialManager } from './src/PointCloudMaterialManager';
 
 export type { RenderOptions, SsaoParameters, EdlOptions } from './src/rendering/types';
 export { defaultRenderOptions, SsaoSampleQuality, AntiAliasingMode } from './src/rendering/types';
+export { shouldApplyEdl } from './src/render-pipeline-providers/pointCloudParameterUtils';
 
 export * from './src/pointcloud-rendering/constants';
 export * from './src/pointcloud-rendering/enums';

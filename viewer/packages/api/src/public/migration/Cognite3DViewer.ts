@@ -380,7 +380,10 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       this._sceneHandler
     );
 
-    this._pointCloudPickingHandler = new PointCloudPickingHandler(this._renderer);
+    this._pointCloudPickingHandler = new PointCloudPickingHandler(
+      this._renderer,
+      revealOptions.renderOptions?.pointCloudParameters?.edlOptions
+    );
 
     const handleLoading = (loadingState: LoadingState) => {
       this.spinner.loading = loadingState.itemsLoaded != loadingState.itemsRequested;
