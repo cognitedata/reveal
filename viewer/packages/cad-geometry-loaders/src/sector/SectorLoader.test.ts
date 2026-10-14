@@ -22,6 +22,7 @@ import { DeferredPromise } from '@reveal/utilities';
 import type { LogLevelNumbers } from 'loglevel';
 import type { CadNode } from '@reveal/cad-model';
 
+import type { Mock as ViMock } from 'vitest';
 import { vi } from 'vitest';
 
 describe('SectorLoader', () => {
@@ -30,7 +31,7 @@ describe('SectorLoader', () => {
   let stateHandler: ModelStateHandler;
   let loader: SectorLoader;
   let collectStatisticsCallback: () => void;
-  let progressCallback: () => void;
+  let progressCallback: ViMock<(loaded: number, scheduled: number, culled: number) => void>;
   let model: CadModelMetadata;
   let input: DetermineSectorsPayload;
   let cadNodeMock: IMock<CadNode>;
@@ -161,6 +162,23 @@ describe('SectorLoader', () => {
     expect(await secondLoading).toHaveLength(model.scene.sectorCount);
     expect(await firstLoading).toHaveLength(0);
     expect(downloads.size).toBe(20);
+  });
+
+  test('loadSectors does not report progress from a previous load once a new load starts', async () => {
+    // Arrange
+    const { cadNode, downloads, completeDownload } = createModelWithControlledDownloads();
+    const firstLoading = asyncIteratorToArray(loader.loadSectors({ ...input, models: [cadNode] }));
+    await vi.waitFor(() => expect(downloads.size).toBe(20));
+
+    // Act
+    const secondLoading = asyncIteratorToArray(loader.loadSectors(input));
+    const callsBeforeFirstLoadFinishes = progressCallback.mock.calls.length;
+    [...downloads.keys()].forEach(completeDownload);
+    await Promise.all([firstLoading, secondLoading]);
+
+    // Assert: sectors are reported as loaded by the consumer of the loader, so the loader itself reports none
+    const progressReportsOfNewLoad = progressCallback.mock.calls.slice(callsBeforeFirstLoadFinishes - 1);
+    expect(progressReportsOfNewLoad.every(([loaded]) => loaded === 0)).toBe(true);
   });
 
   test('loadSectors marks sectors with errors as discarded', async () => {

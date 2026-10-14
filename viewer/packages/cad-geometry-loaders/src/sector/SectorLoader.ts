@@ -94,17 +94,19 @@ export class SectorLoader {
     // Results from previous loads are discarded, so don't let their not-yet-started downloads delay this one
     this._sectorDownloadScheduler.clearQueuedDownloads();
 
+    // A newer load has reset the progress helper and discards results from this one, so a superseded load
+    // must neither report progress nor keep processing its remaining batches.
+    const isSuperseded = () => currentBatchId !== this._batchId;
+
     const startBatch = async (batch: WantedSector[]): Promise<Promise<ConsumedSector>[]> => {
-      if (currentBatchId !== this._batchId) {
-        // Stop processing this batch as a new batch has started, and will discard results from old batches.
-        this._progressHelper.reportNewSectorsLoaded(batch.length);
+      if (isSuperseded()) {
         return [];
       }
-      const filteredSectors = await this.filterSectors(sectorCullerInput, batch, sectorCuller, this._progressHelper);
-      if (currentBatchId !== this._batchId) {
-        this._progressHelper.reportNewSectorsLoaded(filteredSectors.length);
+      const filteredSectors = await sectorCuller.filterSectorsToLoad(sectorCullerInput, batch);
+      if (isSuperseded()) {
         return [];
       }
+      this._progressHelper.reportNewSectorsCulled(batch.length - filteredSectors.length);
       return this.startLoadingBatch(filteredSectors, cadModels);
     };
 
@@ -112,21 +114,32 @@ export class SectorLoader {
     let loadingBatch = batches.length > 0 ? startBatch(batches[0]) : undefined;
     for (let i = 0; loadingBatch !== undefined; i++) {
       const consumedPromises = await loadingBatch;
+      if (isSuperseded()) {
+        return;
+      }
       // Queue the next batch before consuming this one, so the download scheduler can start its sectors
       // as soon as a slot frees up instead of waiting for the slowest download in this batch.
       loadingBatch = i + 1 < batches.length ? startBatch(batches[i + 1]) : undefined;
-      for await (const consumed of PromiseUtils.raceUntilAllCompleted(consumedPromises)) {
-        const resolvedSector = consumed.result;
-        if (currentBatchId === this._batchId && resolvedSector !== undefined) {
-          this._modelStateHandler.updateState(
-            resolvedSector.modelIdentifier.revealInternalId,
-            resolvedSector.metadata.id,
-            resolvedSector.levelOfDetail
-          );
-          yield resolvedSector; // progress will be reported when sector is loaded by CadManager
-        } else {
-          this._progressHelper.reportNewSectorsLoaded(1);
+      try {
+        for await (const consumed of PromiseUtils.raceUntilAllCompleted(consumedPromises)) {
+          if (isSuperseded()) {
+            return;
+          }
+          const resolvedSector = consumed.result;
+          if (resolvedSector !== undefined) {
+            this._modelStateHandler.updateState(
+              resolvedSector.modelIdentifier.revealInternalId,
+              resolvedSector.metadata.id,
+              resolvedSector.levelOfDetail
+            );
+            yield resolvedSector; // progress will be reported when sector is loaded by CadManager
+          } else {
+            this._progressHelper.reportNewSectorsLoaded(1);
+          }
         }
+      } finally {
+        // Don't leave the already queued next batch as an unhandled rejection if we stop early
+        loadingBatch?.catch(() => {});
       }
     }
   }
@@ -147,18 +160,6 @@ export class SectorLoader {
       return this._sectorCuller;
     }
     throw new Error(`No supported sector culler for format ${sectorCullerInput.cadModelsMetadata[0].format}`);
-  }
-
-  private async filterSectors(
-    input: DetermineSectorsInput,
-    batch: WantedSector[],
-    sectorCuller: SectorCuller,
-    progressHelper: ProgressReportHelper
-  ): Promise<WantedSector[]> {
-    // Determine if some of the sectors in the batch is culled by already loaded geometry
-    const filteredSectors = await sectorCuller.filterSectorsToLoad(input, batch);
-    progressHelper.reportNewSectorsCulled(batch.length - filteredSectors.length);
-    return filteredSectors;
   }
 
   private startLoadingBatch(batch: WantedSector[], models: CadNode[]): Promise<ConsumedSector>[] {
