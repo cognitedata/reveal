@@ -18,5 +18,7 @@ export const PERSPECTIVE_CAMERA = 'PerspectiveCamera';
 export const COLOR_BLACK: Color = new Color(0, 0, 0);
 export const COLOR_WHITE: Color = new Color(1, 1, 1);
 export const DEFAULT_EDL_NEIGHBOURS_COUNT = 16;
+// Largest supported EDL radius. Larger radii give thick, heavy outlines and widen the pick window.
+export const MAX_EDL_RADIUS = 5;
 export const OBJECT_STYLING_TEXTURE_WIDTH = 256;
 export const OBJECT_STYLING_TEXTURE_HEIGHT = 256;

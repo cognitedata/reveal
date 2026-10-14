@@ -3,15 +3,17 @@
  */
 import type { Cognite3DViewerOptions } from './types';
 import {
+  createCompleteEdlOptions,
   determineAntiAliasingMode,
   determineResolutionCap,
   determineSsaoRenderParameters
 } from './renderOptionsHelpers';
 import type { PropType } from '../../utilities/reflection';
 import type { DeviceDescriptor } from '@reveal/utilities';
-import { AntiAliasingMode } from '@reveal/rendering';
+import { AntiAliasingMode, defaultRenderOptions, MAX_EDL_RADIUS } from '@reveal/rendering';
 import { Log } from '@reveal/logger';
 import type { LogLevelNumbers } from 'loglevel';
+import { vi } from 'vitest';
 
 describe(determineAntiAliasingMode.name, () => {
   let currentLogLevel: LogLevelNumbers;
@@ -85,5 +87,52 @@ describe(determineResolutionCap.name, () => {
     expect(resolutionCap).toEqual(
       deviceDescriptor.deviceType !== 'desktop' ? defaultResolutionThreshold / mockDPR : defaultResolutionThreshold
     );
+  });
+});
+
+describe(createCompleteEdlOptions.name, () => {
+  let currentLogLevel: LogLevelNumbers;
+
+  beforeAll(() => {
+    currentLogLevel = Log.getLevel();
+    Log.setLevel('ERROR');
+  });
+
+  afterAll(() => {
+    Log.setLevel(currentLogLevel);
+  });
+
+  test('returns the default options when none are given', () => {
+    expect(createCompleteEdlOptions(undefined)).toEqual(defaultRenderOptions.pointCloudParameters.edlOptions);
+  });
+
+  test('disables EDL when given "disabled"', () => {
+    expect(createCompleteEdlOptions('disabled')).toEqual({ radius: 0, strength: 0 });
+  });
+
+  test('fills in unspecified values from the defaults', () => {
+    const defaults = defaultRenderOptions.pointCloudParameters.edlOptions;
+    expect(createCompleteEdlOptions({ strength: 1 })).toEqual({ radius: defaults.radius, strength: 1 });
+    expect(createCompleteEdlOptions({ radius: 3 })).toEqual({ radius: 3, strength: defaults.strength });
+  });
+
+  test('keeps a radius at the maximum unchanged', () => {
+    expect(createCompleteEdlOptions({ radius: MAX_EDL_RADIUS, strength: 1 })).toEqual({
+      radius: MAX_EDL_RADIUS,
+      strength: 1
+    });
+  });
+
+  test('clamps a radius above the maximum and keeps the other values', () => {
+    expect(createCompleteEdlOptions({ radius: 10, strength: 1 })).toEqual({ radius: MAX_EDL_RADIUS, strength: 1 });
+  });
+
+  test('warns when the radius is clamped', () => {
+    const warnSpy = vi.spyOn(Log, 'warn').mockImplementation(() => {});
+
+    createCompleteEdlOptions({ radius: 10 });
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    warnSpy.mockRestore();
   });
 });
