@@ -79,6 +79,19 @@ export class SectorDownloadScheduler {
     });
   }
 
+  /**
+   * Drops all downloads that are queued but not yet started, resolving them as discarded.
+   * Downloads that are already in progress are left untouched.
+   */
+  public clearQueuedDownloads(): void {
+    const queuedSectors = [...this._queuedSectorDownloads.values()];
+    this._sectorDownloadQueue.splice(0);
+    this._queuedSectorDownloads.clear();
+    queuedSectors.forEach(({ sector, queuedDeferredPromise }) =>
+      queuedDeferredPromise.resolve(this.createDiscardedConsumedSector(sector))
+    );
+  }
+
   private createDiscardedConsumedSector(sector: WantedSector): ConsumedSector {
     return {
       modelIdentifier: sector.modelIdentifier,

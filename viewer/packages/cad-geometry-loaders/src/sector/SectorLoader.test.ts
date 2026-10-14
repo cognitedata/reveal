@@ -171,6 +171,39 @@ describe('SectorLoader', () => {
     expect(await loading).toHaveLength(largeModel.scene.sectorCount);
   });
 
+  test('loadSectors does not start queued downloads from a previous load once a new load starts', async () => {
+    // Arrange
+    const largeModel = createCadModelMetadata(9, generateV9SectorTree(3, 5)); // 31 sectors, i.e. more than one batch
+    stateHandler.addModel(largeModel.modelIdentifier.revealInternalId);
+    const downloads = new Map<number, DeferredPromise<ConsumedSector>>();
+    const largeCadNode = new Mock<CadNode>()
+      .setup(p => p.cadModelMetadata)
+      .returns(largeModel)
+      .setup(p => p.visible)
+      .returns(true)
+      .setup(p => p.loadSector)
+      .returns(sector => {
+        const download = new DeferredPromise<ConsumedSector>();
+        downloads.set(sector.metadata.id, download);
+        return download;
+      })
+      .setup(p => p.clippingPlanes)
+      .returns([]);
+    const firstLoading = asyncIteratorToArray(loader.loadSectors({ ...input, models: [largeCadNode.object()] }));
+    await vi.waitFor(() => expect(downloads.size).toBe(20));
+
+    // Act
+    const secondLoading = asyncIteratorToArray(loader.loadSectors(input));
+    for (const [id, download] of downloads) {
+      download.resolve(createConsumedSector(createWantedSector(largeModel, largeModel.scene.getSectorById(id)!)));
+    }
+
+    // Assert
+    expect(await secondLoading).toHaveLength(model.scene.sectorCount);
+    expect(await firstLoading).toHaveLength(0);
+    expect(downloads.size).toBe(20);
+  });
+
   test('loadSectors marks sectors with errors as discarded', async () => {
     // Arrange
     let first = true;

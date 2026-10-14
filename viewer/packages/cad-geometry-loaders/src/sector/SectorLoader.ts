@@ -91,6 +91,8 @@ export class SectorLoader {
 
     this._batchId++;
     const currentBatchId = this._batchId;
+    // Results from previous loads are discarded, so don't let their not-yet-started downloads delay this one
+    this._sectorDownloadScheduler.clearQueuedDownloads();
 
     const startBatch = async (batch: WantedSector[]): Promise<Promise<ConsumedSector>[]> => {
       if (currentBatchId !== this._batchId) {
@@ -99,6 +101,10 @@ export class SectorLoader {
         return [];
       }
       const filteredSectors = await this.filterSectors(sectorCullerInput, batch, sectorCuller, this._progressHelper);
+      if (currentBatchId !== this._batchId) {
+        this._progressHelper.reportNewSectorsLoaded(filteredSectors.length);
+        return [];
+      }
       return this.startLoadingBatch(filteredSectors, cadModels);
     };
 
