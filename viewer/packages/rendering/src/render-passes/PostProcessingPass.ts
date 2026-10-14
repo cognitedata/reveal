@@ -16,7 +16,11 @@ import {
   RenderLayer
 } from '../utilities/renderUtilities';
 import { CadShadowPass, type CadShadowPassFactories } from './CadShadowPass';
-import type { CadShadowMap, PointCloudBlitUniformName, PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
+import type {
+  CadShadowMap,
+  PointCloudBlitUniformName,
+  PostProcessingPipelineOptions
+} from '../render-pipeline-providers/types';
 
 /**
  * Single pass that applies post processing effects and
@@ -57,11 +61,11 @@ export class PostProcessingPass implements RenderPass {
       shadowOptions === undefined
         ? undefined
         : new CadShadowPass(
-          postProcessingPipelineOptions.back.depthTexture,
-          shadowOptions.map,
-          undefined,
-          cadShadowPassDependencies
-        );
+            postProcessingPipelineOptions.back.depthTexture,
+            shadowOptions.map,
+            undefined,
+            cadShadowPassDependencies
+          );
 
     const backBlitMaterial = getBlitMaterial({
       texture: postProcessingPipelineOptions.back.texture,
