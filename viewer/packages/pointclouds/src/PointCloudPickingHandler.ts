@@ -18,6 +18,10 @@ import type { IntersectPointCloudNodeResult } from './types';
 import type { EdlOptions } from '@reveal/rendering';
 import { POINT_SIZE_REFERENCE_SCREEN_HEIGHT, shouldApplyEdl } from '@reveal/rendering';
 
+const MIN_PICK_WINDOW_SIZE = 5;
+// Covers the max EDL radius (5) on a 4320px high drawing buffer (8K display): 2 * ceil(5 * 4320 / 1080) + 1.
+const MAX_PICK_WINDOW_SIZE = 41;
+
 export class PointCloudPickingHandler {
   private readonly _normalized = new Vector2();
   private readonly _drawingBufferSize = new Vector2();
@@ -26,11 +30,6 @@ export class PointCloudPickingHandler {
   private readonly _picker: PointCloudOctreePicker;
   private readonly _edlOptions: EdlOptions | undefined;
   private readonly _mutex = new Mutex();
-
-  // To solve https://cognitedata.atlassian.net/browse/REV-523
-  private static readonly PickingWindowSize = 5;
-  // Covers the max EDL radius (5) on a 4320px high drawing buffer (8K display): 2 * ceil(5 * 4320 / 1080) + 1.
-  private static readonly MaxPickingWindowSize = 41;
 
   /**
    * @param renderer Renderer used for the pick render.
@@ -98,22 +97,27 @@ export class PointCloudPickingHandler {
     }
   }
 
-  /**
-   * Pick window size in drawing buffer pixels. Odd, so the window is centered on the pick position.
-   */
   private getPickWindowSize(): number {
     if (this._edlOptions === undefined || !shouldApplyEdl(this._edlOptions)) {
-      return PointCloudPickingHandler.PickingWindowSize;
+      return MIN_PICK_WINDOW_SIZE;
     }
-    // The EDL radius is given in pixels at the reference screen height, like point sizes.
     const { y: drawingBufferHeight } = this._renderer.getDrawingBufferSize(this._drawingBufferSize);
-    const edlRadiusPixels = (this._edlOptions.radius * drawingBufferHeight) / POINT_SIZE_REFERENCE_SCREEN_HEIGHT;
-    const windowSize = 2 * Math.ceil(edlRadiusPixels) + 1;
-    return Math.min(
-      PointCloudPickingHandler.MaxPickingWindowSize,
-      Math.max(PointCloudPickingHandler.PickingWindowSize, windowSize)
-    );
+    return computePickWindowSize(this._edlOptions, drawingBufferHeight);
   }
+}
+
+/**
+ * Pick window size in drawing buffer pixels. Odd, so the window is centered on the pick position.
+ * Wide enough to cover the EDL outline, which is drawn around points on screen but not in the pick render.
+ */
+export function computePickWindowSize(edlOptions: EdlOptions | undefined, drawingBufferHeight: number): number {
+  if (edlOptions === undefined || !shouldApplyEdl(edlOptions)) {
+    return MIN_PICK_WINDOW_SIZE;
+  }
+  // The EDL radius is given in pixels at the reference screen height, like point sizes.
+  const edlRadiusPixels = (edlOptions.radius * drawingBufferHeight) / POINT_SIZE_REFERENCE_SCREEN_HEIGHT;
+  const windowSize = 2 * Math.ceil(edlRadiusPixels) + 1;
+  return Math.min(MAX_PICK_WINDOW_SIZE, Math.max(MIN_PICK_WINDOW_SIZE, windowSize));
 }
 
 function mapPickResult(
