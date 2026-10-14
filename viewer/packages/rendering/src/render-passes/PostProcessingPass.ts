@@ -16,7 +16,11 @@ import {
   RenderLayer
 } from '../utilities/renderUtilities';
 import { CadShadowPass, type CadShadowPassFactories } from './CadShadowPass';
-import type { CadShadowMap, PointCloudBlitUniformName, PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
+import type {
+  CadShadowMap,
+  PointCloudBlitUniformName,
+  PostProcessingPipelineOptions
+} from '../render-pipeline-providers/types';
 import { CadShadowReceiverForCustomObjectMaterial } from '../rendering/CadShadowReceiverForCustomObjectMaterial';
 import type { ICustomObject } from '@reveal/utilities';
 
@@ -65,6 +69,7 @@ export class PostProcessingPass implements RenderPass {
             undefined,
             cadShadowPassDependencies
           );
+
     const backBlitMaterial = getBlitMaterial({
       texture: postProcessingPipelineOptions.back.texture,
       depthTexture: postProcessingPipelineOptions.back.depthTexture,
