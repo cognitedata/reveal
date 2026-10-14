@@ -15,7 +15,7 @@ import {
   getPointCloudPostProcessingMaterial,
   RenderLayer
 } from '../utilities/renderUtilities';
-import type { PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
+import type { PointCloudBlitUniformName, PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
 
 /**
  * Single pass that applies post processing effects and
@@ -155,7 +155,11 @@ export class PostProcessingPass implements RenderPass {
 }
 
 /** Updates a uniform in place (no per-frame allocation), ignoring uniforms the material doesn't declare. */
-function setUniformValue(uniforms: { [uniform: string]: IUniform }, name: string, value: unknown): void {
+function setUniformValue(
+  uniforms: { [uniform: string]: IUniform },
+  name: PointCloudBlitUniformName,
+  value: number | boolean
+): void {
   const uniform = uniforms[name];
   if (uniform !== undefined) {
     uniform.value = value;
