@@ -116,6 +116,19 @@ describe(createCompleteEdlOptions.name, () => {
     expect(createCompleteEdlOptions({ radius: 3 })).toEqual({ radius: 3, strength: defaults.strength });
   });
 
+  test('falls back to the defaults for values explicitly set to undefined', () => {
+    const defaults = defaultRenderOptions.pointCloudParameters.edlOptions;
+    expect(createCompleteEdlOptions({ radius: undefined, strength: undefined })).toEqual(defaults);
+    expect(createCompleteEdlOptions({ radius: undefined, strength: 1 })).toEqual({
+      radius: defaults.radius,
+      strength: 1
+    });
+    expect(createCompleteEdlOptions({ radius: 3, strength: undefined })).toEqual({
+      radius: 3,
+      strength: defaults.strength
+    });
+  });
+
   test('keeps a radius at the maximum unchanged', () => {
     expect(createCompleteEdlOptions({ radius: MAX_EDL_RADIUS, strength: 1 })).toEqual({
       radius: MAX_EDL_RADIUS,

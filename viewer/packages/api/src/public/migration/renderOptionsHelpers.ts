@@ -131,12 +131,15 @@ export function createCompleteEdlOptions(inputOptions?: Partial<EdlOptions> | 'd
     return { radius: 0.0, strength: 0.0 };
   }
 
-  const options = { ...defaultRenderOptions.pointCloudParameters.edlOptions, ...inputOptions };
-  if (options.radius > MAX_EDL_RADIUS) {
-    Log.warn(`EDL radius ${options.radius} exceeds the maximum of ${MAX_EDL_RADIUS}, using ${MAX_EDL_RADIUS}`);
-    return { ...options, radius: MAX_EDL_RADIUS };
+  const defaults = defaultRenderOptions.pointCloudParameters.edlOptions;
+  const radius = inputOptions.radius ?? defaults.radius;
+  const strength = inputOptions.strength ?? defaults.strength;
+
+  if (radius > MAX_EDL_RADIUS) {
+    Log.warn(`EDL radius ${radius} exceeds the maximum of ${MAX_EDL_RADIUS}, using ${MAX_EDL_RADIUS}`);
+    return { radius: MAX_EDL_RADIUS, strength };
   }
-  return options;
+  return { radius, strength };
 }
 
 function restrictAntiAliasingModeBasedOnDevice(
