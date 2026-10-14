@@ -284,6 +284,7 @@ export class CadShadowPass implements RenderPass {
 
   private applyFocusReading(pixel: Uint8Array, far: number): boolean {
     if (pixel[3] === 0) {
+      this._focusDistance = undefined;
       return true;
     }
     const normalized = (pixel[0] + pixel[1] / 255 + pixel[2] / 65025) / 255;
