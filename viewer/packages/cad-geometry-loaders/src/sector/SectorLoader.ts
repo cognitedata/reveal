@@ -132,6 +132,7 @@ export class SectorLoader {
               resolvedSector.metadata.id,
               resolvedSector.levelOfDetail
             );
+            this._progressHelper.reportSectorYielded();
             yield resolvedSector; // progress will be reported when sector is loaded by CadManager
           } else {
             this._progressHelper.reportNewSectorsLoaded(1);
@@ -145,7 +146,7 @@ export class SectorLoader {
   }
 
   reportNewSectorsLoaded(loadedCountChange: number): void {
-    this._progressHelper.reportNewSectorsLoaded(loadedCountChange);
+    this._progressHelper.reportYieldedSectorsLoaded(loadedCountChange);
   }
 
   private shouldLoad(input: DetermineSectorsPayload) {
@@ -187,16 +188,28 @@ class ProgressReportHelper {
   private _sectorsScheduled = 0;
   private _sectorsLoaded = 0;
   private _sectorsCulled = 0;
+  // Sectors handed to the consumer of the loader, which will report them as loaded
+  private _sectorsAwaitingConsumer = 0;
 
   constructor(reportCb: (sectorsLoaded: number, sectorsScheduled: number, sectorsCulled: number) => void) {
     this._progressCallback = reportCb;
   }
 
   reset(sectorsScheduledChange: number) {
-    this._sectorsScheduled += sectorsScheduledChange - this._sectorsLoaded;
+    // Superseded loads report nothing, so only sectors the consumer still has to report carry over
+    this._sectorsScheduled = sectorsScheduledChange + this._sectorsAwaitingConsumer;
     this._sectorsLoaded = 0;
     this._sectorsCulled = 0;
     this.triggerCallback();
+  }
+
+  reportSectorYielded() {
+    this._sectorsAwaitingConsumer++;
+  }
+
+  reportYieldedSectorsLoaded(loadedCountChange: number) {
+    this._sectorsAwaitingConsumer = Math.max(0, this._sectorsAwaitingConsumer - loadedCountChange);
+    this.reportNewSectorsLoaded(loadedCountChange);
   }
 
   reportNewSectorsLoaded(loadedCountChange: number) {

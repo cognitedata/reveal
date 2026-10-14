@@ -181,6 +181,28 @@ describe('SectorLoader', () => {
     expect(progressReportsOfNewLoad.every(([loaded]) => loaded === 0)).toBe(true);
   });
 
+  test('loadSectors lets progress complete when a load is superseded by a new load', async () => {
+    // Arrange
+    const { cadNode, downloads, completeDownload } = createModelWithControlledDownloads();
+    // Like CadManager, report each yielded sector as loaded once it has been consumed
+    const consume = async (loading: AsyncIterable<ConsumedSector>) => {
+      for await (const _ of loading) {
+        loader.reportNewSectorsLoaded(1);
+      }
+    };
+    const firstLoading = consume(loader.loadSectors({ ...input, models: [cadNode] }));
+    await vi.waitFor(() => expect(downloads.size).toBe(20));
+
+    // Act
+    const secondLoading = consume(loader.loadSectors(input));
+    [...downloads.keys()].forEach(completeDownload);
+    await Promise.all([firstLoading, secondLoading]);
+
+    // Assert
+    const [loaded, scheduled] = progressCallback.mock.calls.at(-1)!;
+    expect(loaded).toBe(scheduled);
+  });
+
   test('loadSectors marks sectors with errors as discarded', async () => {
     // Arrange
     let first = true;
