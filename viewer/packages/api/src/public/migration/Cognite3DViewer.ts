@@ -8,7 +8,6 @@ import viewerPackageJson from '../../../../../package.json' with { type: 'json' 
 import TWEEN from '@tweenjs/tween.js';
 import { pick } from 'lodash-es';
 
-import type { EdlOptions } from '@reveal/rendering';
 import { defaultRenderOptions } from '@reveal/rendering';
 
 import type {
@@ -30,7 +29,9 @@ import {
   SceneHandler,
   getPixelCoordinatesFromEvent,
   getNormalizedPixelCoordinates,
-  CustomObjectIntersectInput
+  CustomObjectIntersectInput,
+  setRenderContextLost,
+  isRenderContextLost
 } from '@reveal/utilities';
 
 import { SessionLogger, MetricsLogger } from '@reveal/metrics';
@@ -83,6 +84,7 @@ import type { IntersectInput, SupportedModelTypes, LoadingState } from '@reveal/
 import type { CogniteClient } from '@cognite/sdk';
 import { Log } from '@reveal/logger';
 import {
+  createCompleteEdlOptions,
   determineAntiAliasingMode,
   determineResolutionCap,
   determineSsaoRenderParameters
@@ -123,6 +125,8 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   private readonly _domElementResizeObserver: ResizeObserver;
   private readonly _image360ApiHelper: Image360ApiHelper<DataSourceT> | undefined;
   private readonly _unsubsribeOnLoading: () => void;
+  private _onContextLost!: (event: Event) => void;
+  private _onContextRestored!: () => void;
 
   /**
    * Returns the rendering canvas, the DOM element where the renderer draws its output.
@@ -301,6 +305,8 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     // Prevents scrolling for mobile devices.
     this.canvas.style.touchAction = 'none';
 
+    this.registerContextLossHandlers();
+
     this._domElement = options.domElement ?? createCanvasWrapper();
     this._domElement.tabIndex = 0;
     this._domElement.appendChild(this.canvas);
@@ -394,7 +400,10 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       this._sceneHandler
     );
 
-    this._pointCloudPickingHandler = new PointCloudPickingHandler(this._renderer);
+    this._pointCloudPickingHandler = new PointCloudPickingHandler(
+      this._renderer,
+      revealOptions.renderOptions?.pointCloudParameters?.edlOptions
+    );
 
     const handleLoading = (loadingState: LoadingState) => {
       this.spinner.loading = loadingState.itemsLoaded != loadingState.itemsRequested;
@@ -421,6 +430,26 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
         customDataSource: options.customDataSource ? true : false
       }
     });
+  }
+
+  /**
+   * Listens for render context loss/restore. On loss, prevents the default (so the
+   * browser attempts recovery) and sets `isRenderContextLost()`; on restore, clears
+   * the flag and requests a redraw.
+   */
+  private registerContextLossHandlers(): void {
+    this._onContextLost = event => {
+      event.preventDefault();
+      setRenderContextLost(true);
+    };
+
+    this._onContextRestored = () => {
+      setRenderContextLost(false);
+      this.revealManager.requestRedraw();
+    };
+
+    this.canvas.addEventListener('webglcontextlost', this._onContextLost);
+    this.canvas.addEventListener('webglcontextrestored', this._onContextRestored);
   }
 
   /**
@@ -513,6 +542,11 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
 
     this._models.forEach(m => m.dispose());
     this._sceneHandler.dispose();
+
+    this.canvas.removeEventListener('webglcontextlost', this._onContextLost);
+    this.canvas.removeEventListener('webglcontextrestored', this._onContextRestored);
+    // Reset so a viewer disposed while the context is lost does not stall other viewers.
+    setRenderContextLost(false);
 
     this._events.disposed.fire();
     disposeOfAllEventListeners(this._events);
@@ -1875,6 +1909,9 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     if (!isVisible) {
       return;
     }
+    if (isRenderContextLost()) {
+      return;
+    }
     const camera = this.cameraManager.getCamera();
     TWEEN.update(time);
     this.recalculateBoundingBox();
@@ -2168,22 +2205,6 @@ function createRenderer(): WebGLRenderer {
   const renderer = new WebGLRenderer({ powerPreference: 'high-performance' });
   renderer.setPixelRatio(window.devicePixelRatio);
   return renderer;
-}
-
-/**
- * Create EDL options from input options.
- * @param inputOptions
- */
-function createCompleteEdlOptions(inputOptions?: Partial<EdlOptions> | 'disabled'): EdlOptions {
-  if (inputOptions === undefined) {
-    return defaultRenderOptions.pointCloudParameters.edlOptions;
-  }
-
-  if (inputOptions === 'disabled') {
-    return { radius: 0.0, strength: 0.0 };
-  }
-
-  return { ...defaultRenderOptions.pointCloudParameters.edlOptions, ...inputOptions };
 }
 
 function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions, devicePixelRatio: number): RevealOptions {
