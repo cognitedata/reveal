@@ -21,6 +21,8 @@ export const DEFAULT_EDL_NEIGHBOURS_COUNT = 16;
 // Screen height (in pixels) at which point sizes and the EDL radius are given in pixels. Must match
 // point_size_relative_to_screen_height in glsl/base/pointSizeRelativeToScreen.glsl.
 export const POINT_SIZE_REFERENCE_SCREEN_HEIGHT = 1080;
+// Largest supported EDL radius. Larger radii give thick, heavy outlines and widen the pick window.
+export const MAX_EDL_RADIUS = 5;
 /**
  * Half-width, in samples, of the depth-aware gap fill applied while compositing the point
  * cloud. An empty pixel with enough covered neighbours adopts the nearest one, closing the gap
