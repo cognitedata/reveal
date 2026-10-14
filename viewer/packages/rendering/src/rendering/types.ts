@@ -26,6 +26,7 @@ export type EdlOptions = {
   strength: number;
   /**
    * Radius of sampled points in pixels. Determines thickness of edges addet on top of points.
+   * Values above 5 are clamped to 5.
    */
   radius: number;
 };

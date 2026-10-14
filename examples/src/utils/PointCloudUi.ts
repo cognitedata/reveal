@@ -73,7 +73,7 @@ export class PointCloudUi {
       urlParams.set('edl', value);
       window.location.href = url.toString();
     });
-    edl.add(this._params.edlOptions, 'radius', 0, 10, 0.1).onFinishChange(value => {
+    edl.add(this._params.edlOptions, 'radius', 0, 5, 0.1).onFinishChange(value => {
       urlParams.set('edlRadius', value);
       window.location.href = url.toString();
     });

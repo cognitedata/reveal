@@ -3,8 +3,8 @@
  */
 
 import { Log } from '@reveal/logger';
-import type { SsaoParameters } from '@reveal/rendering';
-import { AntiAliasingMode, defaultRenderOptions, SsaoSampleQuality } from '@reveal/rendering';
+import type { EdlOptions, SsaoParameters } from '@reveal/rendering';
+import { AntiAliasingMode, defaultRenderOptions, MAX_EDL_RADIUS, SsaoSampleQuality } from '@reveal/rendering';
 import type { DeviceDescriptor } from '@reveal/utilities';
 import { assertNever } from '@reveal/utilities';
 import type { PropType } from '../../utilities/reflection';
@@ -116,6 +116,30 @@ export function determineResolutionCap(
   }
 
   return resolutionThreshold;
+}
+
+/**
+ * Create EDL options from input options. The radius is clamped to the maximum supported radius.
+ * @param inputOptions
+ */
+export function createCompleteEdlOptions(inputOptions?: Partial<EdlOptions> | 'disabled'): EdlOptions {
+  if (inputOptions === undefined) {
+    return defaultRenderOptions.pointCloudParameters.edlOptions;
+  }
+
+  if (inputOptions === 'disabled') {
+    return { radius: 0.0, strength: 0.0 };
+  }
+
+  const defaults = defaultRenderOptions.pointCloudParameters.edlOptions;
+  const radius = inputOptions.radius ?? defaults.radius;
+  const strength = inputOptions.strength ?? defaults.strength;
+
+  if (radius > MAX_EDL_RADIUS) {
+    Log.warn(`EDL radius ${radius} exceeds the maximum of ${MAX_EDL_RADIUS}, using ${MAX_EDL_RADIUS}`);
+    return { radius: MAX_EDL_RADIUS, strength };
+  }
+  return { radius, strength };
 }
 
 function restrictAntiAliasingModeBasedOnDevice(
