@@ -8,7 +8,6 @@ import viewerPackageJson from '../../../../../package.json' with { type: 'json' 
 import TWEEN from '@tweenjs/tween.js';
 import { pick } from 'lodash-es';
 
-import type { EdlOptions } from '@reveal/rendering';
 import { defaultRenderOptions } from '@reveal/rendering';
 
 import type {
@@ -85,6 +84,7 @@ import type { IntersectInput, SupportedModelTypes, LoadingState } from '@reveal/
 import type { CogniteClient } from '@cognite/sdk';
 import { Log } from '@reveal/logger';
 import {
+  createCompleteEdlOptions,
   determineAntiAliasingMode,
   determineResolutionCap,
   determineSsaoRenderParameters
@@ -2182,22 +2182,6 @@ function createRenderer(): WebGLRenderer {
   const renderer = new WebGLRenderer({ powerPreference: 'high-performance' });
   renderer.setPixelRatio(window.devicePixelRatio);
   return renderer;
-}
-
-/**
- * Create EDL options from input options.
- * @param inputOptions
- */
-function createCompleteEdlOptions(inputOptions?: Partial<EdlOptions> | 'disabled'): EdlOptions {
-  if (inputOptions === undefined) {
-    return defaultRenderOptions.pointCloudParameters.edlOptions;
-  }
-
-  if (inputOptions === 'disabled') {
-    return { radius: 0.0, strength: 0.0 };
-  }
-
-  return { ...defaultRenderOptions.pointCloudParameters.edlOptions, ...inputOptions };
 }
 
 function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions, devicePixelRatio: number): RevealOptions {
