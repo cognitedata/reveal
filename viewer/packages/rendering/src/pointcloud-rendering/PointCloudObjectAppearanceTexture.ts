@@ -146,4 +146,8 @@ export class PointCloudObjectAppearanceTexture {
   get objectStyleTexture(): DataTexture {
     return this._objectStyleTexture;
   }
+
+  dispose(): void {
+    this._objectStyleTexture.dispose();
+  }
 }

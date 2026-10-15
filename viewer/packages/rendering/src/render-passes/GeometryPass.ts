@@ -35,6 +35,14 @@ export class GeometryPass implements RenderPass {
       camera.layers.mask = this._renderLayer;
       renderMode = this._materialManager.getRenderMode();
       this._materialManager.setRenderMode(this._renderMode);
+      // Depth, picking and the shadow map do not shade with the sun.
+      if (
+        this._renderMode === RenderMode.Color ||
+        this._renderMode === RenderMode.Ghost ||
+        this._renderMode === RenderMode.Effects
+      ) {
+        this._materialManager.updateViewLighting(camera);
+      }
       renderer.render(this._geometryScene, camera);
     } finally {
       camera.layers.mask = currentCameraMask;

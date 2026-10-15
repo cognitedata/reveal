@@ -29,6 +29,7 @@ export type BlitOptions = {
   overrideAlpha?: number;
   edges?: boolean;
   outline?: boolean;
+  cadShadow?: boolean;
 };
 
 export type DepthBlendBlitOptions = {
@@ -47,6 +48,8 @@ export type PointCloudPostProcessingOptions = {
   depthTexture: DepthTexture | null;
   pointBlending: boolean;
   edlOptions: EdlOptions;
+  /** Half-width in samples of the gap fill. Defaults to DEFAULT_POINTCLOUD_GAP_FILL_RADIUS; 0 disables it. */
+  gapFillRadius?: number;
 };
 
 export const transparentBlendOptions: BlendOptions = {

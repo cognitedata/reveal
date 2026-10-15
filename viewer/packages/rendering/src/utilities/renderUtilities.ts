@@ -36,7 +36,15 @@ import type {
 import { BlitEffect } from '../render-passes/types';
 import { blitShaders, depthBlendBlitShaders, pointCloudShaders } from '../rendering/shaders';
 import { NodeOutlineColor } from '@reveal/cad-styling';
-import { DEFAULT_EDL_NEIGHBOURS_COUNT } from '../pointcloud-rendering/constants';
+import {
+  DEFAULT_EDL_NEIGHBOURS_COUNT,
+  DEFAULT_POINTCLOUD_GAP_FILL_DEPTH_TOLERANCE,
+  DEFAULT_POINTCLOUD_GAP_FILL_GRAZE_TOLERANCE,
+  DEFAULT_POINTCLOUD_GAP_FILL_MAX_WORLD_GAP,
+  DEFAULT_POINTCLOUD_GAP_FILL_MIN_COVERAGE_WEIGHT,
+  DEFAULT_POINTCLOUD_GAP_FILL_RADIUS,
+  DEFAULT_POINTCLOUD_GAP_FILL_STEPS
+} from '../pointcloud-rendering/constants';
 import { shouldApplyEdl } from '../render-pipeline-providers/pointCloudParameterUtils';
 
 export const unitOrthographicCamera: OrthographicCamera = new OrthographicCamera(-1, 1, 1, -1, -1, 1);
@@ -89,7 +97,8 @@ export function getDepthBlendBlitMaterial(options: DepthBlendBlitOptions): RawSh
 }
 
 export function getBlitMaterial(options: BlitOptions): RawShaderMaterial {
-  const { texture, effect, depthTexture, blendOptions, overrideAlpha, ssaoTexture, edges, outline } = options;
+  const { texture, effect, depthTexture, blendOptions, overrideAlpha, ssaoTexture, edges, outline, cadShadow } =
+    options;
 
   const uniforms: ThreeUniforms = {
     tDiffuse: { value: texture }
@@ -114,6 +123,12 @@ export function getBlitMaterial(options: BlitOptions): RawShaderMaterial {
     uniforms['tSsao'] = { value: ssaoTexture };
   }
 
+  if ((cadShadow ?? false) && depthTexture !== null) {
+    defines['CAD_SHADOW'] = true;
+    uniforms['tCadShadow'] = { value: null };
+    uniforms['cadShadowEnabled'] = { value: false };
+  }
+
   const initializedBlendOptions = initializeBlendingOptions(blendOptions); // Uses blendDst value if null
 
   return new RawShaderMaterial({
@@ -128,7 +143,14 @@ export function getBlitMaterial(options: BlitOptions): RawShaderMaterial {
 }
 
 export function getPointCloudPostProcessingMaterial(options: PointCloudPostProcessingOptions): RawShaderMaterial {
-  const { logDepthTexture, texture, depthTexture, pointBlending, edlOptions } = options;
+  const {
+    logDepthTexture,
+    texture,
+    depthTexture,
+    pointBlending,
+    edlOptions,
+    gapFillRadius: requestedGapFillRadius = DEFAULT_POINTCLOUD_GAP_FILL_RADIUS
+  } = options;
 
   let uniforms: ThreeUniforms = {
     tLogDepth: { value: logDepthTexture },
@@ -142,6 +164,31 @@ export function getPointCloudPostProcessingMaterial(options: PointCloudPostProce
     defines['points_blend'] = true;
   }
 
+  const gapFillRadius = Math.max(0, Math.floor(requestedGapFillRadius));
+  if (gapFillRadius > 0) {
+    defines['fill_gaps'] = true;
+    defines['FILL_GAPS_RADIUS'] = gapFillRadius;
+    defines['FILL_GAPS_MIN_COVERED'] = Math.max(2, gapFillRadius);
+    // Number of strided search widths tried per empty pixel: 1px, 2px, 4px, ... The last step
+    // reaches ~gapFillRadius * 2^(steps-1) pixels, enough to bridge the big gaps seen up close.
+    defines['FILL_GAPS_STEPS'] = DEFAULT_POINTCLOUD_GAP_FILL_STEPS;
+    defines['FILL_GAPS_MAX_WORLD_GAP'] = DEFAULT_POINTCLOUD_GAP_FILL_MAX_WORLD_GAP;
+    defines['FILL_GAPS_DEPTH_TOL'] = DEFAULT_POINTCLOUD_GAP_FILL_DEPTH_TOLERANCE;
+    defines['FILL_GAPS_GRAZE_TOL'] = DEFAULT_POINTCLOUD_GAP_FILL_GRAZE_TOLERANCE;
+    defines['FILL_GAPS_MIN_COVERAGE_WEIGHT'] = DEFAULT_POINTCLOUD_GAP_FILL_MIN_COVERAGE_WEIGHT;
+    uniforms = {
+      ...uniforms,
+      screenWidth: { value: 1 },
+      screenHeight: { value: 1 },
+      cameraNear: { value: 0.1 },
+      cameraFar: { value: 1000 },
+      orthographicCamera: { value: false },
+      // World units per screen pixel: at one unit of eye depth for a perspective camera, constant
+      // for an orthographic one. Sizes the world-gap gate and grazing tolerance; 0 disables them.
+      worldPerPixel: { value: 0 }
+    };
+  }
+
   if (shouldApplyEdl(edlOptions)) {
     defines['use_edl'] = true;
     defines['NEIGHBOUR_COUNT'] = DEFAULT_EDL_NEIGHBOURS_COUNT;
@@ -151,7 +198,7 @@ export function getPointCloudPostProcessingMaterial(options: PointCloudPostProce
       radius: { value: edlOptions.radius },
       edlStrength: { value: edlOptions.strength },
       screenWidth: { value: 1 },
-      screeHeight: { value: 1 },
+      screenHeight: { value: 1 },
       neighbours: { value: getEDLNeighbourPoints(DEFAULT_EDL_NEIGHBOURS_COUNT) }
     };
   }

@@ -47,6 +47,13 @@ export interface ICustomObject {
   get useDepthTest(): boolean;
 
   /**
+   * Whether CAD shadows fall on this object.
+   * Optional. When omitted, the object does not receive shadows.
+   * @beta
+   */
+  readonly receiveShadow?: boolean;
+
+  /**
    * Get the bounding box from the object
    * @beta
    */

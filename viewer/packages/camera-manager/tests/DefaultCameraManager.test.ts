@@ -10,20 +10,25 @@ import { vi } from 'vitest';
 
 describe(DefaultCameraManager.name, () => {
   const domElement = document.createElement('canvas');
-  const mockRaycastFunction = async (_1: number, _2: number, _: boolean) => {
+  const raycastSpy = vi.fn(async (_x: number, _y: number, _pickBoundingBox: boolean, _forceWindowedPick?: boolean) => {
     return { intersection: null, modelsBoundingBox: new Box3(), pickedBoundingBox: undefined };
-  };
+  });
   let cameraManager: DefaultCameraManager;
 
   beforeEach(() => {
+    raycastSpy.mockClear();
     cameraManager = new DefaultCameraManager(
       domElement,
       new InputHandler(domElement),
-      mockRaycastFunction,
+      raycastSpy,
       new PerspectiveCamera()
     );
 
     vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    cameraManager.dispose();
   });
 
   afterAll(() => {
@@ -60,5 +65,17 @@ describe(DefaultCameraManager.name, () => {
       originalCameraControlsOptions.changeCameraTargetOnClick
     );
     expect(newCameraControlsOptions.mouseWheelAction).toEqual('zoomToTarget');
+  });
+
+  test('wheel-driven zoom-to-cursor requests a pick with forceWindowedPick=true', async () => {
+    cameraManager.setCameraControlsOptions({ mouseWheelAction: 'zoomToCursor' });
+
+    const wheelEvent = new WheelEvent('wheel', { deltaY: -100, cancelable: true });
+    Object.assign(wheelEvent, { clientX: 50, clientY: 50 });
+    domElement.dispatchEvent(wheelEvent);
+
+    await vi.waitFor(() => expect(raycastSpy).toHaveBeenCalled());
+
+    expect(raycastSpy).toHaveBeenCalledWith(50, 50, false, true);
   });
 });

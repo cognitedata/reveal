@@ -487,6 +487,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     getAnyIntersectionFromPixel(pixelCoords: Vector2, options?: {
         stopOnHitting360Icon?: boolean;
         predicate?: (customObject: ICustomObject) => boolean;
+        forceWindowedPick?: boolean;
     }): Promise<AnyIntersection<DataSourceT> | undefined>;
     // @deprecated
     getClippingPlanes(): Plane[];
@@ -846,6 +847,8 @@ export class CustomObject implements ICustomObject {
     get isPartOfBoundingBox(): boolean;
     set isPartOfBoundingBox(value: boolean);
     get object(): Object3D;
+    get receiveShadow(): boolean;
+    set receiveShadow(value: boolean);
     get shouldPick(): boolean;
     set shouldPick(value: boolean);
     get shouldPickBoundingBox(): boolean;
@@ -1232,6 +1235,7 @@ export interface ICustomObject {
     intersectIfCloser(intersectInput: CustomObjectIntersectInput, closestDistance: number | undefined): undefined | CustomObjectIntersection;
     get isPartOfBoundingBox(): boolean;
     get object(): Object3D;
+    readonly receiveShadow?: boolean;
     get shouldPick(): boolean;
     get shouldPickBoundingBox(): boolean;
     get useDepthTest(): boolean;
