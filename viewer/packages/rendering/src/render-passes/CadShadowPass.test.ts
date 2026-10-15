@@ -26,6 +26,8 @@ describe(CadShadowPass.name, () => {
     .returns(new DepthTexture(1, 1))
     .setup(p => p.texelWorldSize)
     .returns(0.25)
+    .setup(p => p.stableTexelWorldSize)
+    .returns(0.25)
     .setup(p => p.depthRange)
     .returns(12)
     .object();
@@ -107,6 +109,7 @@ describe(CadShadowPass.name, () => {
     expect((uniforms.cadShadowMatrix.value as Matrix4).elements).toEqual(shadowMatrix.elements);
     expect(uniforms.cadShadowMatrix.value).not.toBe(shadowMatrix);
     expect(uniforms.cadShadowTexelWorld.value).toBe(shadowMap.texelWorldSize);
+    expect(uniforms.cadShadowStableTexelWorld.value).toBe(shadowMap.stableTexelWorldSize);
     expect(uniforms.cadShadowDepthRange.value).toBe(shadowMap.depthRange);
   });
 

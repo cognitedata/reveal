@@ -8,17 +8,21 @@ import {
   DepthTexture,
   Matrix4,
   Mesh,
+  MeshBasicMaterial,
   OrthographicCamera,
   PerspectiveCamera,
+  PlaneGeometry,
   Scene,
   ShaderMaterial,
   Texture,
   Vector2,
   WebGLRenderTarget
 } from 'three';
+import type { ICustomObject } from '@reveal/utilities';
 import { PostProcessingPass } from './PostProcessingPass';
 import type { CadShadowMap, PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
 import { CadShadowPass } from './CadShadowPass';
+import { CadShadowReceiverForCustomObjectMaterial } from '../rendering/CadShadowReceiverForCustomObjectMaterial';
 import { autoMockWebGLRenderer } from '../../../../test-utilities';
 
 const POINT_CLOUD_WIDTH = 640;
@@ -71,9 +75,15 @@ function createShadowMap(enabled: boolean): CadShadowMap {
     .returns(new Matrix4())
     .setup(p => p.texelWorldSize)
     .returns(1)
+    .setup(p => p.stableTexelWorldSize)
+    .returns(1)
     .setup(p => p.depthRange)
     .returns(1)
     .object();
+}
+
+function createReceiverMaterial() {
+  return new CadShadowReceiverForCustomObjectMaterial('#88aa44');
 }
 
 describe(PostProcessingPass.name, () => {
@@ -143,14 +153,18 @@ describe(PostProcessingPass.name, () => {
   test.each([
     [true, 1],
     [false, 0]
-  ])('renders the shadow pass only when the shadow map is enabled (enabled=%s)', (enabled, calls) => {
+  ])('updates a receiver material only when the shadow map is enabled (enabled=%s)', (enabled, applied) => {
     const renderSpy = vi.spyOn(CadShadowPass.prototype, 'render');
     const rendererMock = autoMockWebGLRenderer(new Mock<WebGLRenderer>());
+    const material = createReceiverMaterial();
     const pass = new PostProcessingPass(scene, createOptions({ map: createShadowMap(enabled) }));
 
-    pass.render(rendererMock.object(), new PerspectiveCamera());
+    const camera = new PerspectiveCamera();
+    pass.render(rendererMock.object(), camera);
+    material.onBeforeRender(rendererMock.object(), scene, camera, undefined, undefined, undefined);
 
-    expect(renderSpy).toHaveBeenCalledTimes(calls);
+    expect(renderSpy).toHaveBeenCalledTimes(applied);
+    expect(material.uniforms.cadShadowApply.value).toBe(applied);
     renderSpy.mockRestore();
   });
 
@@ -168,14 +182,75 @@ describe(PostProcessingPass.name, () => {
   test('setSize and dispose forward to the cad shadow pass', () => {
     const setSizeSpy = vi.spyOn(CadShadowPass.prototype, 'setSize');
     const disposeSpy = vi.spyOn(CadShadowPass.prototype, 'dispose');
+    const material = createReceiverMaterial();
     const pass = new PostProcessingPass(scene, createOptions({ map: createShadowMap(true) }));
+    const camera = new PerspectiveCamera();
+    const renderer = autoMockWebGLRenderer(new Mock<WebGLRenderer>()).object();
+    pass.render(renderer, camera);
+    material.onBeforeRender(renderer, scene, camera, undefined, undefined, undefined);
 
     pass.setSize(64, 32);
     pass.dispose();
+    material.onBeforeRender(renderer, scene, camera, undefined, undefined, undefined);
 
     expect(setSizeSpy).toHaveBeenCalledWith(64, 32);
     expect(disposeSpy).toHaveBeenCalledOnce();
+    expect(material.uniforms.cadShadowApply.value).toBe(0);
     setSizeSpy.mockRestore();
     disposeSpy.mockRestore();
+  });
+
+  test('adopts an up-facing plane when the custom object is added', () => {
+    const mesh = new Mesh(new PlaneGeometry(10, 8), new MeshBasicMaterial({ color: '#446688' }));
+    mesh.rotation.x = -Math.PI / 2;
+    const customObject = new Mock<ICustomObject>()
+      .setup(p => p.object)
+      .returns(mesh)
+      .setup(p => p.receiveShadow)
+      .returns(true)
+      .object();
+    const pass = new PostProcessingPass(scene, createOptions({ map: createShadowMap(true) }));
+    pass.setReceiversForCustomObjectsEnabled(true);
+
+    expect(mesh.material).toBeInstanceOf(MeshBasicMaterial);
+
+    pass.adoptCustomObject(customObject);
+
+    expect(mesh.material).toBeInstanceOf(CadShadowReceiverForCustomObjectMaterial);
+  });
+
+  test('swaps the receiver material only when shadows are turned on or off', () => {
+    const renderSpy = vi.spyOn(CadShadowPass.prototype, 'render').mockImplementation(() => undefined);
+    const source = new MeshBasicMaterial({ color: '#446688' });
+    const mesh = new Mesh(new PlaneGeometry(10, 8), source);
+    mesh.rotation.x = -Math.PI / 2;
+    const customObject = new Mock<ICustomObject>()
+      .setup(p => p.object)
+      .returns(mesh)
+      .setup(p => p.receiveShadow)
+      .returns(true)
+      .object();
+    const pass = new PostProcessingPass(scene, createOptions({ map: createShadowMap(true) }));
+    const renderer = autoMockWebGLRenderer(new Mock<WebGLRenderer>()).object();
+    const camera = new PerspectiveCamera();
+
+    pass.setReceiversForCustomObjectsEnabled(true);
+    pass.adoptCustomObject(customObject);
+    const receiver = mesh.material;
+    expect(receiver).toBeInstanceOf(CadShadowReceiverForCustomObjectMaterial);
+
+    pass.render(renderer, camera);
+    expect(mesh.material).toBe(receiver);
+
+    pass.setReceiversForCustomObjectsEnabled(false);
+    expect(mesh.material).toBe(source);
+
+    pass.render(renderer, camera);
+    expect(mesh.material).toBe(source);
+
+    pass.setReceiversForCustomObjectsEnabled(true);
+    expect(mesh.material).toBe(receiver);
+
+    renderSpy.mockRestore();
   });
 });

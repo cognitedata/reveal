@@ -3,7 +3,7 @@
  */
 
 import type { WebGLRenderer } from 'three';
-import { Box3, Vector3 } from 'three';
+import { Box3, PerspectiveCamera, Vector3 } from 'three';
 import { It, Mock, Times } from 'moq.ts';
 import { SceneHandler } from '@reveal/utilities';
 import { resolveShadowMapResolution, ShadowMapPass } from './ShadowMapPass';
@@ -65,6 +65,31 @@ describe(ShadowMapPass.name, () => {
     pass.render(rendererMock.object());
 
     expect(pass.texelWorldSize).toBeCloseTo(desktopTexel * (4096 / 1024), 6);
+  });
+
+  test('render keeps the full shadow texel until a focus point tightens the window', () => {
+    const rendererMock = autoMockWebGLRenderer(new Mock<WebGLRenderer>(), { maxTextureSize: 4096 });
+    const pass = new ShadowMapPass(sceneHandler, materialManager, true);
+    const wideBounds = new Box3(new Vector3(-80, -80, -80), new Vector3(80, 80, 80));
+    pass.setCadBounds(wideBounds);
+    const fullTexel = pass.texelWorldSize;
+
+    const camera = new PerspectiveCamera(45, 1, 0.1, 500);
+    camera.position.set(0, 0.4, 1.2);
+    camera.lookAt(0, 0, 0);
+    camera.updateProjectionMatrix();
+    camera.updateMatrixWorld();
+
+    pass.render(rendererMock.object(), camera);
+
+    expect(pass.texelWorldSize).toBeCloseTo(fullTexel, 8);
+    expect(pass.stableTexelWorldSize).toBeCloseTo(fullTexel, 8);
+
+    pass.setFocusPoint(new Vector3(0, 0, 0));
+    pass.render(rendererMock.object(), camera);
+
+    expect(pass.texelWorldSize).toBeLessThan(fullTexel * 0.2);
+    expect(pass.stableTexelWorldSize).toBeCloseTo(fullTexel, 8);
   });
 
   test('render uses a 2048 map on mobile when the GPU allows 4096', () => {

@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { WebGLRenderer } from 'three';
+import type { WebGLRenderer, Vector3 } from 'three';
 import type { RenderPass } from './RenderPass';
 
 /**
@@ -15,4 +15,7 @@ import type { RenderPass } from './RenderPass';
 export interface RenderPipelineProvider {
   pipeline(renderer: WebGLRenderer): Generator<RenderPass>;
   dispose(): void;
+  shadowsEnabled?: boolean;
+  setShadowFocus?(focus: Vector3): void;
+  readonly needsRedraw?: boolean;
 }
