@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { Camera, IUniform, Material, Mesh, Scene, ShaderMaterial, WebGLRenderer } from 'three';
+import type { Camera, IUniform, Material, Mesh, RawShaderMaterial, Scene, ShaderMaterial, WebGLRenderer } from 'three';
 import { OrthographicCamera, PerspectiveCamera } from 'three';
 import type { PostProcessingObjectsVisibilityParameters } from './types';
 import { transparentBlendOptions } from './types';
@@ -15,7 +15,12 @@ import {
   getPointCloudPostProcessingMaterial,
   RenderLayer
 } from '../utilities/renderUtilities';
-import type { PointCloudBlitUniformName, PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
+import { CadShadowPass, type CadShadowPassFactories } from './CadShadowPass';
+import type {
+  CadShadowMap,
+  PointCloudBlitUniformName,
+  PostProcessingPipelineOptions
+} from '../render-pipeline-providers/types';
 
 /**
  * Single pass that applies post processing effects and
@@ -28,6 +33,9 @@ export class PostProcessingPass implements RenderPass {
   private readonly _postProcessingObjects: Mesh[];
   private readonly _pointcloudBlitMaterial: ShaderMaterial;
   private readonly _postProcessingOptions: PostProcessingPipelineOptions;
+  private readonly _cadShadowPass: CadShadowPass | undefined;
+  private readonly _cadShadowMap: CadShadowMap | undefined;
+  private readonly _backBlitMaterial: RawShaderMaterial;
   private readonly setBlendFactorByBackVisibility: () => void;
 
   public updateRenderObjectsVisibility(visibilityParameters: PostProcessingObjectsVisibilityParameters): void {
@@ -39,9 +47,25 @@ export class PostProcessingPass implements RenderPass {
     this.setBlendFactorByBackVisibility();
   }
 
-  constructor(scene: Scene, postProcessingPipelineOptions: PostProcessingPipelineOptions) {
+  constructor(
+    scene: Scene,
+    postProcessingPipelineOptions: PostProcessingPipelineOptions,
+    cadShadowPassDependencies?: Partial<CadShadowPassFactories>
+  ) {
     this._scene = scene;
     this._postProcessingOptions = postProcessingPipelineOptions;
+
+    const shadowOptions = postProcessingPipelineOptions.cadShadow;
+    this._cadShadowMap = shadowOptions?.map;
+    this._cadShadowPass =
+      shadowOptions === undefined
+        ? undefined
+        : new CadShadowPass(
+            postProcessingPipelineOptions.back.depthTexture,
+            shadowOptions.map,
+            undefined,
+            cadShadowPassDependencies
+          );
 
     const backBlitMaterial = getBlitMaterial({
       texture: postProcessingPipelineOptions.back.texture,
@@ -49,8 +73,10 @@ export class PostProcessingPass implements RenderPass {
       ssaoTexture: postProcessingPipelineOptions.ssaoTexture,
       overrideAlpha: 1.0,
       edges: postProcessingPipelineOptions.edges,
-      outline: true
+      outline: true,
+      cadShadow: this._cadShadowPass !== undefined
     });
+    this._backBlitMaterial = backBlitMaterial;
 
     // Normal un-styled opaque geometry
     const backBlitObject = createFullScreenTriangleMesh(backBlitMaterial);
@@ -113,6 +139,10 @@ export class PostProcessingPass implements RenderPass {
     this._postProcessingObjects = [backBlitObject, ghostBlitObject, inFrontBlitObject, pointcloudBlitObject];
   }
 
+  public setSize(width: number, height: number): void {
+    this._cadShadowPass?.setSize(width, height);
+  }
+
   public render(renderer: WebGLRenderer, camera: Camera): void {
     // Both EDL and gap filling need the current render size in the normalize shader. The
     // uniforms only exist when one of them is enabled, so the setters skip missing ones.
@@ -142,10 +172,31 @@ export class PostProcessingPass implements RenderPass {
 
     renderer.sortObjects = true;
     camera.layers.mask = getLayerMask(RenderLayer.Default);
+    this.renderCadShadows(renderer, camera);
     renderer.render(this._scene, camera);
   }
 
+  private renderCadShadows(renderer: WebGLRenderer, camera: Camera): void {
+    const uniforms = this._backBlitMaterial.uniforms;
+    // The shadow composition is only compiled into the blit when a depth texture exists.
+    if (this._cadShadowPass === undefined || uniforms.cadShadowEnabled === undefined) {
+      return;
+    }
+
+    // Leaving the shadow targets unbound while disabled keeps Three from allocating them.
+    if (this._cadShadowMap?.enabled !== true) {
+      uniforms.cadShadowEnabled.value = false;
+      uniforms.tCadShadow.value = null;
+      return;
+    }
+
+    this._cadShadowPass.render(renderer, camera);
+    uniforms.cadShadowEnabled.value = true;
+    uniforms.tCadShadow.value = this._cadShadowPass.texture;
+  }
+
   public dispose(): void {
+    this._cadShadowPass?.dispose();
     this._postProcessingObjects.forEach(postProcessingObject => {
       postProcessingObject.geometry.dispose();
       (postProcessingObject.material as Material).dispose();
