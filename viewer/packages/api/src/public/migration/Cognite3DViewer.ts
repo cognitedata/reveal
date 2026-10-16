@@ -529,6 +529,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
 
     this._unsubsribeOnLoading();
     this._activeCameraManager.dispose();
+    this._pickingHandler.dispose();
     this.revealManager.dispose();
     this._image360ApiHelper?.dispose();
     this.domElement.removeChild(this.canvas);
@@ -1742,7 +1743,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * @param options
    * @param options.stopOnHitting360Icon
    * @param options.predicate Check whether a CustomObject should be intersected.
-   * @param options.forceWindowedPick Skip point-cloud full-frame pick caching for this call.
+   * @param options.forceWindowedPick Skip point cloud and CAD full-frame pick caching for this call.
    * @returns A promise that if there was an intersection then return the intersection object - otherwise it
    * returns `null` if there were no intersections.
    * @beta
@@ -1942,6 +1943,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     });
     this.revealManager.render(camera);
     this._pointCloudPickingHandler.invalidatePickCache();
+    this._pickingHandler.invalidatePickCache();
     this.revealManager.resetRedraw();
     this._image360ApiHelper?.resetRedraw();
     this._clippingNeedsUpdate = false;
