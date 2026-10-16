@@ -260,7 +260,9 @@ export class PickingHandler {
     // Each model writes its index to the alpha byte of the tree index pass.
     visibleCadNodes.forEach((cadNode, index) => {
       forEachMaterial(cadNode.cadMaterial.materials, material => {
-        material.uniforms.modelIndex.value = index;
+        if (material.uniforms.modelIndex !== undefined) {
+          material.uniforms.modelIndex.value = index;
+        }
       });
     });
 
