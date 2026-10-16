@@ -9,6 +9,7 @@ import type { SectorCuller } from './culling/SectorCuller';
 import type { ModelStateHandler } from './ModelStateHandler';
 import { chunk } from 'lodash-es';
 import { PromiseUtils } from '../utilities/PromiseUtils';
+import { Log } from '@reveal/logger';
 
 import { File3dFormat } from '@reveal/data-providers';
 import { SectorDownloadScheduler } from './SectorDownloadScheduler';
@@ -120,27 +121,26 @@ export class SectorLoader {
       // Queue the next batch before consuming this one, so the download scheduler can start its sectors
       // as soon as a slot frees up instead of waiting for the slowest download in this batch.
       loadingBatch = i + 1 < batches.length ? startBatch(batches[i + 1]) : undefined;
-      try {
-        for await (const consumed of PromiseUtils.raceUntilAllCompleted(consumedPromises)) {
-          if (isSuperseded()) {
-            return;
-          }
-          const resolvedSector = consumed.result;
-          if (resolvedSector !== undefined) {
-            this._modelStateHandler.updateState(
-              resolvedSector.modelIdentifier.revealInternalId,
-              resolvedSector.metadata.id,
-              resolvedSector.levelOfDetail
-            );
-            this._progressHelper.reportSectorYielded();
-            yield resolvedSector; // progress will be reported when sector is loaded by CadManager
-          } else {
-            this._progressHelper.reportNewSectorsLoaded(1);
-          }
+      // Mark as handled right away so a rejection while we consume this batch (or stop early) isn't reported as
+      // unhandled. The error still surfaces when the next iteration awaits loadingBatch, but if we stop early
+      // it would otherwise be lost, so log it.
+      loadingBatch?.catch(error => Log.debug('Failed to start loading sector batch', error));
+      for await (const consumed of PromiseUtils.raceUntilAllCompleted(consumedPromises)) {
+        if (isSuperseded()) {
+          return;
         }
-      } finally {
-        // Don't leave the already queued next batch as an unhandled rejection if we stop early
-        loadingBatch?.catch(() => {});
+        const resolvedSector = consumed.result;
+        if (resolvedSector !== undefined) {
+          this._modelStateHandler.updateState(
+            resolvedSector.modelIdentifier.revealInternalId,
+            resolvedSector.metadata.id,
+            resolvedSector.levelOfDetail
+          );
+          this._progressHelper.reportSectorYielded();
+          yield resolvedSector; // progress will be reported when sector is loaded by CadManager
+        } else {
+          this._progressHelper.reportNewSectorsLoaded(1);
+        }
       }
     }
   }

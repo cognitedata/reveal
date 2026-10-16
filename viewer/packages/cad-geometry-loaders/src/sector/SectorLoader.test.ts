@@ -203,6 +203,71 @@ describe('SectorLoader', () => {
     expect(loaded).toBe(scheduled);
   });
 
+  describe('when starting the next batch fails while the previous batch is consumed', () => {
+    let unhandledRejections: unknown[];
+    const onUnhandledRejection = (reason: unknown) => unhandledRejections.push(reason);
+
+    beforeEach(() => {
+      unhandledRejections = [];
+      process.on('unhandledRejection', onUnhandledRejection);
+    });
+
+    afterEach(() => {
+      process.off('unhandledRejection', onUnhandledRejection);
+    });
+
+    const failSecondBatch = (error: Error) => {
+      const original = culler.filterSectorsToLoad.bind(culler);
+      let calls = 0;
+      vi.spyOn(culler, 'filterSectorsToLoad').mockImplementation((culledInput, batch) =>
+        ++calls === 2 ? Promise.reject(error) : original(culledInput, batch)
+      );
+    };
+
+    // Lets a rejection that nobody handles be reported before the test continues
+    const flushUnhandledRejections = () => new Promise(resolve => setTimeout(resolve, 10));
+
+    test('loadSectors rethrows the error after the previous batch is consumed, without unhandled rejections', async () => {
+      // Arrange
+      const error = new Error('Failed to cull batch');
+      failSecondBatch(error);
+      const { cadNode, downloads, completeDownload } = createModelWithControlledDownloads();
+      const loading = asyncIteratorToArray(loader.loadSectors({ ...input, models: [cadNode] }));
+      const loadingResult = loading.then(
+        () => undefined,
+        e => e
+      );
+      await vi.waitFor(() => expect(downloads.size).toBe(20));
+
+      // Act
+      await flushUnhandledRejections();
+      [...downloads.keys()].forEach(completeDownload);
+
+      // Assert
+      expect(await loadingResult).toBe(error);
+      expect(unhandledRejections).toHaveLength(0);
+    });
+
+    test('loadSectors completes without error or unhandled rejections when superseded', async () => {
+      // Arrange
+      failSecondBatch(new Error('Failed to cull batch'));
+      const { cadNode, downloads, completeDownload } = createModelWithControlledDownloads();
+      const firstLoading = asyncIteratorToArray(loader.loadSectors({ ...input, models: [cadNode] }));
+      await vi.waitFor(() => expect(downloads.size).toBe(20));
+      await flushUnhandledRejections();
+
+      // Act
+      const secondLoading = asyncIteratorToArray(loader.loadSectors(input));
+      [...downloads.keys()].forEach(completeDownload);
+
+      // Assert
+      expect(await firstLoading).toHaveLength(0);
+      expect(await secondLoading).toHaveLength(model.scene.sectorCount);
+      await flushUnhandledRejections();
+      expect(unhandledRejections).toHaveLength(0);
+    });
+  });
+
   test('loadSectors marks sectors with errors as discarded', async () => {
     // Arrange
     let first = true;
