@@ -286,6 +286,9 @@ export function initializeDefinesAndUniforms(
       renderMode: {
         value: renderMode
       },
+      modelIndex: {
+        value: 0
+      },
       treeIndexTextureSize: {
         value: treeIndexTextureSize
       },
