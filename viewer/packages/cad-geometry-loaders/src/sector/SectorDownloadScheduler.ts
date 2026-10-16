@@ -187,7 +187,7 @@ export class SectorDownloadScheduler {
     });
   }
 
-  private downloadOrDiscard(
+  private async downloadOrDiscard(
     downloadSector: (sector: WantedSector, signal: AbortSignal) => Promise<ConsumedSector>,
     sector: WantedSector,
     abortSignal: AbortSignal
