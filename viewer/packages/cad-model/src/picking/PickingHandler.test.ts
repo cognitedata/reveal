@@ -180,15 +180,27 @@ describe(PickingHandler.name, () => {
       expect(singlePixelReadCount()).toBe(1);
     });
 
-    test('does not use the cache beyond the combined pass limit', async () => {
+    test('uses the cache for as many models as the alpha byte can address', async () => {
       const { renderer, fullFrameReadCount, singlePixelReadCount } = createRenderer();
       const handler = new PickingHandler(renderer, createMaterialManager(), new SceneHandler());
       const nodes = Array.from({ length: 255 }, (_, i) => createCadModel(i, i, 1, 1).cadNode);
 
       await handler.intersectCadNodes(nodes, createInput(renderer, pickCamera));
 
+      expect(fullFrameReadCount()).toBe(2);
+      expect(singlePixelReadCount()).toBe(0);
+      expect(getModelIndexUniforms(nodes[254]).every(value => value === 254)).toBe(true);
+    });
+
+    test('does not use the cache beyond the combined pass limit', async () => {
+      const { renderer, fullFrameReadCount, singlePixelReadCount } = createRenderer();
+      const handler = new PickingHandler(renderer, createMaterialManager(), new SceneHandler());
+      const nodes = Array.from({ length: 256 }, (_, i) => createCadModel(i, i, 1, 1).cadNode);
+
+      await handler.intersectCadNodes(nodes, createInput(renderer, pickCamera));
+
       expect(fullFrameReadCount()).toBe(0);
-      expect(singlePixelReadCount()).toBe(255);
+      expect(singlePixelReadCount()).toBe(256);
       expect(nodes.every(node => node.visible)).toBe(true);
     });
   });
@@ -198,7 +210,7 @@ describe(PickingHandler.name, () => {
     let pickCamera: PerspectiveCamera;
 
     beforeEach(() => {
-      nowSpy = vi.spyOn(performance, 'now').mockReturnValue(10_000);
+      nowSpy = vi.spyOn(Date, 'now').mockReturnValue(10_000);
       pickCamera = new PerspectiveCamera();
       pickCamera.updateMatrixWorld();
     });
@@ -278,17 +290,20 @@ describe(PickingHandler.name, () => {
     });
 
     test('falls back to per-model picking when invalidated within the holdoff, rebuilds after it', async () => {
-      const { renderer, fullFrameReadCount } = createRenderer();
+      const { renderer, fullFrameReadCount, singlePixelReadCount } = createRenderer();
       const handler = new PickingHandler(renderer, createMaterialManager(), new SceneHandler());
       const node = createCadModel(1, 2).cadNode;
 
       await handler.intersectCadNodes([node], createInput(renderer, pickCamera));
       expect(fullFrameReadCount()).toBe(2);
+      expect(singlePixelReadCount()).toBe(0);
 
       handler.invalidatePickCache();
       nowSpy.mockReturnValue(10_010);
       await handler.intersectCadNodes([node], createInput(renderer, pickCamera));
       expect(fullFrameReadCount()).toBe(2);
+      // The per-model path ran instead: one tree index readback, no depth readback as nothing is hit.
+      expect(singlePixelReadCount()).toBe(1);
 
       nowSpy.mockReturnValue(10_100);
       await handler.intersectCadNodes([node], createInput(renderer, pickCamera));
@@ -369,6 +384,19 @@ describe(PickingHandler.name, () => {
       await handler.intersectCadNodes([node], createInput(renderer, pickCamera));
 
       expect(fullFrameReadCount()).toBe(4);
+    });
+
+    test('fails loudly for a CAD material without the modelIndex uniform', async () => {
+      const { renderer, fullFrameReadCount } = createRenderer();
+      const handler = new PickingHandler(renderer, createMaterialManager(), new SceneHandler());
+      const node = createCadModel(1, 2).cadNode;
+      delete node.cadMaterial.materials.box.uniforms.modelIndex;
+
+      await expect(handler.intersectCadNodes([node], createInput(renderer, pickCamera))).rejects.toThrow(
+        'has no modelIndex uniform'
+      );
+      expect(fullFrameReadCount()).toBe(0);
+      expect(node.visible).toBe(true);
     });
   });
 });
