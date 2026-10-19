@@ -17,6 +17,8 @@ import type { ModelIdentifier } from '@reveal/data-providers';
 export class TakenV9SectorMap extends TakenSectorMapBase {
   private readonly determineSectorCost: DetermineSectorCostDelegate<SectorMetadata>;
   private readonly _totalCost: SectorCost = { downloadSize: 0, drawCalls: 0, renderCost: 0 };
+  /** Cost of sectors force-included via {@link markSectorForced}; these bypass the budget. */
+  private readonly _forcedCost: SectorCost = { downloadSize: 0, drawCalls: 0, renderCost: 0 };
   private readonly _models = new Map<symbol, { modelMetadata: CadModelMetadata; sectorIds: Map<number, number> }>();
 
   get totalCost(): SectorCost {
@@ -46,9 +48,9 @@ export class TakenV9SectorMap extends TakenSectorMapBase {
 
   markSectorDetailed(model: CadModelMetadata, sectorId: number, priority: number): void {
     const entry = this._models.get(model.modelIdentifier.revealInternalId);
-    assert(!!entry, `Could not find sector tree for ${model.modelIdentifier.sourceModelIdentifier()}`);
+    assert(entry !== undefined, `Could not find sector tree for ${model.modelIdentifier.sourceModelIdentifier()}`);
 
-    const { sectorIds } = entry!;
+    const { sectorIds } = entry;
     const existingPriority = sectorIds.get(sectorId);
     if (existingPriority !== undefined) {
       sectorIds.set(sectorId, Math.max(priority, existingPriority));
@@ -65,14 +67,30 @@ export class TakenV9SectorMap extends TakenSectorMapBase {
 
   /**
    * Marks a sector as forced-detailed with infinite priority.
-   * These sectors are always loaded regardless of budget constraints.
+   * These sectors are always loaded regardless of budget constraints, and their cost
+   * does not count against the budget (see {@link isWithinBudget}).
    */
   markSectorForced(model: CadModelMetadata, sectorId: number): void {
+    const entry = this._models.get(model.modelIdentifier.revealInternalId);
+    assert(entry !== undefined, `Could not find sector tree for ${model.modelIdentifier.sourceModelIdentifier()}`);
+
+    const alreadyForced = entry.sectorIds.get(sectorId) === Infinity;
     this.markSectorDetailed(model, sectorId, Infinity);
+    if (alreadyForced) {
+      return;
+    }
+    // Cost is added to the total by markSectorDetailed unless the sector was already taken.
+    const sectorMetadata = model.scene.getSectorById(sectorId)!;
+    const sectorCost = this.determineSectorCost(sectorMetadata, LevelOfDetail.Detailed);
+    addSectorCost(this._forcedCost, sectorCost);
   }
 
+  /**
+   * Cost of non-forced sectors is compared against the budget. Forced sectors (e.g. fully locked
+   * models) are excluded so they cannot starve other models of budget.
+   */
   isWithinBudget(budget: CadModelBudget): boolean {
-    return this._totalCost.renderCost < budget.maximumRenderCost;
+    return this._totalCost.renderCost - this._forcedCost.renderCost < budget.maximumRenderCost;
   }
 
   collectWantedSectors(): PrioritizedWantedSector[] {
