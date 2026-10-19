@@ -97,6 +97,7 @@ export function Viewer() {
         antiAliasingHint: (urlParams.get('antialias') ?? undefined) as any,
         ssaoQualityHint: (urlParams.get('ssao') ?? undefined) as any,
         enableFloorIcons: urlParams.get('floorIcons') === 'true',
+        enableShadows: urlParams.get('shadows') === 'true',
         pointCloudEffects: {
           pointBlending: urlParams.get('pointBlending') === 'true',
           edlOptions: edlEnabled
@@ -158,6 +159,7 @@ export function Viewer() {
       const guiState = {
         antiAliasing: urlParams.get('antialias'),
         ssaoQuality: urlParams.get('ssao'),
+        shadows: urlParams.get('shadows') === 'true',
         screenshot: {
           includeUI: true,
           resolution: {
@@ -290,6 +292,14 @@ export function Viewer() {
         .onFinishChange(v => {
           urlParams.set('ssao', v);
           window.location.href = url.toString();
+        });
+      renderGui
+        .add(guiState, 'shadows')
+        .name('CAD shadows')
+        .onChange((enabled: boolean) => {
+          viewer.shadowsEnabled = enabled;
+          urlParams.set('shadows', String(enabled));
+          window.history.replaceState({}, '', url.toString());
         });
 
       const screenshotGui = gui.addFolder('Screenshot');

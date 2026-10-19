@@ -41,6 +41,7 @@ module.exports = {
         'examples/click-reactions-pointcloud',
         'examples/rendering-resolution',
         'examples/antialiasing',
+        'examples/cad-shadows',
         'examples/axisviewtool',
         'examples/timelinetool',
         'examples/combine-models',

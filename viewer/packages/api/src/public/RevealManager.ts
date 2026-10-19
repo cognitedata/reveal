@@ -121,7 +121,12 @@ export class RevealManager {
   }
 
   get needsRedraw(): boolean {
-    return this._cadManager.needsRedraw || this._pointCloudManager.needsRedraw || this._resizeHandler.needsRedraw;
+    return (
+      this._cadManager.needsRedraw ||
+      this._pointCloudManager.needsRedraw ||
+      this._resizeHandler.needsRedraw ||
+      (this._renderPipeline.needsRedraw ?? false)
+    );
   }
 
   get cameraInMotion(): boolean {
@@ -154,6 +159,14 @@ export class RevealManager {
 
   public set cadRenderMode(renderMode: RenderMode) {
     this._cadManager.renderMode = renderMode;
+  }
+
+  public get shadowsEnabled(): boolean {
+    return this._renderPipeline.shadowsEnabled ?? false;
+  }
+
+  public set shadowsEnabled(enabled: boolean) {
+    this._renderPipeline.shadowsEnabled = enabled;
   }
 
   public get pointCloudBudget(): PointCloudBudget {
@@ -215,6 +228,7 @@ export class RevealManager {
 
   public render(camera: PerspectiveCamera): void {
     this._resizeHandler.handleResize(camera);
+    this._renderPipeline.setShadowFocus?.(this._cameraManager.getCameraState().target);
     this._pipelineExecutor.render(this._renderPipeline, camera);
     this.resetRedraw();
   }

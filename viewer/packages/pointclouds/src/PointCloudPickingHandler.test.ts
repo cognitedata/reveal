@@ -3,10 +3,10 @@
  */
 import type { WebGLRenderer } from 'three';
 import { PerspectiveCamera, Plane, Ray, Vector2, Vector3 } from 'three';
-import { Mock } from 'moq.ts';
+import { It, Mock } from 'moq.ts';
 import { vi } from 'vitest';
 
-import { PointCloudPickingHandler } from './PointCloudPickingHandler';
+import { computePickWindowSize, PointCloudPickingHandler } from './PointCloudPickingHandler';
 import { PointCloudOctreePicker } from './potree-three-loader';
 import type { IntersectInput } from '@reveal/model-base';
 import { createPointCloudNode } from '../../../test-utilities';
@@ -257,6 +257,63 @@ describe(PointCloudPickingHandler.name, () => {
       expect.any(Ray),
       [node.octree],
       expect.objectContaining({ cameraInMotion: false, forceWindowedPick: false })
+    );
+  });
+
+  test('intersectPointClouds uses the default pick window when EDL options are not given', async () => {
+    const node = createPointCloudNode();
+    const pickSpy = vi.spyOn(PointCloudOctreePicker.prototype, 'pick').mockResolvedValue(null);
+
+    const input = createMockIntersectInput();
+
+    await handler.intersectPointClouds([node], input);
+
+    expect(pickSpy).toHaveBeenCalledWith(
+      input.camera,
+      expect.any(Ray),
+      [node.octree],
+      expect.objectContaining({ pickWindowSize: 5 })
+    );
+  });
+
+  test('intersectPointClouds passes the EDL-aware pick window to the picker', async () => {
+    const renderer = new Mock<WebGLRenderer>()
+      .setup(r => r.getDrawingBufferSize(It.IsAny()))
+      .returns(new Vector2(2160, 2160))
+      .object();
+    const edlHandler = new PointCloudPickingHandler(renderer, { radius: 2.2, strength: 0.5 });
+    const node = createPointCloudNode();
+    const pickSpy = vi.spyOn(PointCloudOctreePicker.prototype, 'pick').mockResolvedValue(null);
+
+    const input = createMockIntersectInput();
+
+    await edlHandler.intersectPointClouds([node], input);
+
+    expect(pickSpy).toHaveBeenCalledWith(
+      input.camera,
+      expect.any(Ray),
+      [node.octree],
+      expect.objectContaining({ pickWindowSize: 11 })
+    );
+  });
+
+  describe('computePickWindowSize()', () => {
+    test.each([
+      { edlOptions: undefined, drawingBufferHeight: 2160, expectedWindowSize: 5 },
+      { edlOptions: { radius: 2.2, strength: 0.5 }, drawingBufferHeight: 1080, expectedWindowSize: 7 },
+      { edlOptions: { radius: 2.2, strength: 0.5 }, drawingBufferHeight: 2160, expectedWindowSize: 11 },
+      { edlOptions: { radius: 1, strength: 0.5 }, drawingBufferHeight: 1080, expectedWindowSize: 5 },
+      { edlOptions: { radius: 0, strength: 0 }, drawingBufferHeight: 2160, expectedWindowSize: 5 },
+      { edlOptions: { radius: 2.2, strength: 0 }, drawingBufferHeight: 2160, expectedWindowSize: 5 },
+      { edlOptions: { radius: 0, strength: 0.5 }, drawingBufferHeight: 2160, expectedWindowSize: 5 },
+      { edlOptions: { radius: 5, strength: 0.5 }, drawingBufferHeight: 2160, expectedWindowSize: 21 },
+      { edlOptions: { radius: 5, strength: 0.5 }, drawingBufferHeight: 4320, expectedWindowSize: 41 },
+      { edlOptions: { radius: 5, strength: 0.5 }, drawingBufferHeight: 8640, expectedWindowSize: 41 }
+    ])(
+      'returns $expectedWindowSize for $edlOptions at drawing buffer height $drawingBufferHeight',
+      ({ edlOptions, drawingBufferHeight, expectedWindowSize }) => {
+        expect(computePickWindowSize(edlOptions, drawingBufferHeight)).toBe(expectedWindowSize);
+      }
     );
   });
 

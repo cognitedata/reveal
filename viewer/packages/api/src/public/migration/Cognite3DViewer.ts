@@ -8,7 +8,6 @@ import viewerPackageJson from '../../../../../package.json' with { type: 'json' 
 import TWEEN from '@tweenjs/tween.js';
 import { pick } from 'lodash-es';
 
-import type { EdlOptions } from '@reveal/rendering';
 import { defaultRenderOptions } from '@reveal/rendering';
 
 import type {
@@ -85,6 +84,7 @@ import type { IntersectInput, SupportedModelTypes, LoadingState } from '@reveal/
 import type { CogniteClient } from '@cognite/sdk';
 import { Log } from '@reveal/logger';
 import {
+  createCompleteEdlOptions,
   determineAntiAliasingMode,
   determineResolutionCap,
   determineSsaoRenderParameters
@@ -235,6 +235,26 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   }
 
   /**
+   * Gets whether CAD shadows are currently enabled.
+   * @beta
+   */
+  public get shadowsEnabled(): boolean {
+    return this.revealManager.shadowsEnabled;
+  }
+
+  /**
+   * Enables or disables CAD shadows at runtime, along with the world-space sun shading
+   * that matches them. Turning shadows on changes the CAD look even where no shadow is
+   * cast, including ghosted nodes. The GPU resources are allocated the first time shadows
+   * are enabled.
+   * @beta
+   */
+  public set shadowsEnabled(enabled: boolean) {
+    this.revealManager.shadowsEnabled = enabled;
+    this.requestRedraw();
+  }
+
+  /**
    * Returns the point cloud budget. The budget is shared between all loaded
    * point cloud models.
    */
@@ -380,7 +400,10 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       this._sceneHandler
     );
 
-    this._pointCloudPickingHandler = new PointCloudPickingHandler(this._renderer);
+    this._pointCloudPickingHandler = new PointCloudPickingHandler(
+      this._renderer,
+      revealOptions.renderOptions?.pointCloudParameters?.edlOptions
+    );
 
     const handleLoading = (loadingState: LoadingState) => {
       this.spinner.loading = loadingState.itemsLoaded != loadingState.itemsRequested;
@@ -2184,22 +2207,6 @@ function createRenderer(): WebGLRenderer {
   return renderer;
 }
 
-/**
- * Create EDL options from input options.
- * @param inputOptions
- */
-function createCompleteEdlOptions(inputOptions?: Partial<EdlOptions> | 'disabled'): EdlOptions {
-  if (inputOptions === undefined) {
-    return defaultRenderOptions.pointCloudParameters.edlOptions;
-  }
-
-  if (inputOptions === 'disabled') {
-    return { radius: 0.0, strength: 0.0 };
-  }
-
-  return { ...defaultRenderOptions.pointCloudParameters.edlOptions, ...inputOptions };
-}
-
 function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions, devicePixelRatio: number): RevealOptions {
   const customTarget = viewerOptions.renderTargetOptions?.target;
   const outputRenderTarget = customTarget
@@ -2214,6 +2221,7 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions, devic
 
   const revealOptions: RevealOptions = {
     continuousModelStreaming: viewerOptions.continuousModelStreaming,
+    enableShadows: viewerOptions.enableShadows ?? false,
     outputRenderTarget,
     rendererResolutionThreshold: resolutionCap,
     internal: {}

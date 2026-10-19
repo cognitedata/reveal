@@ -8,6 +8,7 @@ export { PointCloudMaterialManager } from './src/PointCloudMaterialManager';
 
 export type { RenderOptions, SsaoParameters, EdlOptions } from './src/rendering/types';
 export { defaultRenderOptions, SsaoSampleQuality, AntiAliasingMode } from './src/rendering/types';
+export { shouldApplyEdl } from './src/render-pipeline-providers/pointCloudParameterUtils';
 
 export * from './src/pointcloud-rendering/constants';
 export * from './src/pointcloud-rendering/enums';
@@ -22,6 +23,7 @@ export type { StyledTreeIndexSets } from './src/utilities/types';
 export { type Materials, initializeDefinesAndUniforms, forEachMaterial } from './src/rendering/materials';
 export type { OctreeMaterialParams } from './src/pointcloud-rendering';
 export { PointCloudMaterial } from './src/pointcloud-rendering';
+export { CadShadowReceiverForCustomObjectMaterial } from './src/rendering/CadShadowReceiverForCustomObjectMaterial';
 
 export { DefaultRenderPipelineProvider } from './src/render-pipeline-providers/DefaultRenderPipelineProvider';
 export { CadGeometryRenderModePipelineProvider } from './src/render-pipeline-providers/CadGeometryRenderModePipelineProvider';

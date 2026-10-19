@@ -172,7 +172,7 @@ const viewer = new Cognite3DViewer(
   });
 ```
 
-You may also alter the `radius` and the `strength` parameters of the effect. Any of these may be left unspecified, in which case they will be given a default value:
+You may also alter the `radius` and the `strength` parameters of the effect. Any of these may be left unspecified, in which case they will be given a default value. The `radius` is limited to a maximum of 5; larger values are clamped to 5:
 
 
 ```js

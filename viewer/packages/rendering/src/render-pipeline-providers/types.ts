@@ -2,8 +2,24 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { Texture, Vector2, WebGLRenderTarget } from 'three';
+import type { Matrix4, Object3D, Texture, Vector2, WebGLRenderTarget } from 'three';
+import type { SectorScene } from '@reveal/cad-parsers';
 import type { EdlOptions } from '../rendering/types';
+
+export type CadNodeLike = Object3D & {
+  readonly sectorScene: SectorScene;
+  readonly rootSector: Object3D;
+};
+
+export type CadShadowMap = {
+  readonly depthTexture: Texture;
+  readonly matrix: Matrix4;
+  readonly texelWorldSize: number;
+  readonly stableTexelWorldSize: number;
+  readonly depthRange: number;
+  readonly enabled: boolean;
+  setFocusDistance?(distance: number | undefined, readbackPending: boolean): void;
+};
 
 export type RenderTargetData = {
   currentRenderSize: Vector2;
@@ -26,6 +42,9 @@ export type PointCloudRenderTargets = {
 export type PostProcessingPipelineOptions = CadGeometryRenderTargets &
   PointCloudRenderTargets & {
     ssaoTexture: Texture;
+    cadShadow?: {
+      map: CadShadowMap;
+    };
     edges: boolean;
     pointBlending?: boolean;
     edlOptions: EdlOptions;
