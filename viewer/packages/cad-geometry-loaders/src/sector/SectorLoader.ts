@@ -20,6 +20,13 @@ import type { CadNode } from '@reveal/cad-model';
  */
 const SectorLoadingBatchSize = 20;
 
+type LoadContext = {
+  isSuperseded: () => boolean;
+  sectorCuller: SectorCuller;
+  sectorCullerInput: DetermineSectorsInput;
+  models: CadNode[];
+};
+
 /**
  * Loads sector based on a given camera pose, a set of models and budget.
  * Uses {@link SectorCuller} to determine what to load, {@link SectorDownloadScheduler} to
@@ -91,33 +98,37 @@ export class SectorLoader {
 
     this._batchId++;
     const currentBatchId = this._batchId;
+    // Results from previous loads are discarded, so don't let their not-yet-started downloads delay this one
+    this._sectorDownloadScheduler.clearQueuedDownloads();
 
-    for (const batch of chunk(changedSectors, SectorLoadingBatchSize)) {
-      if (currentBatchId !== this._batchId) {
-        // Stop processing this batch as a new batch has started, and will discard results from old batches.
-        this._progressHelper.reportNewSectorsLoaded(batch.length);
-        continue;
+    // A newer load has reset the progress helper and discards results from this one, so a superseded load
+    // must neither report progress nor keep processing its remaining batches.
+    const context: LoadContext = {
+      isSuperseded: () => currentBatchId !== this._batchId,
+      sectorCuller,
+      sectorCullerInput,
+      models: cadModels
+    };
+
+    const batches = chunk(changedSectors, SectorLoadingBatchSize);
+    // Always keep the next batch started before consuming the current one, so the download scheduler can start
+    // its sectors as soon as a slot frees up instead of waiting for the slowest download in the current batch.
+    let nextBatch = batches.length > 0 ? this.startBatch(batches[0], context) : undefined;
+    for (let i = 0; nextBatch !== undefined; i++) {
+      const currentBatch = await nextBatch;
+      if (context.isSuperseded()) {
+        return;
       }
-      const filteredSectors = await this.filterSectors(sectorCullerInput, batch, sectorCuller, this._progressHelper);
-      const consumedPromises = this.startLoadingBatch(filteredSectors, cadModels);
-      for await (const consumed of PromiseUtils.raceUntilAllCompleted(consumedPromises)) {
-        const resolvedSector = consumed.result;
-        if (currentBatchId === this._batchId && resolvedSector !== undefined) {
-          this._modelStateHandler.updateState(
-            resolvedSector.modelIdentifier.revealInternalId,
-            resolvedSector.metadata.id,
-            resolvedSector.levelOfDetail
-          );
-          yield resolvedSector; // progress will be reported when sector is loaded by CadManager
-        } else {
-          this._progressHelper.reportNewSectorsLoaded(1);
-        }
-      }
+      nextBatch = i + 1 < batches.length ? this.startBatch(batches[i + 1], context) : undefined;
+      // Avoid an unhandled rejection while the current batch is consumed. The error still surfaces at the next await.
+      nextBatch?.catch(() => {});
+
+      yield* this.consumeBatch(currentBatch, context);
     }
   }
 
   reportNewSectorsLoaded(loadedCountChange: number): void {
-    this._progressHelper.reportNewSectorsLoaded(loadedCountChange);
+    this._progressHelper.reportYieldedSectorsLoaded(loadedCountChange);
   }
 
   private shouldLoad(input: DetermineSectorsPayload) {
@@ -134,16 +145,48 @@ export class SectorLoader {
     throw new Error(`No supported sector culler for format ${sectorCullerInput.cadModelsMetadata[0].format}`);
   }
 
-  private async filterSectors(
-    input: DetermineSectorsInput,
-    batch: WantedSector[],
-    sectorCuller: SectorCuller,
-    progressHelper: ProgressReportHelper
-  ): Promise<WantedSector[]> {
-    // Determine if some of the sectors in the batch is culled by already loaded geometry
-    const filteredSectors = await sectorCuller.filterSectorsToLoad(input, batch);
-    progressHelper.reportNewSectorsCulled(batch.length - filteredSectors.length);
-    return filteredSectors;
+  /**
+   * Culls the batch against already loaded geometry and queues the remaining sectors for download.
+   * Resolves to no downloads if the load is superseded.
+   */
+  private async startBatch(batch: WantedSector[], context: LoadContext): Promise<Promise<ConsumedSector>[]> {
+    if (context.isSuperseded()) {
+      return [];
+    }
+    const filteredSectors = await context.sectorCuller.filterSectorsToLoad(context.sectorCullerInput, batch);
+    // The load may have been superseded while culling
+    if (context.isSuperseded()) {
+      return [];
+    }
+    this._progressHelper.reportNewSectorsCulled(batch.length - filteredSectors.length);
+    return this.startLoadingBatch(filteredSectors, context.models);
+  }
+
+  /**
+   * Yields the sectors of a batch as they finish downloading, and reports progress.
+   * Stops as soon as the load is superseded.
+   */
+  private async *consumeBatch(
+    consumedPromises: Promise<ConsumedSector>[],
+    context: LoadContext
+  ): AsyncGenerator<ConsumedSector> {
+    for await (const consumed of PromiseUtils.raceUntilAllCompleted(consumedPromises)) {
+      if (context.isSuperseded()) {
+        return;
+      }
+      const resolvedSector = consumed.result;
+      if (resolvedSector !== undefined) {
+        this._modelStateHandler.updateState(
+          resolvedSector.modelIdentifier.revealInternalId,
+          resolvedSector.metadata.id,
+          resolvedSector.levelOfDetail
+        );
+        this._progressHelper.reportSectorYielded();
+        yield resolvedSector; // progress will be reported when sector is loaded by CadManager
+      } else {
+        this._progressHelper.reportNewSectorsLoaded(1);
+      }
+    }
   }
 
   private startLoadingBatch(batch: WantedSector[], models: CadNode[]): Promise<ConsumedSector>[] {
@@ -171,16 +214,28 @@ class ProgressReportHelper {
   private _sectorsScheduled = 0;
   private _sectorsLoaded = 0;
   private _sectorsCulled = 0;
+  // Sectors handed to the consumer of the loader, which will report them as loaded
+  private _sectorsAwaitingConsumer = 0;
 
   constructor(reportCb: (sectorsLoaded: number, sectorsScheduled: number, sectorsCulled: number) => void) {
     this._progressCallback = reportCb;
   }
 
   reset(sectorsScheduledChange: number) {
-    this._sectorsScheduled += sectorsScheduledChange - this._sectorsLoaded;
+    // Superseded loads report nothing, so only sectors the consumer still has to report carry over
+    this._sectorsScheduled = sectorsScheduledChange + this._sectorsAwaitingConsumer;
     this._sectorsLoaded = 0;
     this._sectorsCulled = 0;
     this.triggerCallback();
+  }
+
+  reportSectorYielded() {
+    this._sectorsAwaitingConsumer++;
+  }
+
+  reportYieldedSectorsLoaded(loadedCountChange: number) {
+    this._sectorsAwaitingConsumer = Math.max(0, this._sectorsAwaitingConsumer - loadedCountChange);
+    this.reportNewSectorsLoaded(loadedCountChange);
   }
 
   reportNewSectorsLoaded(loadedCountChange: number) {
