@@ -78,7 +78,7 @@ export class PickingHandler {
 
   /**
    * Invalidates the cached full-frame pick buffer. Must be called whenever a new frame of the
-   * scene is rendered (camera, sector loading, styling or clipping changes).
+   * scene content that affects picking changes (sector loading, styling, clipping or model transforms).
    */
   public invalidatePickCache(): void {
     this._pickCache.invalidate();

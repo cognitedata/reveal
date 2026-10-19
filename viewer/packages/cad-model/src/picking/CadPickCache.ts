@@ -71,7 +71,7 @@ export class CadPickCache {
   }
 
   /**
-   * Marks the cache stale. Must be called whenever a new frame of the scene is rendered.
+   * Marks the cache stale. Must be called whenever scene content that affects picking changes. Camera changes are detected by comparing camera matrices.
    */
   public invalidate(): void {
     if (this._cache !== undefined) {

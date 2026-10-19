@@ -129,6 +129,14 @@ export class RevealManager {
     );
   }
 
+  /**
+   * True if something that affects CAD picking changed (sectors, styling, clipping or resolution).
+   * Camera movement alone does not count, as the CAD pick cache compares the camera itself.
+   */
+  get needsCadPickContentRedraw(): boolean {
+    return this._cadManager.needsRedraw || this._resizeHandler.needsRedraw;
+  }
+
   get cameraInMotion(): boolean {
     return this._cameraInMotion;
   }
