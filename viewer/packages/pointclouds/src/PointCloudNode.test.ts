@@ -13,7 +13,8 @@ import type { IPointCloudTreeGeometryNode } from './potree-three-loader/geometry
 import { vi } from 'vitest';
 import type { PointCloudMaterial } from '../../rendering';
 import { DEFAULT_CLASSIFICATION } from '../../rendering';
-import { PointColorType } from '@reveal/rendering';
+import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
+import { ClassificationHandler } from './ClassificationHandler';
 import { PointCloudObjectAppearanceTexture } from '../../rendering/src/pointcloud-rendering';
 import { Cylinder } from '@reveal/utilities';
 import {
@@ -21,7 +22,7 @@ import {
   DefaultPointCloudAppearance,
   StyledPointCloudVolumeCollection
 } from '@reveal/pointcloud-styling';
-import { Color } from 'three';
+import { Color, Plane } from 'three';
 import { PickCacheInvalidation } from '@reveal/utilities';
 
 describe(PointCloudNode.name, () => {
@@ -151,6 +152,11 @@ describe(PointCloudNode.name, () => {
         ...appearance
       });
 
+    beforeEach(() => {
+      // The test node has no classification sets, so the real handler cannot resolve the class
+      vi.spyOn(ClassificationHandler.prototype, 'setClassificationAndRecompute').mockImplementation(() => {});
+    });
+
     const createNodeWithInvalidation = () => {
       const pickCacheInvalidation = new PickCacheInvalidation();
       const node = createPointCloudNode({ pickCacheInvalidation });
@@ -202,13 +208,42 @@ describe(PointCloudNode.name, () => {
     test.each([
       ['point size', (node: PointCloudNode) => (node.pointSize = 5)],
       [
+        'point size type',
+        (node: PointCloudNode) =>
+          (node.pointSizeType =
+            node.pointSizeType === PointSizeType.Fixed ? PointSizeType.Adaptive : PointSizeType.Fixed)
+      ],
+      ['point shape', (node: PointCloudNode) => (node.pointShape = PointShape.Square)],
+      [
         'model transformation',
         (node: PointCloudNode) => node.setModelTransformation(new Matrix4().makeTranslation(1, 2, 3))
-      ]
+      ],
+      ['clipping planes', (node: PointCloudNode) => (node.clippingPlanes = [new Plane()])],
+      ['class visibility', (node: PointCloudNode) => node.setClassVisible(2, false)]
     ])('%s invalidates the pick cache', (_, change) => {
       const { node, pickCacheInvalidation } = createNodeWithInvalidation();
 
       change(node);
+
+      expect(pickCacheInvalidation.consume()).toBe(true);
+    });
+
+    test('default appearance invalidates the pick cache only when it hides objects', () => {
+      const { node, pickCacheInvalidation } = createNodeWithInvalidation();
+
+      node.defaultAppearance = { ...DefaultPointCloudAppearance, color: new Color('red') };
+      expect(pickCacheInvalidation.consume()).toBe(false);
+
+      node.defaultAppearance = { ...DefaultPointCloudAppearance, visible: false };
+      expect(pickCacheInvalidation.consume()).toBe(true);
+    });
+
+    test('removing all styled objects invalidates the pick cache when a style hid objects', () => {
+      const { node, pickCacheInvalidation } = createNodeWithInvalidation();
+      node.assignStyledPointCloudObjectCollection(createStyledCollection({ visible: false }));
+      pickCacheInvalidation.consume();
+
+      node.removeAllStyledPointCloudObjects();
 
       expect(pickCacheInvalidation.consume()).toBe(true);
     });
