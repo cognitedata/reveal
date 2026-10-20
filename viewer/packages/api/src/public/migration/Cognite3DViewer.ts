@@ -446,6 +446,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     this._onContextRestored = () => {
       setRenderContextLost(false);
       this.revealManager.requestRedraw();
+      this.revealManager.pickCacheInvalidation.request();
     };
 
     this.canvas.addEventListener('webglcontextlost', this._onContextLost);
@@ -1941,7 +1942,9 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       customObject.beforeRender(camera);
     });
     this.revealManager.render(camera);
-    this._pointCloudPickingHandler.invalidatePickCache();
+    if (this.revealManager.pickCacheInvalidation.consume()) {
+      this._pointCloudPickingHandler.invalidatePickCache();
+    }
     this.revealManager.resetRedraw();
     this._image360ApiHelper?.resetRedraw();
     this._clippingNeedsUpdate = false;

@@ -77,6 +77,7 @@ export { LineMaterial } from './src/three/lines/LineMaterial';
 export { DeferredPromise } from './src/DeferredPromise';
 
 export { SceneHandler } from './src/SceneHandler';
+export { PickCacheInvalidation } from './src/PickCacheInvalidation';
 
 export { CustomObject } from './src/customObject/CustomObject';
 export type { ICustomObject } from './src/customObject/ICustomObject';

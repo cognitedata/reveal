@@ -143,6 +143,14 @@ export class PointCloudObjectAppearanceTexture {
     return this._defaultAppearance;
   }
 
+  /**
+   * True if the default appearance or any styled object set hides objects. Only hidden objects affect
+   * picking, so a style change can be ignored by picking while this is false both before and after it.
+   */
+  get hasHiddenObjects(): boolean {
+    return this._defaultAppearance.visible === false || this._styledObjectSets.some(set => set.style.visible === false);
+  }
+
   get objectStyleTexture(): DataTexture {
     return this._objectStyleTexture;
   }

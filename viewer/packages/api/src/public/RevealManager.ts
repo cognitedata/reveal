@@ -23,7 +23,7 @@ import type {
   ResizeHandler,
   SettableRenderTarget
 } from '@reveal/rendering';
-import { assertNever, EventTrigger } from '@reveal/utilities';
+import { assertNever, EventTrigger, PickCacheInvalidation } from '@reveal/utilities';
 import type { CameraManager } from '@reveal/camera-manager';
 
 import type { DataSourceType, File3dFormat, InternalDataSourceType } from '@reveal/data-providers';
@@ -51,6 +51,7 @@ export class RevealManager {
   private readonly _resizeHandler: ResizeHandler;
 
   private _cameraInMotion: boolean = false;
+  private readonly _pickCacheInvalidation: PickCacheInvalidation;
 
   private _isDisposed = false;
   private readonly _subscriptions;
@@ -69,8 +70,10 @@ export class RevealManager {
     pipelineExecutor: RenderPipelineExecutor,
     renderPipeline: RenderPipelineProvider & SettableRenderTarget,
     resizeHandler: ResizeHandler,
-    cameraManager: CameraManager
+    cameraManager: CameraManager,
+    pickCacheInvalidation: PickCacheInvalidation = new PickCacheInvalidation()
   ) {
+    this._pickCacheInvalidation = pickCacheInvalidation;
     this._pipelineExecutor = pipelineExecutor;
     this._renderPipeline = renderPipeline;
     this._cadManager = cadManager;
@@ -127,6 +130,13 @@ export class RevealManager {
       this._resizeHandler.needsRedraw ||
       (this._renderPipeline.needsRedraw ?? false)
     );
+  }
+
+  /**
+   * Flag that is set whenever something that can change what a pick hits changes. See {@link PickCacheInvalidation}.
+   */
+  get pickCacheInvalidation(): PickCacheInvalidation {
+    return this._pickCacheInvalidation;
   }
 
   get cameraInMotion(): boolean {
@@ -228,6 +238,7 @@ export class RevealManager {
 
   public render(camera: PerspectiveCamera): void {
     this._resizeHandler.handleResize(camera);
+    this._pointCloudManager.requestPickCacheInvalidationOnNewData();
     this._renderPipeline.setShadowFocus?.(this._cameraManager.getCameraState().target);
     this._pipelineExecutor.render(this._renderPipeline, camera);
     this.resetRedraw();

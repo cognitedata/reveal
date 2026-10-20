@@ -13,8 +13,16 @@ import type { IPointCloudTreeGeometryNode } from './potree-three-loader/geometry
 import { vi } from 'vitest';
 import type { PointCloudMaterial } from '../../rendering';
 import { DEFAULT_CLASSIFICATION } from '../../rendering';
+import { PointColorType } from '@reveal/rendering';
 import { PointCloudObjectAppearanceTexture } from '../../rendering/src/pointcloud-rendering';
 import { Cylinder } from '@reveal/utilities';
+import {
+  AnnotationIdPointCloudObjectCollection,
+  DefaultPointCloudAppearance,
+  StyledPointCloudVolumeCollection
+} from '@reveal/pointcloud-styling';
+import { Color } from 'three';
+import { PickCacheInvalidation } from '@reveal/utilities';
 
 describe(PointCloudNode.name, () => {
   afterEach(() => {
@@ -133,6 +141,84 @@ describe(PointCloudNode.name, () => {
       expect(result.length).toBe(2);
       expect(result[0].equals(new Vector3(1, 1, 1))).toBeTruthy();
       expect(result[1].equals(new Vector3(5, 5, 5))).toBeTruthy();
+    });
+  });
+
+  describe('pick cache invalidation', () => {
+    const createStyledCollection = (appearance: { color?: Color; visible?: boolean }) =>
+      new StyledPointCloudVolumeCollection(new AnnotationIdPointCloudObjectCollection([1]), {
+        ...DefaultPointCloudAppearance,
+        ...appearance
+      });
+
+    const createNodeWithInvalidation = () => {
+      const pickCacheInvalidation = new PickCacheInvalidation();
+      const node = createPointCloudNode({ pickCacheInvalidation });
+      // Creating the node sets its initial point size, color type and shape.
+      pickCacheInvalidation.consume();
+      return { node, pickCacheInvalidation };
+    };
+
+    test('color-only styling redraws but does not invalidate the pick cache', () => {
+      const { node, pickCacheInvalidation } = createNodeWithInvalidation();
+      node.resetRedraw();
+
+      node.assignStyledPointCloudObjectCollection(createStyledCollection({ color: new Color('red') }));
+
+      expect(node.needsRedraw).toBe(true);
+      expect(pickCacheInvalidation.consume()).toBe(false);
+    });
+
+    test('hiding objects invalidates the pick cache', () => {
+      const { node, pickCacheInvalidation } = createNodeWithInvalidation();
+
+      node.assignStyledPointCloudObjectCollection(createStyledCollection({ visible: false }));
+
+      expect(pickCacheInvalidation.consume()).toBe(true);
+    });
+
+    test('removing a hiding style invalidates the pick cache', () => {
+      const { node, pickCacheInvalidation } = createNodeWithInvalidation();
+      const hidden = createStyledCollection({ visible: false });
+      node.assignStyledPointCloudObjectCollection(hidden);
+      pickCacheInvalidation.consume();
+
+      node.removeStyledPointCloudObjectCollection(hidden);
+
+      expect(pickCacheInvalidation.consume()).toBe(true);
+    });
+
+    test('a color style invalidates the pick cache while another collection is hidden', () => {
+      const { node, pickCacheInvalidation } = createNodeWithInvalidation();
+      node.assignStyledPointCloudObjectCollection(createStyledCollection({ visible: false }));
+      pickCacheInvalidation.consume();
+
+      // The color style could overlap with the hidden objects, so it cannot be proven irrelevant.
+      node.assignStyledPointCloudObjectCollection(createStyledCollection({ color: new Color('red') }));
+
+      expect(pickCacheInvalidation.consume()).toBe(true);
+    });
+
+    test.each([
+      ['point size', (node: PointCloudNode) => (node.pointSize = 5)],
+      [
+        'model transformation',
+        (node: PointCloudNode) => node.setModelTransformation(new Matrix4().makeTranslation(1, 2, 3))
+      ]
+    ])('%s invalidates the pick cache', (_, change) => {
+      const { node, pickCacheInvalidation } = createNodeWithInvalidation();
+
+      change(node);
+
+      expect(pickCacheInvalidation.consume()).toBe(true);
+    });
+
+    test('point color type does not invalidate the pick cache', () => {
+      const { node, pickCacheInvalidation } = createNodeWithInvalidation();
+
+      node.pointColorType = PointColorType.Height;
+
+      expect(pickCacheInvalidation.consume()).toBe(false);
     });
   });
 });

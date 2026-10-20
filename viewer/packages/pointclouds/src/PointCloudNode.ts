@@ -20,6 +20,7 @@ import { type CompletePointCloudAppearance } from '@reveal/pointcloud-styling';
 import type { Color } from 'three';
 import { Matrix4, Group, Box3, Vector3, type Camera, type Plane, type Ray, type WebGLRenderer } from 'three';
 import type { StyledPointCloudVolumeCollection } from '@reveal/pointcloud-styling';
+import { PickCacheInvalidation } from '@reveal/utilities';
 
 export class PointCloudNode<T extends DataSourceType = DataSourceType> extends Group {
   private readonly _cameraConfiguration?: CameraConfiguration;
@@ -29,6 +30,7 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
   private readonly _classificationHandler: ClassificationHandler;
 
   private _needsRedraw: boolean = false;
+  private readonly _pickCacheInvalidation: PickCacheInvalidation;
   private static readonly pickingWindowSize = 20;
 
   private readonly _modelIdentifier: symbol;
@@ -42,9 +44,11 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
     octree: PointCloudOctree,
     annotations: PointCloudObject<T>[],
     classificationInfo: ClassificationInfo,
-    cameraConfiguration?: CameraConfiguration
+    cameraConfiguration?: CameraConfiguration,
+    pickCacheInvalidation: PickCacheInvalidation = new PickCacheInvalidation()
   ) {
     super();
+    this._pickCacheInvalidation = pickCacheInvalidation;
 
     this._octree = octree;
     this.add(this._octree);
@@ -101,6 +105,7 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
   set pointSize(size: number) {
     this._octree.material.size = size;
     this._needsRedraw = true;
+    this._pickCacheInvalidation.request();
   }
 
   get pointSizeType(): PointSizeType {
@@ -110,6 +115,7 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
   set pointSizeType(pointSizeType: PointSizeType) {
     this._octree.pointSizeType = pointSizeType;
     this._needsRedraw = true;
+    this._pickCacheInvalidation.request();
   }
 
   get pointColorType(): PointColorType {
@@ -128,6 +134,7 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
   set pointShape(value: PointShape) {
     this._octree.material.shape = value;
     this._needsRedraw = true;
+    this._pickCacheInvalidation.request();
   }
 
   get visiblePointCount(): number {
@@ -154,6 +161,7 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
   setClassVisible(pointClass: number | WellKnownAsprsPointClassCodes, visible: boolean): void {
     this._classificationHandler.setClassificationAndRecompute(pointClass, visible);
     this._needsRedraw = true;
+    this._pickCacheInvalidation.request();
   }
 
   /**
@@ -201,6 +209,7 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
     this.updateMatrixWorld(true);
 
     this._needsRedraw = true;
+    this._pickCacheInvalidation.request();
   }
 
   getModelTransformation(out: Matrix4 = new Matrix4()): Matrix4 {
@@ -280,28 +289,41 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
   }
 
   set defaultAppearance(appearance: CompletePointCloudAppearance) {
-    this._octree.material.objectAppearanceTexture.defaultAppearance = appearance;
-    this._needsRedraw = true;
+    this.updateAppearance(() => (this._octree.material.objectAppearanceTexture.defaultAppearance = appearance));
   }
 
   set clippingPlanes(clippingPlanes: Plane[]) {
     this._octree.setModelClippingPlane(clippingPlanes);
     this._needsRedraw = true;
+    this._pickCacheInvalidation.request();
   }
 
   assignStyledPointCloudObjectCollection(styledCollection: StyledPointCloudVolumeCollection<T>): void {
-    this._octree.material.objectAppearanceTexture.assignStyledObjectSet(styledCollection);
-    this._needsRedraw = true;
+    this.updateAppearance(() => this._octree.material.objectAppearanceTexture.assignStyledObjectSet(styledCollection));
   }
 
   removeStyledPointCloudObjectCollection(styledCollection: StyledPointCloudVolumeCollection<T>): void {
-    this._octree.material.objectAppearanceTexture.removeStyledObjectSet(styledCollection.volumeCollection);
-    this._needsRedraw = true;
+    this.updateAppearance(() =>
+      this._octree.material.objectAppearanceTexture.removeStyledObjectSet(styledCollection.volumeCollection)
+    );
   }
 
   removeAllStyledPointCloudObjects(): void {
-    this._octree.material.objectAppearanceTexture.removeAllStyledObjectSets();
+    this.updateAppearance(() => this._octree.material.objectAppearanceTexture.removeAllStyledObjectSets());
+  }
+
+  /**
+   * Applies a style change. It always redraws, but only affects picking if objects are hidden before or
+   * after the change, as color alone cannot change what is pickable.
+   */
+  private updateAppearance(applyChange: () => void): void {
+    const appearanceTexture = this._octree.material.objectAppearanceTexture;
+    const hadHiddenObjects = appearanceTexture.hasHiddenObjects;
+    applyChange();
     this._needsRedraw = true;
+    if (hadHiddenObjects || appearanceTexture.hasHiddenObjects) {
+      this._pickCacheInvalidation.request();
+    }
   }
 
   dispose(): void {

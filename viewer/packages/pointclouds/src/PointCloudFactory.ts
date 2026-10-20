@@ -17,6 +17,7 @@ import { isDMIdentifier } from '@reveal/data-providers';
 import type { IPointClassificationsProvider } from './classificationsProviders/IPointClassificationsProvider';
 
 import type { PointCloudMaterialManager } from '@reveal/rendering';
+import { PickCacheInvalidation } from '@reveal/utilities';
 import { createObjectIdMaps } from './potree-three-loader/utils/createObjectIdMaps';
 import { isLocalIdentifier } from '@reveal/data-providers';
 import type { ModelIdentifier } from '@reveal/data-providers/src/ModelIdentifier';
@@ -27,14 +28,17 @@ export class PointCloudFactory {
   private readonly _pointCloudDMProvider: PointCloudStylableObjectProvider<DMDataSourceType>;
   private readonly _classificationsProvider: IPointClassificationsProvider;
   private readonly _pointCloudMaterialManager: PointCloudMaterialManager;
+  private readonly _pickCacheInvalidation: PickCacheInvalidation;
 
   constructor(
     potreeInstance: Potree,
     pointCloudObjectProvider: PointCloudStylableObjectProvider,
     pointCloudDMProvider: PointCloudStylableObjectProvider<DMDataSourceType>,
     classificationsProvider: IPointClassificationsProvider,
-    pointCloudMaterialManager: PointCloudMaterialManager
+    pointCloudMaterialManager: PointCloudMaterialManager,
+    pickCacheInvalidation: PickCacheInvalidation = new PickCacheInvalidation()
   ) {
+    this._pickCacheInvalidation = pickCacheInvalidation;
     this._potreeInstance = potreeInstance;
     this._pointCloudObjectProvider = pointCloudObjectProvider;
     this._pointCloudDMProvider = pointCloudDMProvider;
@@ -91,7 +95,8 @@ export class PointCloudFactory {
       pointCloudOctree,
       annotationInfo,
       classSchema,
-      cameraConfiguration
+      cameraConfiguration,
+      this._pickCacheInvalidation
     );
   }
 }

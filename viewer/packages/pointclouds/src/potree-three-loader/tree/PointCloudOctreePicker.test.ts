@@ -318,6 +318,33 @@ describe(PointCloudOctreePicker.name, () => {
       expect(renderSpy.mock.calls[1][3]).toBe(ray);
     });
 
+    test('camera movement while the cache readback is in flight discards the result', async () => {
+      const { renderSpy, readPixelsSpy } = setupPickerHelperMocks(renderedNodes);
+      const picker = new PointCloudOctreePicker(createMockRenderer());
+
+      let resolveReadPixels!: (pixels: Uint8Array) => void;
+      readPixelsSpy.mockReturnValueOnce(
+        new Promise<Uint8Array>(resolve => {
+          resolveReadPixels = resolve;
+        })
+      );
+
+      const pickPromise = picker.pick(camera, ray, [octree]);
+      camera.position.set(10, 0, 0);
+      camera.updateMatrixWorld();
+      resolveReadPixels(new Uint8Array(4 * RENDER_TARGET_WIDTH * RENDER_TARGET_HEIGHT));
+      await pickPromise;
+
+      // The stale build is answered by the windowed path ...
+      expect(renderSpy).toHaveBeenCalledTimes(2);
+      expect(renderSpy.mock.calls[1][3]).toBe(ray);
+
+      // ... and is not reused for the moved camera: the next pick rebuilds the full frame.
+      await picker.pick(camera, ray, [octree]);
+      expect(renderSpy).toHaveBeenCalledTimes(3);
+      expect(renderSpy.mock.calls[2][3]).toBeUndefined();
+    });
+
     test('custom pick parameters bypass the cache', async () => {
       const { renderSpy } = setupPickerHelperMocks(renderedNodes);
       const picker = new PointCloudOctreePicker(createMockRenderer());
