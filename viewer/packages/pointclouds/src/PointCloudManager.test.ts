@@ -7,7 +7,7 @@ import type { WebGLRenderer } from 'three';
 import { It, Mock } from 'moq.ts';
 import { vi } from 'vitest';
 import { CdfModelIdentifier } from '@reveal/data-providers';
-import type { ClassicDataSourceType } from '@reveal/data-providers';
+import type { AddModelOptionsWithModelRevisionId, ClassicDataSourceType } from '@reveal/data-providers';
 import type { PointCloudMaterialManager } from '@reveal/rendering';
 import { PickCacheInvalidation } from '@reveal/utilities';
 import { PointCloudManager } from './PointCloudManager';
@@ -20,7 +20,11 @@ import { createPointCloudNode } from '../../../test-utilities';
 
 describe(PointCloudManager.name, () => {
   const modelIdentifier = new CdfModelIdentifier(1, 2);
-  const addModelOptions = { modelId: 1, revisionId: 2 };
+  const addModelOptions: AddModelOptionsWithModelRevisionId<ClassicDataSourceType> = {
+    modelId: 1,
+    revisionId: 2,
+    classicModelRevisionId: { modelId: 1, revisionId: 2 }
+  };
 
   let pickCacheInvalidation: PickCacheInvalidation;
   let manager: PointCloudManager;

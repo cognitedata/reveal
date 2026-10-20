@@ -24,6 +24,7 @@ import {
 } from '@reveal/pointcloud-styling';
 import { Color, Plane } from 'three';
 import { PickCacheInvalidation } from '@reveal/utilities';
+import type { ClassicDataSourceType } from '@reveal/data-providers';
 
 describe(PointCloudNode.name, () => {
   afterEach(() => {
@@ -146,7 +147,10 @@ describe(PointCloudNode.name, () => {
   });
 
   describe('pick cache invalidation', () => {
-    const createStyledCollection = (appearance: { color?: Color; visible?: boolean }) =>
+    const createStyledCollection = (appearance: {
+      color?: Color;
+      visible?: boolean;
+    }): StyledPointCloudVolumeCollection<ClassicDataSourceType> =>
       new StyledPointCloudVolumeCollection(new AnnotationIdPointCloudObjectCollection([1]), {
         ...DefaultPointCloudAppearance,
         ...appearance
@@ -157,9 +161,12 @@ describe(PointCloudNode.name, () => {
       vi.spyOn(ClassificationHandler.prototype, 'setClassificationAndRecompute').mockImplementation(() => {});
     });
 
-    const createNodeWithInvalidation = () => {
+    const createNodeWithInvalidation = (): {
+      node: PointCloudNode<ClassicDataSourceType>;
+      pickCacheInvalidation: PickCacheInvalidation;
+    } => {
       const pickCacheInvalidation = new PickCacheInvalidation();
-      const node = createPointCloudNode({ pickCacheInvalidation });
+      const node = createPointCloudNode<ClassicDataSourceType>({ pickCacheInvalidation });
       // Creating the node sets its initial point size, color type and shape.
       pickCacheInvalidation.consume();
       return { node, pickCacheInvalidation };

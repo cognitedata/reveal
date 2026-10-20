@@ -20,6 +20,7 @@ import { mockClientAuthentication, autoMockWebGLRenderer } from '../../../../../
 import type { DataSourceType } from '@reveal/data-providers';
 import type { DefaultImage360Collection, Image360ClusterIntersectionData, Image360Entity } from '@reveal/360-images';
 
+import type { MockInstance } from 'vitest';
 import { vi } from 'vitest';
 import type { ResolutionOptions } from './types';
 
@@ -249,14 +250,14 @@ describe('Cognite3DViewer', () => {
 
   describe('point-cloud pick cache invalidation', () => {
     let requestAnimationFrameCallback: FrameRequestCallback | undefined;
-    const spies: { mockRestore: () => void }[] = [];
+    const spies: MockInstance[] = [];
 
     beforeEach(() => {
       spies.push(
         vi
           .spyOn(window, 'getComputedStyle')
-          .mockImplementation(
-            () => ({ visibility: 'visible', display: 'block' }) as Partial<CSSStyleDeclaration> as CSSStyleDeclaration
+          .mockImplementation(() =>
+            Object.assign(document.createElement('div').style, { visibility: 'visible', display: 'block' })
           ),
         vi.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => {
           requestAnimationFrameCallback = cb;
