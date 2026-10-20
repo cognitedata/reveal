@@ -18,9 +18,11 @@ import { SectorLoader } from './SectorLoader';
 import type { IMock } from 'moq.ts';
 import { Mock } from 'moq.ts';
 import { Log } from '@reveal/logger';
+import { DeferredPromise } from '@reveal/utilities';
 import type { LogLevelNumbers } from 'loglevel';
 import type { CadNode } from '@reveal/cad-model';
 
+import type { Mock as ViMock } from 'vitest';
 import { vi } from 'vitest';
 
 describe('SectorLoader', () => {
@@ -29,7 +31,7 @@ describe('SectorLoader', () => {
   let stateHandler: ModelStateHandler;
   let loader: SectorLoader;
   let collectStatisticsCallback: () => void;
-  let progressCallback: () => void;
+  let progressCallback: ViMock<(loaded: number, scheduled: number, culled: number) => void>;
   let model: CadModelMetadata;
   let input: DetermineSectorsPayload;
   let cadNodeMock: IMock<CadNode>;
@@ -44,6 +46,10 @@ describe('SectorLoader', () => {
 
   afterAll(() => {
     Log.setLevel(currentLogLevel);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   beforeEach(() => {
@@ -131,6 +137,83 @@ describe('SectorLoader', () => {
     expect(updateStateFn).toHaveBeenCalledTimes(model.scene.sectorCount - 1);
   });
 
+  test('loadSectors starts the next batch before the slowest download of the previous batch completes', async () => {
+    // Arrange
+    const downloads = createControlledDownloads();
+    const loading = asyncIteratorToArray(loader.loadSectors({ ...input, models: [downloads.cadNode] }));
+    await downloads.settle();
+    expect(downloads.requestedSectorIds).toHaveLength(20);
+
+    // Act
+    const [slowestSectorId] = downloads.requestedSectorIds;
+    downloads.completeAllExcept(slowestSectorId);
+    await downloads.settle();
+
+    // Assert
+    expect(downloads.requestedSectorIds).toHaveLength(downloads.sectorCount);
+    await downloads.completeAll();
+    expect(await loading).toHaveLength(downloads.sectorCount);
+  });
+
+  test('loadSectors does not start queued downloads from a previous load once a new load starts', async () => {
+    // Arrange
+    const downloads = createControlledDownloads();
+    const firstLoading = asyncIteratorToArray(loader.loadSectors({ ...input, models: [downloads.cadNode] }));
+    await downloads.settle();
+
+    // Act
+    const secondLoading = asyncIteratorToArray(loader.loadSectors(input));
+    await downloads.completeAll();
+
+    // Assert
+    expect(await secondLoading).toHaveLength(model.scene.sectorCount);
+    expect(await firstLoading).toHaveLength(0);
+    expect(downloads.requestedSectorIds).toHaveLength(20);
+  });
+
+  test('loadSectors does not report progress from a previous load once a new load starts', async () => {
+    // Arrange
+    const downloads = createControlledDownloads();
+    const firstLoading = asyncIteratorToArray(loader.loadSectors({ ...input, models: [downloads.cadNode] }));
+    await downloads.settle();
+
+    // Act
+    const secondLoading = asyncIteratorToArray(loader.loadSectors(input));
+    progressCallback.mockClear();
+    await downloads.completeAll();
+    await Promise.all([firstLoading, secondLoading]);
+
+    // Assert: sectors are reported as loaded by the consumer of the loader, so the loader itself reports none
+    const loadedCounts = progressCallback.mock.calls.map(([loaded]) => loaded);
+    expect(loadedCounts.every(loaded => loaded === 0)).toBe(true);
+  });
+
+  test('loadSectors lets progress complete when a load is superseded by a new load', async () => {
+    // Arrange
+    const downloads = createControlledDownloads();
+    // Like CadManager, report each yielded sector as loaded once it has been consumed
+    const consume = async (loading: AsyncIterable<ConsumedSector>) => {
+      for await (const _ of loading) {
+        loader.reportNewSectorsLoaded(1);
+      }
+    };
+    const firstLoading = consume(loader.loadSectors({ ...input, models: [downloads.cadNode] }));
+    await downloads.settle();
+
+    // Act
+    const secondLoading = consume(loader.loadSectors(input));
+    await downloads.completeAll();
+    await Promise.all([firstLoading, secondLoading]);
+
+    // Assert
+    const lastProgress = progressCallback.mock.lastCall;
+    if (lastProgress === undefined) {
+      throw new Error('Expected progress to be reported');
+    }
+    const [loaded, scheduled] = lastProgress;
+    expect(loaded).toBe(scheduled);
+  });
+
   test('loadSectors marks sectors with errors as discarded', async () => {
     // Arrange
     let first = true;
@@ -159,7 +242,80 @@ describe('SectorLoader', () => {
     const discarded = result.filter(x => x.levelOfDetail === LevelOfDetail.Discarded);
     expect(discarded.length).toBe(1);
   });
+
+  function createControlledDownloads(): ControlledDownloads {
+    vi.useFakeTimers();
+    const downloads = new ControlledDownloads();
+    stateHandler.addModel(downloads.model.modelIdentifier.revealInternalId);
+    return downloads;
+  }
 });
+
+/**
+ * A model with more sectors than fit in one batch, whose downloads only complete when the test says so.
+ */
+class ControlledDownloads {
+  readonly model = createCadModelMetadata(9, generateV9SectorTree(3, 5)); // 31 sectors
+  readonly cadNode: CadNode;
+  private readonly _downloads = new Map<number, { sector: WantedSector; download: DeferredPromise<ConsumedSector> }>();
+  private readonly _completed = new Set<number>();
+
+  constructor() {
+    this.cadNode = new Mock<CadNode>()
+      .setup(p => p.cadModelMetadata)
+      .returns(this.model)
+      .setup(p => p.visible)
+      .returns(true)
+      .setup(p => p.loadSector)
+      .returns(sector => {
+        const download = new DeferredPromise<ConsumedSector>();
+        this._downloads.set(sector.metadata.id, { sector, download });
+        return download;
+      })
+      .setup(p => p.clippingPlanes)
+      .returns([])
+      .object();
+  }
+
+  get sectorCount(): number {
+    return this.model.scene.sectorCount;
+  }
+
+  get wantedSectors(): WantedSector[] {
+    return this.model.scene.getAllSectors().map(sector => createWantedSector(this.model, sector));
+  }
+
+  /** Ids of the sectors the loader has started downloading so far. */
+  get requestedSectorIds(): number[] {
+    return [...this._downloads.keys()];
+  }
+
+  /** Lets everything that can progress without a download completing do so. Requires fake timers. */
+  async settle(): Promise<void> {
+    await vi.advanceTimersByTimeAsync(0);
+  }
+
+  completeAllExcept(sectorId: number): void {
+    this.completePending(id => id !== sectorId);
+  }
+
+  /** Completes every download, including those the loader only starts once earlier ones complete. */
+  async completeAll(): Promise<void> {
+    do {
+      this.completePending(() => true);
+      await this.settle();
+    } while (this._completed.size < this._downloads.size);
+  }
+
+  private completePending(shouldComplete: (sectorId: number) => boolean): void {
+    for (const [id, { sector, download }] of this._downloads) {
+      if (!this._completed.has(id) && shouldComplete(id)) {
+        this._completed.add(id);
+        download.resolve(createConsumedSector(sector));
+      }
+    }
+  }
+}
 
 class StubRepository implements SectorRepository {
   loadSectorCallback: (sector: WantedSector) => ConsumedSector;

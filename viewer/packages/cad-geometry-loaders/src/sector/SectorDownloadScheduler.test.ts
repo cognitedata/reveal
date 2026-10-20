@@ -293,6 +293,33 @@ describe(SectorDownloadScheduler.name, () => {
       expect(sector.levelOfDetail).toBe(LevelOfDetail.Discarded);
     });
   });
+
+  test('Failing download of a queued sector resolves as discarded and frees its download slot', async () => {
+    // Setup
+    const wantedSectors = createMockWantedSectors(21, 'TestModelIdentifier');
+    const stalledDownload = new DeferredPromise<void>();
+    const downloadSectorMock = async (sector: WantedSector) => {
+      await stalledDownload;
+      if (sector.metadata.id === 20) {
+        throw new Error('Download failed');
+      }
+      return createConsumedSectorMock(sector).object();
+    };
+
+    // Act
+    const queuedSectorBatch = sectorDownloadScheduler.queueSectorBatchForDownload(
+      wantedSectors.map(sector => {
+        return { sector, downloadSector: downloadSectorMock };
+      })
+    );
+    expect(sectorDownloadScheduler.numberOfQueuedDownloads).toBe(1);
+    stalledDownload.resolve();
+    const resolvedSectors = await Promise.all(queuedSectorBatch);
+
+    // Assert
+    expect(resolvedSectors[20].levelOfDetail).toBe(LevelOfDetail.Discarded);
+    expect(sectorDownloadScheduler.numberOfPendingDownloads).toBe(0);
+  });
 });
 
 function createMockWantedSectors(
