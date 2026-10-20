@@ -1,15 +1,11 @@
-// Hex tiling of one repeating texture (Mikkelsen, JCGT 11(3), 2022).
-// Each cell samples the texture at its own offset and rotation, and the three
-// cells around a pixel blend so the repeat is not visible. Needs GLSL ES 3.00.
+// Hex tiling: each cell offsets and rotates the texture,
+// and the three cells around a pixel blend so the repeat disappears.
 
-// x: rotation as a fraction of 180 degrees. y: how much brightness steers the
-// blend. z: blend exponent. High z is a thin seam; low z is a wide crossfade.
+// x: rotation, fraction of 180 degrees. y: brightness steers the blend. z: exponent.
 uniform vec3 hexTilingParams;
-// When one pixel covers more of the texture than this, the mipmaps already
-// blur the repeat away, and the three-cell blend is no longer worth its cost.
+// Above this pixel footprint, one sample is enough.
 const float HEX_SINGLE_SAMPLE_FOOTPRINT = 0.25;
-// A much larger copy of the texture, read from its green channel, slowly
-// darkens and lightens the plane so a wide surface is not one flat tone.
+// Larger green-channel sample that slowly varies brightness.
 const float HEX_MACRO_SCALE = 1.0 / 32.0;
 const float HEX_MACRO_STRENGTH = 0.1;
 const float HEX_PI = 3.14159265359;
@@ -90,8 +86,7 @@ vec3 sampleHexCell(sampler2D textureMap, vec2 textureCoordinate, vec2 uvDx, vec2
     vec2 center = hexCellCenter(cell);
     vec2 shifted = rotation * (textureCoordinate - center) + center + hexHash(cell);
 
-    // Derivatives of the original uv pick the mip. The shifted coordinate stays
-    // outside [0, 1] so the sampler's own wrap keeps a mirrored image continuous.
+    // Mip level comes from the original uv. The sampler wraps the shifted coordinate.
     return textureGrad(textureMap, shifted, rotation * uvDx, rotation * uvDy).rgb;
 }
 
@@ -109,8 +104,7 @@ vec3 hexTileSample(sampler2D textureMap, vec2 textureCoordinate, vec2 uvDx, vec2
         dot(colorC, HEX_LUMINANCE)
     );
 
-    // Where cells meet, the brighter sample takes more of the blend, so the
-    // seam follows the texture instead of a straight cut across it.
+    // Brighter samples take more of the blend, so the seam follows the texture.
     vec3 blendWeight = mix(vec3(1.0), sampleLuminance, luminanceFalloff);
     vec3 closeness = vec3(neighborhood.weightA, neighborhood.weightB, neighborhood.weightC);
     blendWeight *= pow(closeness, vec3(blendExponent));

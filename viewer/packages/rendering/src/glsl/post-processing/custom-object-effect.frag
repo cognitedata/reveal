@@ -13,8 +13,7 @@ in vec3 vWorldNormal;
 
 out vec4 fragColor;
 
-// Each effect is included only while its define is set. CAD shadows also read the
-// shadow map of this frame, so the included code still checks cadShadowApply.
+// Included only while its define is set. Shadows still read cadShadowApply this frame.
 #if defined(CAD_SHADOW)
 uniform float cadShadowApply;
 #include cadShadow.glsl;

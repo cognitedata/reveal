@@ -20,23 +20,21 @@ import { CAD_LIGHT_WORLD, CAD_SHADOW_STRENGTH } from './cadLighting';
 import effectFragmentShader from '../glsl/post-processing/custom-object-effect.frag';
 import effectVertexShader from '../glsl/post-processing/custom-object-effect.vert';
 
-// Define in custom-object-effect.frag for each effect. The module is compiled in only while it is set.
+// Define name in custom-object-effect.frag for each effect.
 const CUSTOM_OBJECT_EFFECT = {
   cadShadow: 'CAD_SHADOW',
   textureVariation: 'HEX_TILING_TEXTURE_VARIATION'
 } as const;
 
 /**
- * Up-facing custom object, such as a ground plane. Each effect is a define in
- * `CUSTOM_OBJECT_EFFECT` and a GLSL module included only while that define is set.
+ * Up-facing custom object, such as a ground plane. Each effect is included only while its define is set.
  * @public
  */
 export class CustomObjectEffectMaterial extends RawShaderMaterial {
   private static frameShadowMap: CadShadowMap | undefined;
 
   /**
-   * Shadow data for the receiver materials drawn in this frame.
-   * Each material copies it in `onBeforeRender`, when the mesh is drawn.
+   * Shadow map for this frame, copied in `onBeforeRender`.
    * @internal
    */
   public static setFrameShadowMap(shadowMap: CadShadowMap | undefined): void {
@@ -44,8 +42,7 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
   }
 
   /**
-   * Replaces up-facing planes with this material while shadows are on.
-   * Textured planes with variation keep it while shadows are off.
+   * Installs this material on up-facing planes. Variation keeps it while shadows are off.
    * @internal
    */
   public static adoptReceivers(
@@ -88,8 +85,7 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
   }
 
   /**
-   * Swaps the receivers in and out with the shadows. A pinned receiver keeps drawing the
-   * texture variation while shadows are off, so only the shadow itself comes and goes.
+   * Swaps this material with the original as shadows turn on and off. Pinned planes stay.
    * @internal
    */
   public static setShadowMaterialsVisible(owner: object, visible: boolean): void {
@@ -233,10 +229,10 @@ const size = new Vector3();
 const axis = new Vector3();
 const replacements: Replacement[] = [];
 
-// Hex tiling parameters: rotation strength, luminance falloff, blend exponent (Mikkelsen 2022).
+// x: rotation, y: luminance falloff, z: blend exponent.
 const HEX_TILING_REPEATED = new Vector3(0.3, 0.6, 7.0);
 const HEX_TILING_STRETCHED = new Vector3(0.0, 0.0, 1.5);
-// Below this many tiles across the plane the texture counts as stretched rather than repeated.
+// Tile count below which the texture is treated as stretched.
 const HEX_TILING_FEW_TILES = 3;
 
 type Replacement = {
