@@ -75,12 +75,15 @@ export class TakenV9SectorMap extends TakenSectorMapBase {
     assert(entry !== undefined, `Could not find sector tree for ${model.modelIdentifier.sourceModelIdentifier()}`);
 
     const alreadyForced = entry.sectorIds.get(sectorId) === Infinity;
-    this.markSectorDetailed(model, sectorId, Infinity);
     if (alreadyForced) {
       return;
     }
-    // Cost is added to the total by markSectorDetailed unless the sector was already taken.
-    const sectorMetadata = model.scene.getSectorById(sectorId)!;
+
+    const sectorMetadata = model.scene.getSectorById(sectorId);
+    assert(sectorMetadata !== undefined, 'Could not find sector metadata for sector ID ' + sectorId);
+
+    this.markSectorDetailed(model, sectorId, Infinity);
+
     const sectorCost = this.determineSectorCost(sectorMetadata, LevelOfDetail.Detailed);
     addSectorCost(this._forcedCost, sectorCost);
   }
