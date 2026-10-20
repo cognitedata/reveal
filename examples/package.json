@@ -25,8 +25,8 @@
     "buffer": "^6.0.3",
     "dat.gui": "^0.7.7",
     "lodash": "^4.17.21",
-    "react": "19.3.0",
-    "react-dom": "19.3.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
     "stats.js": "0.17.0",
     "styled-components": "6.6.0"
   },
