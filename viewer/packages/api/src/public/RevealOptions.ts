@@ -18,6 +18,7 @@ export type RevealOptions = {
   renderOptions?: RenderOptions;
   continuousModelStreaming?: boolean;
   enableShadows?: boolean;
+  enableGroundPlaneTextureVariation?: boolean;
   outputRenderTarget?: { target: WebGLRenderTarget; autoSize?: boolean };
   rendererResolutionThreshold?: number;
   internal?: {

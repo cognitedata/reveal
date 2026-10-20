@@ -21,7 +21,7 @@ import type {
   PointCloudBlitUniformName,
   PostProcessingPipelineOptions
 } from '../render-pipeline-providers/types';
-import { CadShadowReceiverForCustomObjectMaterial } from '../rendering/CadShadowReceiverForCustomObjectMaterial';
+import { CustomObjectEffectMaterial } from '../rendering/CustomObjectEffectMaterial';
 import type { ICustomObject } from '@reveal/utilities';
 
 /**
@@ -40,6 +40,7 @@ export class PostProcessingPass implements RenderPass {
   private readonly _backBlitMaterial: RawShaderMaterial;
   private readonly setBlendFactorByBackVisibility: () => void;
   private _receiversForCustomObjectsEnabled = false;
+  private _textureVariationForCustomObjectsEnabled = false;
 
   public updateRenderObjectsVisibility(visibilityParameters: PostProcessingObjectsVisibilityParameters): void {
     this._postProcessingObjects[0].visible = visibilityParameters.cad.back;
@@ -148,22 +149,31 @@ export class PostProcessingPass implements RenderPass {
 
   public adoptCustomObject(customObject: ICustomObject): void {
     if (this._cadShadowPass === undefined) return;
-    CadShadowReceiverForCustomObjectMaterial.adoptReceivers(
+    CustomObjectEffectMaterial.adoptReceivers(
       this,
       [customObject],
-      this._receiversForCustomObjectsEnabled
+      this._receiversForCustomObjectsEnabled,
+      this._textureVariationForCustomObjectsEnabled
     );
+  }
+
+  public get textureVariationForCustomObjectsEnabled(): boolean {
+    return this._textureVariationForCustomObjectsEnabled;
+  }
+
+  public setTextureVariationForCustomObjectsEnabled(enabled: boolean): void {
+    this._textureVariationForCustomObjectsEnabled = enabled;
   }
 
   public releaseCustomObject(customObject: ICustomObject): void {
     if (this._cadShadowPass === undefined) return;
-    CadShadowReceiverForCustomObjectMaterial.releaseReceivers(this, [customObject]);
+    CustomObjectEffectMaterial.releaseReceivers(this, [customObject]);
   }
 
   public setReceiversForCustomObjectsEnabled(enabled: boolean): void {
     if (this._receiversForCustomObjectsEnabled === enabled) return;
     this._receiversForCustomObjectsEnabled = enabled;
-    CadShadowReceiverForCustomObjectMaterial.setShadowMaterialsVisible(this, enabled);
+    CustomObjectEffectMaterial.setShadowMaterialsVisible(this, enabled);
   }
 
   public render(renderer: WebGLRenderer, camera: Camera): void {
@@ -203,7 +213,7 @@ export class PostProcessingPass implements RenderPass {
     const uniforms = this._backBlitMaterial.uniforms;
     // The shadow composition is only compiled into the blit when a depth texture exists.
     if (this._cadShadowPass === undefined || uniforms.cadShadowEnabled === undefined) {
-      CadShadowReceiverForCustomObjectMaterial.setFrameShadowMap(undefined);
+      CustomObjectEffectMaterial.setFrameShadowMap(undefined);
       return;
     }
 
@@ -211,12 +221,12 @@ export class PostProcessingPass implements RenderPass {
     if (this._cadShadowMap?.enabled !== true) {
       uniforms.cadShadowEnabled.value = false;
       uniforms.tCadShadow.value = null;
-      CadShadowReceiverForCustomObjectMaterial.setFrameShadowMap(undefined);
+      CustomObjectEffectMaterial.setFrameShadowMap(undefined);
       return;
     }
 
     this._cadShadowPass.render(renderer, camera);
-    CadShadowReceiverForCustomObjectMaterial.setFrameShadowMap(this._cadShadowMap);
+    CustomObjectEffectMaterial.setFrameShadowMap(this._cadShadowMap);
     uniforms.cadShadowEnabled.value = true;
     uniforms.tCadShadow.value = this._cadShadowPass.texture;
 
@@ -225,8 +235,8 @@ export class PostProcessingPass implements RenderPass {
 
   public dispose(): void {
     this._cadShadowPass?.dispose();
-    CadShadowReceiverForCustomObjectMaterial.releaseOwner(this);
-    CadShadowReceiverForCustomObjectMaterial.setFrameShadowMap(undefined);
+    CustomObjectEffectMaterial.releaseOwner(this);
+    CustomObjectEffectMaterial.setFrameShadowMap(undefined);
     this._postProcessingObjects.forEach(postProcessingObject => {
       postProcessingObject.geometry.dispose();
       (postProcessingObject.material as Material).dispose();

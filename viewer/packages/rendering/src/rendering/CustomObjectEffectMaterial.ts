@@ -3,20 +3,35 @@
  */
 
 import type { Blending, Camera, ColorRepresentation, Side, Texture, WebGLRenderer, Scene } from 'three';
-import { BackSide, Color, GLSL3, Matrix3, Matrix4, RawShaderMaterial, Vector3 } from 'three';
+import {
+  BackSide,
+  Color,
+  GLSL3,
+  Matrix3,
+  Matrix4,
+  MirroredRepeatWrapping,
+  RawShaderMaterial,
+  RepeatWrapping,
+  Vector3
+} from 'three';
 import type { ICustomObject } from '@reveal/utilities';
 import type { CadShadowMap } from '../render-pipeline-providers/types';
 import { CAD_LIGHT_WORLD, CAD_SHADOW_STRENGTH } from './cadLighting';
-import receiverFragmentShader from '../glsl/post-processing/cad-shadow-receiver-for-custom-object.frag';
-import receiverVertexShader from '../glsl/post-processing/cad-shadow-receiver-for-custom-object.vert';
+import effectFragmentShader from '../glsl/post-processing/custom-object-effect.frag';
+import effectVertexShader from '../glsl/post-processing/custom-object-effect.vert';
+
+// Define in custom-object-effect.frag for each effect. The module is compiled in only while it is set.
+const CUSTOM_OBJECT_EFFECT = {
+  cadShadow: 'CAD_SHADOW',
+  textureVariation: 'HEX_TILING_TEXTURE_VARIATION'
+} as const;
 
 /**
- * Surface on a custom object that samples a color or texture and receives CAD shadows.
- * The viewer creates one for each up-facing plane that receives shadows.
- * A skybox stays on its own material when `receiveShadow` is false.
+ * Up-facing custom object, such as a ground plane. Each effect is a define in
+ * `CUSTOM_OBJECT_EFFECT` and a GLSL module included only while that define is set.
  * @public
  */
-export class CadShadowReceiverForCustomObjectMaterial extends RawShaderMaterial {
+export class CustomObjectEffectMaterial extends RawShaderMaterial {
   private static frameShadowMap: CadShadowMap | undefined;
 
   /**
@@ -25,21 +40,27 @@ export class CadShadowReceiverForCustomObjectMaterial extends RawShaderMaterial 
    * @internal
    */
   public static setFrameShadowMap(shadowMap: CadShadowMap | undefined): void {
-    CadShadowReceiverForCustomObjectMaterial.frameShadowMap = shadowMap;
+    CustomObjectEffectMaterial.frameShadowMap = shadowMap;
   }
 
   /**
-   * Replaces up-facing plane surfaces with this material while shadows are on.
-   * The original material stays on the mesh while shadows are off.
+   * Replaces up-facing planes with this material while shadows are on.
+   * Textured planes with variation keep it while shadows are off.
    * @internal
    */
-  public static adoptReceivers(owner: object, customObjects: ICustomObject[], install = true): void {
+  public static adoptReceivers(
+    owner: object,
+    customObjects: ICustomObject[],
+    install = true,
+    textureVariation = false
+  ): void {
     for (const customObject of customObjects) {
-      if (customObject.receiveShadow === false) continue;
+      const receivesShadow = customObject.receiveShadow !== false;
+      if (!receivesShadow && !textureVariation) continue;
       customObject.object.updateMatrixWorld(true);
       customObject.object.traverse(node => {
         if (!isSurfaceMesh(node) || !isUpFacingPlane(node)) return;
-        rememberSurfaces(owner, node, install);
+        rememberSurfaces(owner, node, { install, receivesShadow, textureVariation });
       });
     }
   }
@@ -66,20 +87,25 @@ export class CadShadowReceiverForCustomObjectMaterial extends RawShaderMaterial 
     forgetSurfaces(owner, undefined);
   }
 
-  /** @internal */
+  /**
+   * Swaps the receivers in and out with the shadows. A pinned receiver keeps drawing the
+   * texture variation while shadows are off, so only the shadow itself comes and goes.
+   * @internal
+   */
   public static setShadowMaterialsVisible(owner: object, visible: boolean): void {
     for (const replacement of replacements) {
       if (replacement.owner !== owner) continue;
       const current = materialAt(replacement.mesh, replacement.slot);
       if (current !== replacement.receiver && current !== replacement.original) continue;
-      assignMaterial(replacement.mesh, replacement.slot, visible ? replacement.receiver : replacement.original);
+      const showReceiver = visible || replacement.pinned;
+      assignMaterial(replacement.mesh, replacement.slot, showReceiver ? replacement.receiver : replacement.original);
     }
   }
 
   constructor(color: ColorRepresentation = '#ffffff', map: Texture | null = null) {
     super({
-      vertexShader: receiverVertexShader,
-      fragmentShader: receiverFragmentShader,
+      vertexShader: effectVertexShader,
+      fragmentShader: effectFragmentShader,
       uniforms: {
         tReceiver: { value: map },
         tReceiverTransform: { value: new Matrix3() },
@@ -94,12 +120,16 @@ export class CadShadowReceiverForCustomObjectMaterial extends RawShaderMaterial 
         cadShadowStableTexelWorld: { value: 1 },
         cadShadowDepthRange: { value: 1 },
         cadShadowStrength: { value: CAD_SHADOW_STRENGTH },
-        cadShadowTerminatorFade: { value: 0 }
+        cadShadowTerminatorFade: { value: 0 },
+        hexTilingParams: { value: HEX_TILING_REPEATED.clone() }
+      },
+      defines: {
+        [CUSTOM_OBJECT_EFFECT.cadShadow]: ''
       },
       glslVersion: GLSL3
     });
     this.setMap(map);
-    this.type = 'CadShadowReceiverForCustomObjectMaterial';
+    this.type = 'CustomObjectEffectMaterial';
   }
 
   public override onBeforeRender(
@@ -110,8 +140,8 @@ export class CadShadowReceiverForCustomObjectMaterial extends RawShaderMaterial 
     _object: unknown,
     _group: unknown
   ): void {
-    const shadowMap = CadShadowReceiverForCustomObjectMaterial.frameShadowMap;
-    if (shadowMap === undefined) {
+    const shadowMap = CustomObjectEffectMaterial.frameShadowMap;
+    if (shadowMap === undefined || !this.cadShadow) {
       this.disableShadows();
       return;
     }
@@ -127,6 +157,41 @@ export class CadShadowReceiverForCustomObjectMaterial extends RawShaderMaterial 
     }
     this.needsUpdate = true;
     this.refreshMapTransform();
+  }
+
+  public setTextureVariation(enabled: boolean): void {
+    if (enabled) this.fitTextureVariationToMap();
+    this.setEffectEnabled(CUSTOM_OBJECT_EFFECT.textureVariation, enabled);
+  }
+
+  private fitTextureVariationToMap(): void {
+    const map = this.uniforms.tReceiver.value as Texture | null;
+    const params = this.uniforms.hexTilingParams.value as Vector3;
+    if (map === null) return;
+    const tilesAcross = Math.max(Math.abs(map.repeat.x), Math.abs(map.repeat.y));
+    params.copy(tilesAcross < HEX_TILING_FEW_TILES ? HEX_TILING_STRETCHED : HEX_TILING_REPEATED);
+  }
+
+  public get textureVariation(): boolean {
+    return this.defines[CUSTOM_OBJECT_EFFECT.textureVariation] !== undefined;
+  }
+
+  private setEffectEnabled(define: string, enabled: boolean): void {
+    const isEnabled = this.defines[define] !== undefined;
+    if (isEnabled === enabled) return;
+    if (enabled) this.defines[define] = '';
+    else delete this.defines[define];
+    this.needsUpdate = true;
+  }
+
+  /** @internal */
+  public setReceivesShadow(receivesShadow: boolean): void {
+    this.setEffectEnabled(CUSTOM_OBJECT_EFFECT.cadShadow, receivesShadow);
+    if (!receivesShadow) this.disableShadows();
+  }
+
+  private get cadShadow(): boolean {
+    return this.defines[CUSTOM_OBJECT_EFFECT.cadShadow] !== undefined;
   }
 
   public setColor(color: ColorRepresentation): void {
@@ -168,12 +233,20 @@ const size = new Vector3();
 const axis = new Vector3();
 const replacements: Replacement[] = [];
 
+// Hex tiling parameters: rotation strength, luminance falloff, blend exponent (Mikkelsen 2022).
+const HEX_TILING_REPEATED = new Vector3(0.3, 0.6, 7.0);
+const HEX_TILING_STRETCHED = new Vector3(0.0, 0.0, 1.5);
+// Below this many tiles across the plane the texture counts as stretched rather than repeated.
+const HEX_TILING_FEW_TILES = 3;
+
 type Replacement = {
   owner: object;
   mesh: SurfaceMesh;
   slot: number | undefined;
   original: object;
-  receiver: CadShadowReceiverForCustomObjectMaterial;
+  receiver: CustomObjectEffectMaterial;
+  /** Stays installed while shadows are off. */
+  pinned: boolean;
 };
 
 type SurfaceMesh = {
@@ -208,25 +281,74 @@ function isUpFacingPlane(mesh: SurfaceMesh): boolean {
   return axis.y > 0.75;
 }
 
-function rememberSurfaces(owner: object, mesh: SurfaceMesh, install: boolean): void {
+type AdoptOptions = {
+  install: boolean;
+  receivesShadow: boolean;
+  textureVariation: boolean;
+};
+
+function rememberSurfaces(owner: object, mesh: SurfaceMesh, options: AdoptOptions): void {
   const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-  const next = materials.map((material, index) => rememberSurface(owner, mesh, material, index, install));
-  if (!install) return;
+  const next = materials.map((material, index) => rememberSurface(owner, mesh, material, index, options));
+  if (next.every((material, index) => material === materials[index])) return;
   mesh.material = Array.isArray(mesh.material) ? next : next[0];
 }
 
-function rememberSurface(owner: object, mesh: SurfaceMesh, material: object, index: number, install: boolean): object {
-  if (material instanceof CadShadowReceiverForCustomObjectMaterial || sideOf(material) === BackSide) return material;
-  const receiver = new CadShadowReceiverForCustomObjectMaterial(colorOf(material), mapOf(material));
+function rememberSurface(
+  owner: object,
+  mesh: SurfaceMesh,
+  material: object,
+  index: number,
+  options: AdoptOptions
+): object {
+  if (sideOf(material) === BackSide) return material;
+  const slot = Array.isArray(mesh.material) ? index : undefined;
+  const existing = findReplacement(owner, mesh, slot);
+  if (existing !== undefined) return applyTextureVariation(existing, options);
+  if (material instanceof CustomObjectEffectMaterial) return material;
+  const map = mapOf(material);
+  const pinned = options.textureVariation && map !== null;
+  if (!options.receivesShadow && !pinned) return material;
+  if (pinned && map !== null) ensureRepeatWrapping(map);
+
+  const receiver = new CustomObjectEffectMaterial(colorOf(material), map);
   copyDrawState(material, receiver);
+  receiver.setTextureVariation(pinned);
+  receiver.setReceivesShadow(options.receivesShadow);
   replacements.push({
     owner,
     mesh,
-    slot: Array.isArray(mesh.material) ? index : undefined,
+    slot,
     original: material,
-    receiver
+    receiver,
+    pinned
   });
-  return install ? receiver : material;
+  return options.install || pinned ? receiver : material;
+}
+
+function findReplacement(owner: object, mesh: SurfaceMesh, slot: number | undefined): Replacement | undefined {
+  return replacements.find(
+    replacement => replacement.owner === owner && replacement.mesh === mesh && replacement.slot === slot
+  );
+}
+
+function applyTextureVariation(replacement: Replacement, options: AdoptOptions): object {
+  const map = mapOf(replacement.original);
+  const pinned = options.textureVariation && map !== null;
+  if (pinned && map !== null) ensureRepeatWrapping(map);
+  replacement.receiver.setTextureVariation(pinned);
+  replacement.receiver.setReceivesShadow(options.receivesShadow);
+  replacement.pinned = pinned;
+  return options.install || pinned ? replacement.receiver : replacement.original;
+}
+
+function ensureRepeatWrapping(map: Texture): void {
+  const tilesAcross = Math.max(Math.abs(map.repeat.x), Math.abs(map.repeat.y));
+  const wrapping = tilesAcross < HEX_TILING_FEW_TILES ? MirroredRepeatWrapping : RepeatWrapping;
+  if (map.wrapS === wrapping && map.wrapT === wrapping) return;
+  map.wrapS = wrapping;
+  map.wrapT = wrapping;
+  map.needsUpdate = true;
 }
 
 function forgetSurfaces(owner: object, meshes: Set<object> | undefined): void {
@@ -275,7 +397,7 @@ function mapOf(material: object): Texture | null {
   return null;
 }
 
-function copyDrawState(source: object, receiver: CadShadowReceiverForCustomObjectMaterial): void {
+function copyDrawState(source: object, receiver: CustomObjectEffectMaterial): void {
   const state = source as {
     transparent?: boolean;
     opacity?: number;

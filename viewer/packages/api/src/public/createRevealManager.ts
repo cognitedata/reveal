@@ -152,7 +152,8 @@ export function createRevealManager(
     sceneHandler,
     renderOptions,
     revealOptions.outputRenderTarget,
-    revealOptions.enableShadows
+    revealOptions.enableShadows,
+    revealOptions.enableGroundPlaneTextureVariation
   );
   const resizeHandler = new ResizeHandler(renderer, cameraManager, {
     renderResolutionThreshold: revealOptions.rendererResolutionThreshold

@@ -189,6 +189,13 @@ export interface Cognite3DViewerOptions {
    */
   enableShadows?: boolean;
 
+  /**
+   * Hides texture repetition on wide ground planes. Defaults to false. Toggle at runtime
+   * through {@link Cognite3DViewer.groundPlaneTextureVariationEnabled}.
+   * @beta
+   */
+  enableGroundPlaneTextureVariation?: boolean;
+
   /** Callback to download stream progress. */
   onLoading?: OnLoadingCallback;
 

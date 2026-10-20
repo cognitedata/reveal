@@ -255,6 +255,23 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   }
 
   /**
+   * Gets whether ground plane texture variation is currently enabled.
+   * @beta
+   */
+  public get groundPlaneTextureVariationEnabled(): boolean {
+    return this.revealManager.groundPlaneTextureVariationEnabled;
+  }
+
+  /**
+   * Enables or disables hex tiling on ground planes already in the scene.
+   * @beta
+   */
+  public set groundPlaneTextureVariationEnabled(enabled: boolean) {
+    this.revealManager.groundPlaneTextureVariationEnabled = enabled;
+    this.requestRedraw();
+  }
+
+  /**
    * Returns the point cloud budget. The budget is shared between all loaded
    * point cloud models.
    */
@@ -2222,6 +2239,7 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions, devic
   const revealOptions: RevealOptions = {
     continuousModelStreaming: viewerOptions.continuousModelStreaming,
     enableShadows: viewerOptions.enableShadows ?? false,
+    enableGroundPlaneTextureVariation: viewerOptions.enableGroundPlaneTextureVariation ?? false,
     outputRenderTarget,
     rendererResolutionThreshold: resolutionCap,
     internal: {}

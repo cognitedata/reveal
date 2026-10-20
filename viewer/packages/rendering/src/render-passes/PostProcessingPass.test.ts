@@ -22,7 +22,7 @@ import type { ICustomObject } from '@reveal/utilities';
 import { PostProcessingPass } from './PostProcessingPass';
 import type { CadShadowMap, PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
 import { CadShadowPass } from './CadShadowPass';
-import { CadShadowReceiverForCustomObjectMaterial } from '../rendering/CadShadowReceiverForCustomObjectMaterial';
+import { CustomObjectEffectMaterial } from '../rendering/CustomObjectEffectMaterial';
 import { autoMockWebGLRenderer } from '../../../../test-utilities';
 
 const POINT_CLOUD_WIDTH = 640;
@@ -83,7 +83,7 @@ function createShadowMap(enabled: boolean): CadShadowMap {
 }
 
 function createReceiverMaterial() {
-  return new CadShadowReceiverForCustomObjectMaterial('#88aa44');
+  return new CustomObjectEffectMaterial('#88aa44');
 }
 
 describe(PostProcessingPass.name, () => {
@@ -216,7 +216,7 @@ describe(PostProcessingPass.name, () => {
 
     pass.adoptCustomObject(customObject);
 
-    expect(mesh.material).toBeInstanceOf(CadShadowReceiverForCustomObjectMaterial);
+    expect(mesh.material).toBeInstanceOf(CustomObjectEffectMaterial);
   });
 
   test('swaps the receiver material only when shadows are turned on or off', () => {
@@ -237,7 +237,7 @@ describe(PostProcessingPass.name, () => {
     pass.setReceiversForCustomObjectsEnabled(true);
     pass.adoptCustomObject(customObject);
     const receiver = mesh.material;
-    expect(receiver).toBeInstanceOf(CadShadowReceiverForCustomObjectMaterial);
+    expect(receiver).toBeInstanceOf(CustomObjectEffectMaterial);
 
     pass.render(renderer, camera);
     expect(mesh.material).toBe(receiver);

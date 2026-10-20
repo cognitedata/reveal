@@ -169,6 +169,14 @@ export class RevealManager {
     this._renderPipeline.shadowsEnabled = enabled;
   }
 
+  public get groundPlaneTextureVariationEnabled(): boolean {
+    return this._renderPipeline.groundPlaneTextureVariationEnabled ?? false;
+  }
+
+  public set groundPlaneTextureVariationEnabled(enabled: boolean) {
+    this._renderPipeline.groundPlaneTextureVariationEnabled = enabled;
+  }
+
   public get pointCloudBudget(): PointCloudBudget {
     return { numberOfPoints: this._pointCloudManager.pointBudget };
   }

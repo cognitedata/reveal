@@ -278,7 +278,7 @@ export type CadModelBudget = {
 };
 
 // @public
-export class CadShadowReceiverForCustomObjectMaterial extends RawShaderMaterial {
+export class CustomObjectEffectMaterial extends RawShaderMaterial {
     constructor(color?: ColorRepresentation, map?: Texture | null);
     // (undocumented)
     onBeforeRender(_renderer: WebGLRenderer, _scene: Scene, camera: Camera, _geometry: unknown, _object: unknown, _group: unknown): void;
@@ -286,6 +286,9 @@ export class CadShadowReceiverForCustomObjectMaterial extends RawShaderMaterial 
     setColor(color: ColorRepresentation): void;
     // (undocumented)
     setMap(map: Texture | null): void;
+    setTextureVariation(enabled: boolean): void;
+    // (undocumented)
+    get textureVariation(): boolean;
 }
 
 // @public
@@ -568,6 +571,9 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     setResolutionOptions(options: ResolutionOptions): void;
     setViewState(state: ViewerState): Promise<void>;
     // @beta
+    get groundPlaneTextureVariationEnabled(): boolean;
+    set groundPlaneTextureVariationEnabled(enabled: boolean);
+    // @beta
     get shadowsEnabled(): boolean;
     set shadowsEnabled(enabled: boolean);
     worldToScreen(point: Vector3, normalize?: boolean): Vector2 | null;
@@ -583,6 +589,8 @@ export interface Cognite3DViewerOptions {
     enableEdges?: boolean;
     enableFloorIcons?: boolean;
     enableHtmlClusters?: boolean;
+    // @beta
+    enableGroundPlaneTextureVariation?: boolean;
     // @beta
     enableShadows?: boolean;
     // @beta
