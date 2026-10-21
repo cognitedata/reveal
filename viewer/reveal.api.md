@@ -278,20 +278,6 @@ export type CadModelBudget = {
 };
 
 // @public
-export class CustomObjectEffectMaterial extends RawShaderMaterial {
-    constructor(color?: ColorRepresentation, map?: Texture | null);
-    // (undocumented)
-    onBeforeRender(_renderer: WebGLRenderer, _scene: Scene, camera: Camera, _geometry: unknown, _object: unknown, _group: unknown): void;
-    // (undocumented)
-    setColor(color: ColorRepresentation): void;
-    // (undocumented)
-    setMap(map: Texture | null): void;
-    setTextureVariation(enabled: boolean): void;
-    // (undocumented)
-    get textureVariation(): boolean;
-}
-
-// @public
 export const CAMERA_MANAGER_EVENT_TYPE_LIST: readonly ["cameraChange", "cameraStop"];
 
 // @public
@@ -521,6 +507,9 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     // @beta
     getVisualSceneBoundingBox(): Box3;
     // @beta
+    get groundPlaneTextureVariationEnabled(): boolean;
+    set groundPlaneTextureVariationEnabled(enabled: boolean);
+    // @beta
     image360Action(action: Image360Action): Promise<void>;
     loadCameraFromModel(model: CogniteModel<DataSourceT>): void;
     get models(): CogniteModel<DataSourceT>[];
@@ -571,9 +560,6 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     setResolutionOptions(options: ResolutionOptions): void;
     setViewState(state: ViewerState): Promise<void>;
     // @beta
-    get groundPlaneTextureVariationEnabled(): boolean;
-    set groundPlaneTextureVariationEnabled(enabled: boolean);
-    // @beta
     get shadowsEnabled(): boolean;
     set shadowsEnabled(enabled: boolean);
     worldToScreen(point: Vector3, normalize?: boolean): Vector2 | null;
@@ -588,9 +574,9 @@ export interface Cognite3DViewerOptions {
     domElement?: HTMLElement;
     enableEdges?: boolean;
     enableFloorIcons?: boolean;
-    enableHtmlClusters?: boolean;
     // @beta
     enableGroundPlaneTextureVariation?: boolean;
+    enableHtmlClusters?: boolean;
     // @beta
     enableShadows?: boolean;
     // @beta
@@ -882,6 +868,21 @@ export class CustomObject implements ICustomObject {
     set shouldPickBoundingBox(value: boolean);
     get useDepthTest(): boolean;
     set useDepthTest(value: boolean);
+}
+
+// @public
+export class CustomObjectEffectMaterial extends RawShaderMaterial {
+    constructor(color?: ColorRepresentation, map?: Texture | null);
+    // (undocumented)
+    onBeforeRender(_renderer: WebGLRenderer, _scene: Scene, camera: Camera, _geometry: unknown, _object: unknown, _group: unknown): void;
+    // (undocumented)
+    setColor(color: ColorRepresentation): void;
+    // (undocumented)
+    setMap(map: Texture | null): void;
+    // (undocumented)
+    setTextureVariation(enabled: boolean): void;
+    // (undocumented)
+    get textureVariation(): boolean;
 }
 
 // @beta
