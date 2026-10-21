@@ -1938,8 +1938,6 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     const frameNumber = this.renderer.info.render.frame;
     const start = Date.now();
 
-    const cadPickContentChanged = this.revealManager.needsCadPickContentRedraw || this._clippingNeedsUpdate;
-
     this._events.beforeSceneRendered.fire({ frameNumber, renderer: this.renderer, camera });
     this._sceneHandler.customObjects.forEach(customObject => {
       customObject.beforeRender(camera);
@@ -1947,8 +1945,6 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     this.revealManager.render(camera);
     if (this.revealManager.pickCacheInvalidator.consume()) {
       this._pointCloudPickingHandler.invalidatePickCache();
-    }
-    if (cadPickContentChanged) {
       this._pickingHandler.invalidatePickCache();
     }
     this.revealManager.resetRedraw();

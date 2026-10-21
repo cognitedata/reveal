@@ -13,6 +13,7 @@ import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
 
 import { Color } from 'three';
 
+import type { Mock } from 'vitest';
 import { vi } from 'vitest';
 import { NodeOutlineColor, type NodeAppearance } from './NodeAppearance';
 import { assert } from '@reveal/utilities/assert';
@@ -51,6 +52,50 @@ describe('NodeAppearanceTextureBuilder', () => {
     styleProvider.assignStyledNodeCollection(nodeCollection, { renderGhosted: true });
     vi.runAllTimers();
     expect(builder.needsUpdate).toBeTruthy();
+  });
+
+  describe('onPickVisibilityChanged', () => {
+    let onPickVisibilityChanged: Mock<() => void>;
+
+    const buildAfterStyling = (appearance: NodeAppearance): void => {
+      styleProvider.assignStyledNodeCollection(nodeCollection, appearance);
+      vi.runAllTimers();
+      builder.build();
+    };
+
+    beforeEach(() => {
+      builder.build();
+      onPickVisibilityChanged = vi.fn();
+      builder.onPickVisibilityChanged = onPickVisibilityChanged;
+    });
+
+    test.each([
+      ['hidden', { visible: false }],
+      ['ghosted', { renderGhosted: true }]
+    ])('is called when styling makes nodes %s', (_, appearance: NodeAppearance) => {
+      buildAfterStyling(appearance);
+      expect(onPickVisibilityChanged).toHaveBeenCalledTimes(1);
+    });
+
+    test.each([
+      ['color', { color: new Color(1, 0, 0) }],
+      ['outline', { outlineColor: NodeOutlineColor.Cyan }],
+      ['in front', { renderInFront: true }]
+    ])('is not called when styling only changes %s', (_, appearance: NodeAppearance) => {
+      buildAfterStyling(appearance);
+      expect(onPickVisibilityChanged).not.toHaveBeenCalled();
+    });
+
+    test('is called when a hidden style is removed', () => {
+      buildAfterStyling({ visible: false });
+      onPickVisibilityChanged.mockClear();
+
+      styleProvider.unassignStyledNodeCollection(nodeCollection);
+      vi.runAllTimers();
+      builder.build();
+
+      expect(onPickVisibilityChanged).toHaveBeenCalledTimes(1);
+    });
   });
 
   test('build() applies color override', () => {

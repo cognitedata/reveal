@@ -11,7 +11,7 @@ import type { Materials } from '@reveal/rendering';
 import { CadMaterialManager, createCadMaterial } from '@reveal/rendering';
 import type { SectorRepository } from '..';
 import { GltfSectorRepository } from '..';
-import { assertNever } from '../../utilities';
+import { assertNever, PickCacheInvalidator } from '../../utilities';
 import type { ConsumedSector } from '@reveal/cad-parsers';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import type { CadSceneRootMetadata, BoundingBox } from '@reveal/cad-parsers/src/metadata/parsers/types';
@@ -25,7 +25,7 @@ export default class SectorLoaderVisualTestFixture extends SimpleVisualTestFixtu
 
     const group = this.initializeGroup(scene);
 
-    const cadMaterialManager = new CadMaterialManager();
+    const cadMaterialManager = new CadMaterialManager(new PickCacheInvalidator());
     const sectorRepository = new GltfSectorRepository(modelDataProvider);
 
     const gltfOutput = (await modelMetadataProvider.getModelOutputs(modelIdentifier)).find(

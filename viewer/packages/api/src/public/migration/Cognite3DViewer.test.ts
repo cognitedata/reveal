@@ -12,6 +12,7 @@ import type { SectorCuller } from '@reveal/cad-geometry-loaders';
 import { Cognite3DViewer } from './Cognite3DViewer';
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import { PointCloudPickingHandler } from '@reveal/pointclouds';
+import { PickingHandler } from '@reveal/cad-model';
 
 import { It, Mock } from 'moq.ts';
 import type { BeforeSceneRenderedDelegate, DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
@@ -275,28 +276,33 @@ describe('Cognite3DViewer', () => {
       requestAnimationFrameCallback(1000);
     }
 
-    test('plain redraws do not invalidate the pick cache, a restored WebGL context does', () => {
+    test('plain redraws do not invalidate the pick caches, a restored WebGL context does', () => {
       const invalidateSpy = vi.spyOn(PointCloudPickingHandler.prototype, 'invalidatePickCache');
-      spies.push(invalidateSpy);
+      const cadInvalidateSpy = vi.spyOn(PickingHandler.prototype, 'invalidatePickCache');
+      spies.push(invalidateSpy, cadInvalidateSpy);
       const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
 
       // Settle anything requested while the viewer was created
       viewer.requestRedraw();
       renderFrame();
       invalidateSpy.mockClear();
+      cadInvalidateSpy.mockClear();
 
       viewer.requestRedraw();
       renderFrame();
       expect(invalidateSpy).not.toHaveBeenCalled();
+      expect(cadInvalidateSpy).not.toHaveBeenCalled();
 
       viewer.canvas.dispatchEvent(new Event('webglcontextrestored'));
       renderFrame();
       expect(invalidateSpy).toHaveBeenCalledTimes(1);
+      expect(cadInvalidateSpy).toHaveBeenCalledTimes(1);
 
       // The request is consumed, so the next frame does not invalidate again
       viewer.requestRedraw();
       renderFrame();
       expect(invalidateSpy).toHaveBeenCalledTimes(1);
+      expect(cadInvalidateSpy).toHaveBeenCalledTimes(1);
 
       viewer.dispose();
     });

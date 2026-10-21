@@ -18,14 +18,17 @@ import { It, Mock } from 'moq.ts';
 import type { GeometryFilter } from './types';
 
 import { vi } from 'vitest';
+import { PickCacheInvalidator } from '@reveal/utilities';
 
 describe(CadModelFactory.name, () => {
   let materialManager: CadMaterialManager;
   let factory: CadModelFactory;
+  let pickCacheInvalidator: PickCacheInvalidator;
   let mockIdentifier: ModelIdentifier;
 
   beforeEach(() => {
-    materialManager = new CadMaterialManager();
+    pickCacheInvalidator = new PickCacheInvalidator();
+    materialManager = new CadMaterialManager(pickCacheInvalidator);
     mockIdentifier = new LocalModelIdentifier('test-model');
 
     const testOutput: BlobOutputMetadata = { blobId: 1, format: 'gltf-directory', version: 9 };
@@ -63,7 +66,12 @@ describe(CadModelFactory.name, () => {
       .setup(p => p.getJsonFile(testBaseUrl, It.IsAny<string>()))
       .returns(Promise.resolve({ version: testOutput.version, sectors: [sector] }));
 
-    factory = new CadModelFactory(materialManager, modelMetadataProviderMock.object(), mock.object());
+    factory = new CadModelFactory(
+      materialManager,
+      modelMetadataProviderMock.object(),
+      mock.object(),
+      pickCacheInvalidator
+    );
   });
 
   test('createModel() initializes model materials', async () => {

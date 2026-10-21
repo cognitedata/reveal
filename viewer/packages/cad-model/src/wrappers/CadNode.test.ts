@@ -3,7 +3,7 @@
  */
 import { CadNode } from './CadNode';
 import type { Group } from 'three';
-import { Matrix4, BufferGeometry, BufferAttribute, Box3, Vector3, CanvasTexture, Mesh, Plane } from 'three';
+import { Matrix4, BufferGeometry, BufferAttribute, Box3, Vector3, CanvasTexture, Mesh, Plane, Color } from 'three';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import type { ConsumedSector, ParsedMeshGeometry, WantedSector } from '@reveal/cad-parsers';
 
@@ -11,6 +11,7 @@ import { vi } from 'vitest';
 import { createCadNode } from '../../../../test-utilities/src/createCadNode';
 import type { SectorRepository } from '@reveal/sector-loader';
 import { Mock } from 'moq.ts';
+import { PickCacheInvalidator } from '@reveal/utilities';
 import { createMockedConsumedSector, createWantedSectorMock } from '@reveal/sector-loader/tests/mockSectorUtils';
 
 describe(CadNode.name, () => {
@@ -27,6 +28,29 @@ describe(CadNode.name, () => {
     // After reset, needsRedraw should be false again
     cadNode.resetRedraw();
     expect(cadNode.needsRedraw).toBe(false);
+  });
+
+  describe('pick cache invalidation', () => {
+    test('model transformation invalidates the pick cache', () => {
+      const pickCacheInvalidator = new PickCacheInvalidator();
+      const cadNode = createCadNode(3, 3, { pickCacheInvalidator });
+
+      cadNode.setModelTransformation(new Matrix4().makeTranslation(1, 2, 3));
+
+      expect(pickCacheInvalidator.consume()).toBe(true);
+    });
+
+    test('default appearance invalidates the pick cache only when it ghosts or hides nodes', () => {
+      const pickCacheInvalidator = new PickCacheInvalidator();
+      const cadNode = createCadNode(3, 3, { pickCacheInvalidator });
+      pickCacheInvalidator.consume();
+
+      cadNode.defaultNodeAppearance = { color: new Color('red') };
+      expect(pickCacheInvalidator.consume()).toBe(false);
+
+      cadNode.defaultNodeAppearance = { renderGhosted: true };
+      expect(pickCacheInvalidator.consume()).toBe(true);
+    });
   });
 
   test('should return cadModelIdentifier as symbol', () => {

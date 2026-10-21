@@ -8,6 +8,8 @@ import { IndexSet, determinePowerOfTwoDimensions, NumericRange, createUint8View 
 import { DefaultNodeAppearance, type NodeAppearance } from './NodeAppearance';
 import type { NodeAppearanceProvider } from './NodeAppearanceProvider';
 
+type PickableSetsSnapshot = { visible: NumericRange[]; ghosted: NumericRange[] };
+
 export class NodeAppearanceTextureBuilder {
   private _defaultAppearance: NodeAppearance = {};
   private readonly _styleProvider: NodeAppearanceProvider;
@@ -82,6 +84,12 @@ export class NodeAppearanceTextureBuilder {
   }
 
   /**
+   * Called when a build changed which nodes are hidden or ghosted. Those are the only styles that affect
+   * picking, as hidden and ghosted nodes cannot be picked. Color, outline and in-front changes do not call it.
+   */
+  onPickVisibilityChanged: (() => void) | undefined;
+
+  /**
    * A texture holding at least one element per node with color override
    * and style information. RGB is used to store color, A is used to store
    * style toggles, with the following bit layout:
@@ -113,10 +121,23 @@ export class NodeAppearanceTextureBuilder {
       throw new Error('Node appearance override color texture data is not initialized');
     }
     const rgba = createUint8View(rawData);
+    // Snapshotting allocates one range object per range, so only do it when someone listens
+    const pickableBefore = this.onPickVisibilityChanged ? this.snapshotPickableSets() : undefined;
     this.populateTexture(rgba);
     this.populateNodeSets(rgba);
+    if (pickableBefore && !areSnapshotsEqual(pickableBefore, this.snapshotPickableSets())) {
+      this.onPickVisibilityChanged?.();
+    }
 
     this._needsUpdate = false;
+  }
+
+  /** The sets that decide whether a node can be picked: hidden nodes are not visible, ghosted nodes are not drawn. */
+  private snapshotPickableSets(): PickableSetsSnapshot {
+    return {
+      visible: this._visibleNodesTreeIndices.toRangeArray(),
+      ghosted: this._ghostedNodesTreeIndices.toRangeArray()
+    };
   }
 
   private populateTexture(rgbaBuffer: Uint8Array | Uint8ClampedArray) {
@@ -210,6 +231,14 @@ export class NodeAppearanceTextureBuilder {
   private handleStylesChanged() {
     this._needsUpdate = true;
   }
+}
+
+function areSnapshotsEqual(a: PickableSetsSnapshot, b: PickableSetsSnapshot): boolean {
+  return areRangesEqual(a.visible, b.visible) && areRangesEqual(a.ghosted, b.ghosted);
+}
+
+function areRangesEqual(a: NumericRange[], b: NumericRange[]): boolean {
+  return a.length === b.length && a.every((range, i) => range.from === b[i].from && range.count === b[i].count);
 }
 
 function allocateOverrideColorPerTreeIndexTexture(treeIndexCount: number): DataTexture {

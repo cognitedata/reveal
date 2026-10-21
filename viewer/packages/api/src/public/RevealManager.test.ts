@@ -141,25 +141,6 @@ describe('RevealManager', () => {
     expect(manager.needsRedraw).toBeFalsy();
   });
 
-  test('camera updates redraw the scene but do not count as a CAD pick content change', () => {
-    manager.resetRedraw();
-    onChangeListeners.forEach(callback => callback());
-
-    manager.update(new PerspectiveCamera(70, 1, 0.1, 100));
-
-    expect(manager.needsRedraw).toBe(true);
-    expect(manager.needsCadPickContentRedraw).toBe(false);
-  });
-
-  test('requested redraws count as CAD pick content changes', () => {
-    manager.resetRedraw();
-    manager.requestRedraw();
-    expect(manager.needsCadPickContentRedraw).toBe(true);
-
-    manager.resetRedraw();
-    expect(manager.needsCadPickContentRedraw).toBe(false);
-  });
-
   test('cameraInMotion reflects camera change/stop events', () => {
     expect(manager.cameraInMotion).toBe(false);
 

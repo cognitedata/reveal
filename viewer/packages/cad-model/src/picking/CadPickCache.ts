@@ -159,6 +159,10 @@ export class CadPickCache {
   ): Promise<boolean> {
     const { camera, renderer } = input;
     const invalidationCountAtStart = this._invalidationCount;
+    // The camera is not covered by the invalidation count, so it is snapshotted before the first
+    // render and compared again once both passes have been read back.
+    const cameraMatrixWorld = camera.matrixWorld.clone();
+    const cameraProjectionMatrix = camera.projectionMatrix.clone();
 
     // Each model writes its index to the alpha byte of the tree index pass.
     visibleCadNodes.forEach((cadNode, index) => {
@@ -187,10 +191,14 @@ export class CadPickCache {
     this._cache = {
       buffer,
       cadNodes: [...visibleCadNodes],
-      cameraMatrixWorld: camera.matrixWorld.clone(),
-      cameraProjectionMatrix: camera.projectionMatrix.clone(),
-      // The scene may have rendered a new frame while the readbacks were in flight, so the buffer then describes the previous frame and must not be served.
-      valid: this._invalidationCount === invalidationCountAtStart
+      cameraMatrixWorld,
+      cameraProjectionMatrix,
+      // The scene content may have changed or the camera may have moved while the readbacks were in flight, so the
+      // buffer then describes a previous frame (or mixes two cameras) and must not be served.
+      valid:
+        this._invalidationCount === invalidationCountAtStart &&
+        cameraMatrixWorld.equals(camera.matrixWorld) &&
+        cameraProjectionMatrix.equals(camera.projectionMatrix)
     };
     return this._cache.valid;
   }

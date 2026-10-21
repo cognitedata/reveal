@@ -9,7 +9,7 @@ import { CadMaterialManager, createCadMaterial } from './CadMaterialManager';
 import type { Materials } from './rendering/materials';
 import { RenderMode } from './rendering/RenderMode';
 
-import { IndexSet, NumericRange } from '@reveal/utilities';
+import { IndexSet, NumericRange, PickCacheInvalidator } from '@reveal/utilities';
 import { TreeIndexNodeCollection } from '@reveal/cad-styling';
 
 import { range, cloneDeep } from 'lodash-es';
@@ -25,7 +25,7 @@ describe('CadMaterialManager', () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
-    manager = new CadMaterialManager();
+    manager = new CadMaterialManager(new PickCacheInvalidator());
   });
 
   afterEach(() => {
@@ -246,6 +246,27 @@ describe('CadMaterialManager', () => {
     const { cadLightDirection, cadUpDirection } = manager.getModelMaterials(modelIdentifier1).box.uniforms;
     expect(cadLightDirection.value.length()).toBeCloseTo(1);
     expect(cadUpDirection.value.length()).toBeCloseTo(1);
+  });
+
+  describe('pick cache invalidation', () => {
+    test('clipping planes invalidate the pick cache', () => {
+      const pickCacheInvalidator = new PickCacheInvalidator();
+      const pickManager = new CadMaterialManager(pickCacheInvalidator);
+
+      pickManager.clippingPlanes = [new Plane()];
+
+      expect(pickCacheInvalidator.consume()).toBe(true);
+    });
+
+    test('lighting changes redraw but do not invalidate the pick cache', () => {
+      const pickCacheInvalidator = new PickCacheInvalidator();
+      const pickManager = new CadMaterialManager(pickCacheInvalidator);
+
+      pickManager.setCadLightingEnabled(true);
+
+      expect(pickManager.needsRedraw).toBe(true);
+      expect(pickCacheInvalidator.consume()).toBe(false);
+    });
   });
 });
 

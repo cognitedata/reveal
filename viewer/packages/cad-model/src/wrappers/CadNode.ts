@@ -11,6 +11,7 @@ import type { SectorRepository } from '@reveal/sector-loader';
 import type { ParsedGeometry } from '@reveal/sector-parser';
 import type { StyledTreeIndexSets, CadMaterial } from '@reveal/rendering';
 import { setModelRenderLayers, createCadMaterial, forEachMaterial } from '@reveal/rendering';
+import type { PickCacheInvalidator } from '@reveal/utilities';
 
 import type { Plane, Object3DEventMap } from 'three';
 import { Group, Object3D, Matrix4 } from 'three';
@@ -44,6 +45,7 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
   private _isDisposed: boolean = false;
 
   private _needsRedraw: boolean = false;
+  private readonly _pickCacheInvalidator: PickCacheInvalidator;
 
   // Manages mesh for sectors
   private readonly _meshManager: CadMeshManager;
@@ -55,13 +57,15 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
 
   public readonly type = 'CadNode';
 
-  constructor(model: CadModelMetadata, sectorRepository: SectorRepository) {
+  constructor(model: CadModelMetadata, sectorRepository: SectorRepository, pickCacheInvalidator: PickCacheInvalidator) {
     super();
     this.name = 'Sector model';
+    this._pickCacheInvalidator = pickCacheInvalidator;
     this._sectorRepository = sectorRepository;
     this._modelIdentifier = model.modelIdentifier;
     this.treeIndexToSectorsMap = new TreeIndexToSectorsMap(model.scene.maxTreeIndex);
     this._cadMaterial = createCadMaterial(model.scene.maxTreeIndex);
+    this._cadMaterial.nodeAppearanceTextureBuilder.onPickVisibilityChanged = () => pickCacheInvalidator.request();
 
     this._styledTreeIndexSets = {
       back: this._cadMaterial.nodeAppearanceTextureBuilder.regularNodeTreeIndices,
@@ -194,6 +198,7 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
     this._cadModelMetadata.modelMatrix.copy(customTransformFromSource);
 
     this._needsRedraw = true;
+    this._pickCacheInvalidator.request();
   }
 
   /**

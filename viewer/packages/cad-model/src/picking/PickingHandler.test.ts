@@ -386,6 +386,28 @@ describe(PickingHandler.name, () => {
       expect(fullFrameReadCount()).toBe(4);
     });
 
+    test('a cache built while the camera moved is not served', async () => {
+      const { renderer, fullFrameReadCount } = createRenderer({
+        fullFrame: (index, pixels) => {
+          writeHit(pixels, index, { treeIndex: 5, modelIndex: 0, depthByte: 128 }, PICKED_PIXEL_OFFSET);
+          if (index === 1) {
+            pickCamera.position.set(10, 0, 0);
+            pickCamera.updateMatrixWorld();
+          }
+        }
+      });
+      const handler = new PickingHandler(renderer, createMaterialManager(), new SceneHandler());
+      const node = createCadModel(1, 2).cadNode;
+
+      await handler.intersectCadNodes([node], createInput(renderer, pickCamera));
+      expect(fullFrameReadCount()).toBe(2);
+
+      await handler.intersectCadNodes([node], createInput(renderer, pickCamera));
+
+      // The first build mixed two cameras, so the second pick rebuilds instead of using it.
+      expect(fullFrameReadCount()).toBe(4);
+    });
+
     test('fails loudly for a CAD material without the modelIndex uniform', async () => {
       const { renderer, fullFrameReadCount } = createRenderer();
       const handler = new PickingHandler(renderer, createMaterialManager(), new SceneHandler());
