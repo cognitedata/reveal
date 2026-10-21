@@ -53,7 +53,6 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
   ): void {
     for (const customObject of customObjects) {
       const receivesShadow = customObject.receiveShadow !== false;
-      if (!receivesShadow && !textureVariation) continue;
       customObject.object.updateMatrixWorld(true);
       customObject.object.traverse(node => {
         if (!isSurfaceMesh(node) || !isUpFacingPlane(node)) return;
