@@ -183,6 +183,10 @@ export class CadPickCache {
 
     this._renderTarget.setSize(width, height);
     await this.renderAndReadFullFrame(this._treeIndexRenderPipeline, camera, renderer, buffer.treeIndexPixels);
+    // dispose() may have run during the first readback, and the render target must not be reused then.
+    if (this._isDisposed) {
+      return false;
+    }
     await this.renderAndReadFullFrame(this._depthRenderPipeline, camera, renderer, buffer.depthPixels);
     if (this._isDisposed) {
       return false;
