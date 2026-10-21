@@ -96,7 +96,7 @@ export class CadPickCache {
     visibleCadNodes: CadNode[],
     input: IntersectInput,
     shouldRunAsync: boolean
-  ): Promise<IntersectCadNodesResult[] | undefined> {
+  ): Promise<IntersectCadNodesResult | undefined> {
     if (
       input.forceWindowedPick === true ||
       visibleCadNodes.length === 0 ||
@@ -123,14 +123,14 @@ export class CadPickCache {
     assert(cache !== undefined, 'Pick cache must be populated after a successful build');
     const hit = cache.buffer.getHit(input.normalizedCoords);
     if (hit === undefined) {
-      return [];
+      return undefined;
     }
     const cadNode = cache.cadNodes[hit.modelIndex];
     if (cadNode === undefined) {
-      return [];
+      return undefined;
     }
     const { distance, point } = depthToIntersection(hit.depth, input.camera, input.normalizedCoords);
-    return [{ distance, point, treeIndex: hit.treeIndex, object: cadNode, cadNode }];
+    return { distance, point, treeIndex: hit.treeIndex, object: cadNode, cadNode };
   }
 
   private isUsable(visibleCadNodes: CadNode[], camera: PerspectiveCamera, width: number, height: number): boolean {
