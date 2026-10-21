@@ -155,28 +155,35 @@ describe(PostProcessingPass.name, () => {
     [false, 0]
   ])('updates a receiver material only when the shadow map is enabled (enabled=%s)', (enabled, applied) => {
     const renderSpy = vi.spyOn(CadShadowPass.prototype, 'render');
-    const rendererMock = autoMockWebGLRenderer(new Mock<WebGLRenderer>());
-    const material = createReceiverMaterial();
-    const pass = new PostProcessingPass(scene, createOptions({ map: createShadowMap(enabled) }));
+    try {
+      const rendererMock = autoMockWebGLRenderer(new Mock<WebGLRenderer>());
+      const material = createReceiverMaterial();
+      material.setReceivesShadow(true);
+      const pass = new PostProcessingPass(scene, createOptions({ map: createShadowMap(enabled) }));
 
-    const camera = new PerspectiveCamera();
-    pass.render(rendererMock.object(), camera);
-    material.onBeforeRender(rendererMock.object(), scene, camera, undefined, undefined, undefined);
+      const camera = new PerspectiveCamera();
+      pass.render(rendererMock.object(), camera);
+      material.onBeforeRender(rendererMock.object(), scene, camera, undefined, undefined, undefined);
 
-    expect(renderSpy).toHaveBeenCalledTimes(applied);
-    expect(material.uniforms.cadShadowApply.value).toBe(applied);
-    renderSpy.mockRestore();
+      expect(renderSpy).toHaveBeenCalledTimes(applied);
+      expect(material.uniforms.cadShadowApply.value).toBe(applied);
+    } finally {
+      renderSpy.mockRestore();
+    }
   });
 
   test('skips all shadow work when no shadow map is configured', () => {
     const renderSpy = vi.spyOn(CadShadowPass.prototype, 'render');
-    const rendererMock = autoMockWebGLRenderer(new Mock<WebGLRenderer>());
-    const pass = new PostProcessingPass(scene, createOptions());
+    try {
+      const rendererMock = autoMockWebGLRenderer(new Mock<WebGLRenderer>());
+      const pass = new PostProcessingPass(scene, createOptions());
 
-    pass.render(rendererMock.object(), new PerspectiveCamera());
+      pass.render(rendererMock.object(), new PerspectiveCamera());
 
-    expect(renderSpy).not.toHaveBeenCalled();
-    renderSpy.mockRestore();
+      expect(renderSpy).not.toHaveBeenCalled();
+    } finally {
+      renderSpy.mockRestore();
+    }
   });
 
   test('setSize and dispose forward to the cad shadow pass', () => {
