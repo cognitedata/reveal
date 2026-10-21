@@ -7,10 +7,13 @@ import { PointCloudObjectAppearanceTexture } from './PointCloudObjectAppearanceT
 import {
   AnnotationIdPointCloudObjectCollection,
   PointCloudDMVolumeCollection,
+  DefaultPointCloudAppearance,
   StyledPointCloudVolumeCollection
 } from '@reveal/pointcloud-styling';
 
 import { Color } from 'three';
+import type { Mock } from 'vitest';
+import { vi } from 'vitest';
 import type { DMInstanceKey, DMInstanceRef } from '@reveal/utilities';
 import { dmInstanceRefToKey, createUint8View } from '@reveal/utilities';
 import { assert } from '@reveal/utilities/assert';
@@ -237,5 +240,62 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
     const resultRgb1 = createUint8View(textureData).slice(4 * OBJECT_ID0, 4 * (OBJECT_ID0 + 1));
 
     expect([...resultRgb1.values()]).toEqual([0, 0, 0, 1]);
+  });
+
+  describe('onVisibilityChanged', () => {
+    const ANNOTATION_ID = 7;
+    const objectsMaps = {
+      annotationToObjectIds: new Map<number, number>([[ANNOTATION_ID, OBJECT_ID0]]),
+      objectToAnnotationIds: new Map<number, number>([[OBJECT_ID0, ANNOTATION_ID]])
+    };
+    let onVisibilityChanged: Mock<() => void>;
+
+    const createStyledSet = (appearance: { color: Color; visible: boolean }) =>
+      new StyledPointCloudVolumeCollection<ClassicDataSourceType>(
+        new AnnotationIdPointCloudObjectCollection([ANNOTATION_ID]),
+        appearance
+      );
+
+    beforeEach(() => {
+      onVisibilityChanged = vi.fn();
+      appearanceTexture.onVisibilityChanged = onVisibilityChanged;
+      appearanceTexture.setObjectsMaps(objectsMaps);
+    });
+
+    test('is not called when only the color changes', () => {
+      appearanceTexture.assignStyledObjectSet(createStyledSet({ color: new Color('red'), visible: true }));
+      appearanceTexture.onBeforeRender();
+
+      expect(onVisibilityChanged).not.toHaveBeenCalled();
+    });
+
+    test('is called when an object becomes hidden, and again when it becomes visible', () => {
+      const hidden = createStyledSet({ color: new Color('red'), visible: false });
+      appearanceTexture.assignStyledObjectSet(hidden);
+      appearanceTexture.onBeforeRender();
+      expect(onVisibilityChanged).toHaveBeenCalledTimes(1);
+
+      appearanceTexture.removeStyledObjectSet(hidden.volumeCollection);
+      appearanceTexture.onBeforeRender();
+      expect(onVisibilityChanged).toHaveBeenCalledTimes(2);
+    });
+
+    test('is not called when an already hidden object only changes color', () => {
+      appearanceTexture.assignStyledObjectSet(createStyledSet({ color: new Color('red'), visible: false }));
+      appearanceTexture.onBeforeRender();
+      onVisibilityChanged.mockClear();
+
+      appearanceTexture.assignStyledObjectSet(createStyledSet({ color: new Color('blue'), visible: false }));
+      appearanceTexture.onBeforeRender();
+
+      expect(onVisibilityChanged).not.toHaveBeenCalled();
+    });
+
+    test('is called when the default appearance hides everything', () => {
+      appearanceTexture.defaultAppearance = { ...DefaultPointCloudAppearance, visible: false };
+      appearanceTexture.onBeforeRender();
+
+      expect(onVisibilityChanged).toHaveBeenCalledTimes(1);
+    });
   });
 });

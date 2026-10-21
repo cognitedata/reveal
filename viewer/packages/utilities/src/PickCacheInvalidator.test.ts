@@ -2,15 +2,15 @@
  * Copyright 2026 Cognite AS
  */
 
-import { PickCacheInvalidation } from './PickCacheInvalidation';
+import { PickCacheInvalidator } from './PickCacheInvalidator';
 
-describe(PickCacheInvalidation.name, () => {
+describe(PickCacheInvalidator.name, () => {
   test('is not requested initially', () => {
-    expect(new PickCacheInvalidation().consume()).toBe(false);
+    expect(new PickCacheInvalidator().consume()).toBe(false);
   });
 
   test('consume returns true once after a request, then clears', () => {
-    const invalidation = new PickCacheInvalidation();
+    const invalidation = new PickCacheInvalidator();
 
     invalidation.request();
     invalidation.request();

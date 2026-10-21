@@ -18,7 +18,7 @@ import { PointCloudFactory } from './PointCloudFactory';
 import type { IPointClassificationsProvider } from './classificationsProviders/IPointClassificationsProvider';
 
 import type { PointCloudMaterialManager } from '@reveal/rendering';
-import { PickCacheInvalidation } from '@reveal/utilities';
+import type { PickCacheInvalidator } from '@reveal/utilities';
 
 export function createPointCloudManager(
   modelMetadataProvider: ModelMetadataProvider,
@@ -29,7 +29,7 @@ export function createPointCloudManager(
   cachedProvider: CachedModelDataProvider,
   scene: Scene,
   renderer: WebGLRenderer,
-  pickCacheInvalidation: PickCacheInvalidation = new PickCacheInvalidation()
+  pickCacheInvalidator: PickCacheInvalidator
 ): PointCloudManager {
   const metadataRepository = new PointCloudMetadataRepository(modelMetadataProvider, cachedProvider);
 
@@ -40,7 +40,7 @@ export function createPointCloudManager(
     pointCloudDMProvider,
     classificationsProvider,
     pointCloudMaterialManager,
-    pickCacheInvalidation
+    pickCacheInvalidator
   );
 
   return new PointCloudManager(
@@ -50,6 +50,6 @@ export function createPointCloudManager(
     potreeInstance,
     scene,
     renderer,
-    pickCacheInvalidation
+    pickCacheInvalidator
   );
 }

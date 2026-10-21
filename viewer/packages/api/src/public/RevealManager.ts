@@ -23,7 +23,8 @@ import type {
   ResizeHandler,
   SettableRenderTarget
 } from '@reveal/rendering';
-import { assertNever, EventTrigger, PickCacheInvalidation } from '@reveal/utilities';
+import type { PickCacheInvalidator } from '@reveal/utilities';
+import { assertNever, EventTrigger } from '@reveal/utilities';
 import type { CameraManager } from '@reveal/camera-manager';
 
 import type { DataSourceType, File3dFormat, InternalDataSourceType } from '@reveal/data-providers';
@@ -51,7 +52,7 @@ export class RevealManager {
   private readonly _resizeHandler: ResizeHandler;
 
   private _cameraInMotion: boolean = false;
-  private readonly _pickCacheInvalidation: PickCacheInvalidation;
+  private readonly _pickCacheInvalidator: PickCacheInvalidator;
 
   private _isDisposed = false;
   private readonly _subscriptions;
@@ -71,9 +72,9 @@ export class RevealManager {
     renderPipeline: RenderPipelineProvider & SettableRenderTarget,
     resizeHandler: ResizeHandler,
     cameraManager: CameraManager,
-    pickCacheInvalidation: PickCacheInvalidation = new PickCacheInvalidation()
+    pickCacheInvalidator: PickCacheInvalidator
   ) {
-    this._pickCacheInvalidation = pickCacheInvalidation;
+    this._pickCacheInvalidator = pickCacheInvalidator;
     this._pipelineExecutor = pipelineExecutor;
     this._renderPipeline = renderPipeline;
     this._cadManager = cadManager;
@@ -133,10 +134,10 @@ export class RevealManager {
   }
 
   /**
-   * Flag that is set whenever something that can change what a pick hits changes. See {@link PickCacheInvalidation}.
+   * Flag that is set whenever something that can change what a pick hits changes. See {@link PickCacheInvalidator}.
    */
-  get pickCacheInvalidation(): PickCacheInvalidation {
-    return this._pickCacheInvalidation;
+  get pickCacheInvalidator(): PickCacheInvalidator {
+    return this._pickCacheInvalidator;
   }
 
   get cameraInMotion(): boolean {
@@ -238,7 +239,7 @@ export class RevealManager {
 
   public render(camera: PerspectiveCamera): void {
     this._resizeHandler.handleResize(camera);
-    this._pointCloudManager.requestPickCacheInvalidationOnNewData();
+    this._pointCloudManager.requestPickCacheInvalidationOnUpdatedData();
     this._renderPipeline.setShadowFocus?.(this._cameraManager.getCameraState().target);
     this._pipelineExecutor.render(this._renderPipeline, camera);
     this.resetRedraw();

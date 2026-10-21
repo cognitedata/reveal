@@ -48,9 +48,8 @@ export class PointCloudPickingHandler {
   }
 
   /**
-   * Invalidates the picker's cached full-frame pick buffer. Must be called whenever scene content
-   * that affects picking changes (models, LOD, styling, clipping or resolution). Camera changes are
-   * detected by comparing camera matrices.
+   * Invalidates the picker's cached full-frame pick buffer. Call it when scene content that can
+   * change what a pick hits has changed.
    */
   invalidatePickCache(): void {
     this._picker.invalidateCache();

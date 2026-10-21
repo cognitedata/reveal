@@ -16,7 +16,7 @@ import { DEFAULT_CLASSIFICATION } from '../../packages/rendering';
 import { PointCloudObjectAppearanceTexture } from '../../packages/rendering/src/pointcloud-rendering/PointCloudObjectAppearanceTexture';
 import type { DataSourceType } from '../../packages/data-providers/src/DataSourceType';
 import type { PointCloudObject } from '../../packages/data-providers';
-import type { PickCacheInvalidation } from '../../packages/utilities';
+import { PickCacheInvalidator } from '../../packages/utilities';
 
 export function createPointCloudModel<T extends DataSourceType>(
   modelId: number,
@@ -29,7 +29,7 @@ export function createPointCloudModel<T extends DataSourceType>(
 
 export function createPointCloudNode<T extends DataSourceType>(params?: {
   annotations?: PointCloudObject<T>[];
-  pickCacheInvalidation?: PickCacheInvalidation;
+  pickCacheInvalidator?: PickCacheInvalidator;
 }): PointCloudNode<T> {
   const pointCloudOctree = new PointCloudOctree(
     new Mock<Potree>().object(),
@@ -55,7 +55,6 @@ export function createPointCloudNode<T extends DataSourceType>(params?: {
     pointCloudOctree,
     params?.annotations ?? [],
     { classificationSets: [] },
-    undefined,
-    params?.pickCacheInvalidation
+    params?.pickCacheInvalidator ?? new PickCacheInvalidator()
   );
 }

@@ -17,6 +17,7 @@ import { CdfModelIdentifier, File3dFormat } from '@reveal/data-providers';
 import { PointCloudMaterialManager } from '@reveal/rendering';
 import type { PointCloudMetadata } from './PointCloudMetadata';
 import { createPointCloudNode } from '../../../test-utilities';
+import { PickCacheInvalidator } from '@reveal/utilities';
 import type { IPointClassificationsProvider } from './classificationsProviders/IPointClassificationsProvider';
 
 const modelIdentifier = new CdfModelIdentifier(1, 2);
@@ -59,7 +60,8 @@ function createFactory() {
     emptyClassicProvider,
     emptyDMProvider,
     classificationsProviderPartial as IPointClassificationsProvider,
-    new PointCloudMaterialManager()
+    new PointCloudMaterialManager(),
+    new PickCacheInvalidator()
   );
   return { factory, loadPointCloud };
 }
