@@ -879,9 +879,13 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
     // (undocumented)
     onBeforeRender(_renderer: WebGLRenderer, _scene: Scene, camera: Camera, _geometry: unknown, _object: unknown, _group: unknown): void;
     // (undocumented)
+    get receivesShadow(): boolean;
+    // (undocumented)
     setColor(color: ColorRepresentation): void;
     // (undocumented)
     setMap(map: Texture | null): void;
+    // (undocumented)
+    setReceivesShadow(receivesShadow: boolean): void;
     // (undocumented)
     setTextureVariation(enabled: boolean): void;
     // (undocumented)

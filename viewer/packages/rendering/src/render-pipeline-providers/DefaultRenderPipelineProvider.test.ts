@@ -3,7 +3,7 @@
  */
 
 import type { WebGLRenderer } from 'three';
-import { Color, Mesh, MeshBasicMaterial, Object3D, PlaneGeometry, Texture, Vector2 } from 'three';
+import { Color, Mesh, Object3D, PlaneGeometry, Texture, Vector2 } from 'three';
 import type { IMock } from 'moq.ts';
 import { It, Mock } from 'moq.ts';
 import { DefaultRenderPipelineProvider } from './DefaultRenderPipelineProvider';
@@ -290,24 +290,23 @@ describe(DefaultRenderPipelineProvider.name, () => {
       sceneHandler,
       defaultRenderOptions
     );
-    const source = new MeshBasicMaterial({ map: new Texture() });
-    const mesh = new Mesh(new PlaneGeometry(12, 8), source);
+    const material = new CustomObjectEffectMaterial('#ffffff', new Texture());
+    const mesh = new Mesh(new PlaneGeometry(12, 8), material);
     mesh.rotation.x = -Math.PI / 2;
     sceneHandler.addObject3D(mesh);
 
     expect(provider.groundPlaneTextureVariationEnabled).toBe(false);
-    expect(mesh.material).toBe(source);
+    expect(material.textureVariation).toBe(false);
 
     provider.groundPlaneTextureVariationEnabled = true;
 
     expect(provider.groundPlaneTextureVariationEnabled).toBe(true);
-    expect(mesh.material).toBeInstanceOf(CustomObjectEffectMaterial);
-    expect((mesh.material as CustomObjectEffectMaterial).textureVariation).toBe(true);
+    expect(material.textureVariation).toBe(true);
 
     provider.groundPlaneTextureVariationEnabled = false;
 
     expect(provider.groundPlaneTextureVariationEnabled).toBe(false);
-    expect(mesh.material).toBe(source);
+    expect(material.textureVariation).toBe(false);
   });
 });
 

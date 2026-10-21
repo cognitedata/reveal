@@ -184,14 +184,15 @@ export interface Cognite3DViewerOptions {
    * them. Turning shadows on changes the CAD look even where no shadow is cast, including
    * ghosted nodes. Defaults to false. Can also be toggled at runtime through
    * {@link Cognite3DViewer.shadowsEnabled}.
-   * GPU resources for shadows are only allocated the first time they are enabled.
+   * Custom objects receive shadows when they use {@link CustomObjectEffectMaterial} and set
+   * {@link ICustomObject.receiveShadow}. GPU resources are only allocated when first enabled.
    * @beta
    */
   enableShadows?: boolean;
 
   /**
-   * Hides texture repetition on wide ground planes. Defaults to false. Toggle at runtime
-   * through {@link Cognite3DViewer.groundPlaneTextureVariationEnabled}.
+   * Hides texture repetition on ground planes that use {@link CustomObjectEffectMaterial}.
+   * Defaults to false. Toggle at runtime through {@link Cognite3DViewer.groundPlaneTextureVariationEnabled}.
    * @beta
    */
   enableGroundPlaneTextureVariation?: boolean;

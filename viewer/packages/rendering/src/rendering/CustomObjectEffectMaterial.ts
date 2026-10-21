@@ -2,7 +2,7 @@
  * Copyright 2026 Cognite AS
  */
 
-import type { Blending, Camera, ColorRepresentation, Side, Texture, WebGLRenderer, Scene } from 'three';
+import type { Camera, ColorRepresentation, Texture, WebGLRenderer, Scene } from 'three';
 import {
   BackSide,
   Color,
@@ -27,7 +27,8 @@ const CUSTOM_OBJECT_EFFECT = {
 } as const;
 
 /**
- * Up-facing custom object, such as a ground plane. Each effect is included only while its define is set.
+ * Opt-in material for up-facing custom objects, such as a ground plane. Reveal applies its
+ * effects only to planes that use it; each effect is included only while its define is set.
  * @public
  */
 export class CustomObjectEffectMaterial extends RawShaderMaterial {
@@ -42,7 +43,7 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
   }
 
   /**
-   * Installs this material on up-facing planes. Variation keeps it while shadows are off.
+   * Registers the up-facing planes that use this material and applies the current effects.
    * @internal
    */
   public static adoptReceivers(
@@ -52,7 +53,7 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
     textureVariation = false
   ): void {
     for (const customObject of customObjects) {
-      const receivesShadow = customObject.receiveShadow !== false;
+      const receivesShadow = customObject.receiveShadow === true;
       customObject.object.updateMatrixWorld(true);
       customObject.object.traverse(node => {
         if (!isSurfaceMesh(node) || !isUpFacingPlane(node)) return;
@@ -62,7 +63,7 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
   }
 
   /**
-   * Restores the original materials of the custom objects and forgets their receivers.
+   * Forgets the planes of the custom objects. Their materials are left as they are.
    * @internal
    */
   public static releaseReceivers(owner: object, customObjects: ICustomObject[]): void {
@@ -76,7 +77,7 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
   }
 
   /**
-   * Restores the original materials of every receiver the owner adopted.
+   * Forgets every plane the owner adopted.
    * @internal
    */
   public static releaseOwner(owner: object): void {
@@ -84,16 +85,13 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
   }
 
   /**
-   * Swaps this material with the original as shadows turn on and off. Pinned planes stay.
+   * Turns the CAD shadow on and off for the owner's planes that receive shadow.
    * @internal
    */
   public static setShadowMaterialsVisible(owner: object, visible: boolean): void {
-    for (const replacement of replacements) {
-      if (replacement.owner !== owner) continue;
-      const current = materialAt(replacement.mesh, replacement.slot);
-      if (current !== replacement.receiver && current !== replacement.original) continue;
-      const showReceiver = visible || replacement.pinned;
-      assignMaterial(replacement.mesh, replacement.slot, showReceiver ? replacement.receiver : replacement.original);
+    for (const surface of adoptedSurfaces) {
+      if (surface.owner !== owner) continue;
+      surface.material.setReceivesShadow(visible && surface.receivesShadow);
     }
   }
 
@@ -117,9 +115,6 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
         cadShadowStrength: { value: CAD_SHADOW_STRENGTH },
         cadShadowTerminatorFade: { value: 0 },
         hexTilingParams: { value: HEX_TILING_REPEATED.clone() }
-      },
-      defines: {
-        [CUSTOM_OBJECT_EFFECT.cadShadow]: ''
       },
       glslVersion: GLSL3
     });
@@ -155,14 +150,16 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
   }
 
   public setTextureVariation(enabled: boolean): void {
-    if (enabled) this.fitTextureVariationToMap();
-    this.setEffectEnabled(CUSTOM_OBJECT_EFFECT.textureVariation, enabled);
+    const map = this.uniforms.tReceiver.value as Texture | null;
+    if (enabled && map !== null) {
+      ensureRepeatWrapping(map);
+      this.fitTextureVariationToMap(map);
+    }
+    this.setEffectEnabled(CUSTOM_OBJECT_EFFECT.textureVariation, enabled && map !== null);
   }
 
-  private fitTextureVariationToMap(): void {
-    const map = this.uniforms.tReceiver.value as Texture | null;
+  private fitTextureVariationToMap(map: Texture): void {
     const params = this.uniforms.hexTilingParams.value as Vector3;
-    if (map === null) return;
     const tilesAcross = Math.max(Math.abs(map.repeat.x), Math.abs(map.repeat.y));
     params.copy(tilesAcross < HEX_TILING_FEW_TILES ? HEX_TILING_STRETCHED : HEX_TILING_REPEATED);
   }
@@ -179,10 +176,13 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
     this.needsUpdate = true;
   }
 
-  /** @internal */
   public setReceivesShadow(receivesShadow: boolean): void {
     this.setEffectEnabled(CUSTOM_OBJECT_EFFECT.cadShadow, receivesShadow);
     if (!receivesShadow) this.disableShadows();
+  }
+
+  public get receivesShadow(): boolean {
+    return this.cadShadow;
   }
 
   private get cadShadow(): boolean {
@@ -232,7 +232,7 @@ export const CadShadowReceiverForCustomObjectMaterial = CustomObjectEffectMateri
 
 const size = new Vector3();
 const axis = new Vector3();
-const replacements: Replacement[] = [];
+const adoptedSurfaces: AdoptedSurface[] = [];
 
 // x: rotation, y: luminance falloff, z: blend exponent.
 const HEX_TILING_REPEATED = new Vector3(0.3, 0.6, 7.0);
@@ -240,14 +240,12 @@ const HEX_TILING_STRETCHED = new Vector3(0.0, 0.0, 1.5);
 // Tile count below which the texture is treated as stretched.
 const HEX_TILING_FEW_TILES = 3;
 
-type Replacement = {
+type AdoptedSurface = {
   owner: object;
   mesh: SurfaceMesh;
   slot: number | undefined;
-  original: object;
-  receiver: CustomObjectEffectMaterial;
-  /** Stays installed while shadows are off. */
-  pinned: boolean;
+  material: CustomObjectEffectMaterial;
+  receivesShadow: boolean;
 };
 
 type SurfaceMesh = {
@@ -290,9 +288,7 @@ type AdoptOptions = {
 
 function rememberSurfaces(owner: object, mesh: SurfaceMesh, options: AdoptOptions): void {
   const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-  const next = materials.map((material, index) => rememberSurface(owner, mesh, material, index, options));
-  if (next.every((material, index) => material === materials[index])) return;
-  mesh.material = Array.isArray(mesh.material) ? next : next[0];
+  materials.forEach((material, index) => rememberSurface(owner, mesh, material, index, options));
 }
 
 function rememberSurface(
@@ -301,50 +297,22 @@ function rememberSurface(
   material: object,
   index: number,
   options: AdoptOptions
-): object {
-  if (sideOf(material) === BackSide) return material;
+): void {
+  if (!(material instanceof CustomObjectEffectMaterial) || material.side === BackSide) return;
   const slot = Array.isArray(mesh.material) ? index : undefined;
-  const existing = findReplacement(owner, mesh, slot);
-
-  if (existing !== undefined) return applyTextureVariation(existing, options);
-
-  if (material instanceof CustomObjectEffectMaterial) return material;
-
-  const map = mapOf(material);
-  const pinned = options.textureVariation && map !== null;
-  
-  if (!options.receivesShadow && !pinned) return material;
-  if (pinned && map !== null) ensureRepeatWrapping(map);
-
-  const receiver = new CustomObjectEffectMaterial(colorOf(material), map);
-  copyDrawState(material, receiver);
-  receiver.setTextureVariation(pinned);
-  receiver.setReceivesShadow(options.receivesShadow);
-  replacements.push({
-    owner,
-    mesh,
-    slot,
-    original: material,
-    receiver,
-    pinned
-  });
-  return options.install || pinned ? receiver : material;
+  let surface = findSurface(owner, mesh, slot);
+  if (surface === undefined) {
+    surface = { owner, mesh, slot, material, receivesShadow: false };
+    adoptedSurfaces.push(surface);
+  }
+  surface.material = material;
+  surface.receivesShadow = options.receivesShadow;
+  material.setReceivesShadow(options.install && options.receivesShadow);
+  material.setTextureVariation(options.textureVariation);
 }
 
-function findReplacement(owner: object, mesh: SurfaceMesh, slot: number | undefined): Replacement | undefined {
-  return replacements.find(
-    replacement => replacement.owner === owner && replacement.mesh === mesh && replacement.slot === slot
-  );
-}
-
-function applyTextureVariation(replacement: Replacement, options: AdoptOptions): object {
-  const map = mapOf(replacement.original);
-  const pinned = options.textureVariation && map !== null;
-  if (pinned && map !== null) ensureRepeatWrapping(map);
-  replacement.receiver.setTextureVariation(pinned);
-  replacement.receiver.setReceivesShadow(options.receivesShadow);
-  replacement.pinned = pinned;
-  return options.install || pinned ? replacement.receiver : replacement.original;
+function findSurface(owner: object, mesh: SurfaceMesh, slot: number | undefined): AdoptedSurface | undefined {
+  return adoptedSurfaces.find(surface => surface.owner === owner && surface.mesh === mesh && surface.slot === slot);
 }
 
 function ensureRepeatWrapping(map: Texture): void {
@@ -357,72 +325,10 @@ function ensureRepeatWrapping(map: Texture): void {
 }
 
 function forgetSurfaces(owner: object, meshes: Set<object> | undefined): void {
-  for (let index = replacements.length - 1; index >= 0; index--) {
-    const replacement = replacements[index];
-    if (replacement.owner !== owner) continue;
-    if (meshes !== undefined && !meshes.has(replacement.mesh)) continue;
-    if (materialAt(replacement.mesh, replacement.slot) === replacement.receiver) {
-      assignMaterial(replacement.mesh, replacement.slot, replacement.original);
-    }
-    replacement.receiver.dispose();
-    replacements.splice(index, 1);
+  for (let index = adoptedSurfaces.length - 1; index >= 0; index--) {
+    const surface = adoptedSurfaces[index];
+    if (surface.owner !== owner) continue;
+    if (meshes !== undefined && !meshes.has(surface.mesh)) continue;
+    adoptedSurfaces.splice(index, 1);
   }
-}
-
-function materialAt(mesh: SurfaceMesh, slot: number | undefined): object {
-  if (slot === undefined) return mesh.material as object;
-  return (mesh.material as object[])[slot];
-}
-
-function assignMaterial(mesh: SurfaceMesh, slot: number | undefined, material: object): void {
-  if (materialAt(mesh, slot) === material) return;
-  if (slot === undefined) {
-    mesh.material = material;
-    return;
-  }
-  const materials = mesh.material as object[];
-  materials[slot] = material;
-  mesh.material = materials;
-}
-
-function sideOf(material: object): number | undefined {
-  const side = (material as { side?: number }).side;
-  return typeof side === 'number' ? side : undefined;
-}
-
-function colorOf(material: object): ColorRepresentation {
-  const color = (material as { color?: { r?: number; g?: number; b?: number } }).color;
-  if (typeof color?.r !== 'number' || typeof color.g !== 'number' || typeof color.b !== 'number') return '#ffffff';
-  return new Color(color.r, color.g, color.b);
-}
-
-function mapOf(material: object): Texture | null {
-  const map = (material as { map?: Texture | null }).map;
-  if (map !== null && map !== undefined && map.isTexture === true) return map;
-  return null;
-}
-
-function copyDrawState(source: object, receiver: CustomObjectEffectMaterial): void {
-  const state = source as {
-    transparent?: boolean;
-    opacity?: number;
-    depthTest?: boolean;
-    depthWrite?: boolean;
-    side?: Side;
-    blending?: Blending;
-    visible?: boolean;
-    polygonOffset?: boolean;
-    polygonOffsetFactor?: number;
-    polygonOffsetUnits?: number;
-  };
-  if (typeof state.blending === 'number') receiver.blending = state.blending;
-  if (typeof state.visible === 'boolean') receiver.visible = state.visible;
-  if (typeof state.polygonOffset === 'boolean') receiver.polygonOffset = state.polygonOffset;
-  if (typeof state.polygonOffsetFactor === 'number') receiver.polygonOffsetFactor = state.polygonOffsetFactor;
-  if (typeof state.polygonOffsetUnits === 'number') receiver.polygonOffsetUnits = state.polygonOffsetUnits;
-  if (typeof state.transparent === 'boolean') receiver.transparent = state.transparent;
-  if (typeof state.opacity === 'number') receiver.opacity = state.opacity;
-  if (typeof state.depthTest === 'boolean') receiver.depthTest = state.depthTest;
-  if (typeof state.depthWrite === 'boolean') receiver.depthWrite = state.depthWrite;
-  if (typeof state.side === 'number') receiver.side = state.side;
 }

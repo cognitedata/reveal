@@ -263,7 +263,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   }
 
   /**
-   * Enables or disables hex tiling on ground planes already in the scene.
+   * Enables or disables hex tiling on ground planes that use {@link CustomObjectEffectMaterial}.
    * @beta
    */
   public set groundPlaneTextureVariationEnabled(enabled: boolean) {
@@ -1199,6 +1199,12 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * const customObject = CustomObject(sphere);
    * customObject.isPartOfBoundingBox = false;
    * viewer.addCustomObject(customObject);
+   *
+   * // Ground plane that receives CAD shadows and texture variation
+   * const plane = new Mesh(new PlaneGeometry(100, 100), new CustomObjectEffectMaterial('#ffffff', texture));
+   * const ground = CustomObject(plane);
+   * ground.receiveShadow = true;
+   * viewer.addCustomObject(ground);
    * ```
    * @beta
    */

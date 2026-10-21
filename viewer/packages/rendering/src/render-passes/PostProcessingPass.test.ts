@@ -200,8 +200,9 @@ describe(PostProcessingPass.name, () => {
     disposeSpy.mockRestore();
   });
 
-  test('adopts an up-facing plane when the custom object is added', () => {
-    const mesh = new Mesh(new PlaneGeometry(10, 8), new MeshBasicMaterial({ color: '#446688' }));
+  test('leaves a foreign material on an up-facing plane untouched', () => {
+    const source = new MeshBasicMaterial({ color: '#446688' });
+    const mesh = new Mesh(new PlaneGeometry(10, 8), source);
     mesh.rotation.x = -Math.PI / 2;
     const customObject = new Mock<ICustomObject>()
       .setup(p => p.object)
@@ -212,17 +213,15 @@ describe(PostProcessingPass.name, () => {
     const pass = new PostProcessingPass(scene, createOptions({ map: createShadowMap(true) }));
     pass.setReceiversForCustomObjectsEnabled(true);
 
-    expect(mesh.material).toBeInstanceOf(MeshBasicMaterial);
-
     pass.adoptCustomObject(customObject);
 
-    expect(mesh.material).toBeInstanceOf(CustomObjectEffectMaterial);
+    expect(mesh.material).toBe(source);
   });
 
-  test('swaps the receiver material only when shadows are turned on or off', () => {
+  test('turns the shadow effect on and off with the shadow flag', () => {
     const renderSpy = vi.spyOn(CadShadowPass.prototype, 'render').mockImplementation(() => undefined);
-    const source = new MeshBasicMaterial({ color: '#446688' });
-    const mesh = new Mesh(new PlaneGeometry(10, 8), source);
+    const material = new CustomObjectEffectMaterial('#446688');
+    const mesh = new Mesh(new PlaneGeometry(10, 8), material);
     mesh.rotation.x = -Math.PI / 2;
     const customObject = new Mock<ICustomObject>()
       .setup(p => p.object)
@@ -236,20 +235,19 @@ describe(PostProcessingPass.name, () => {
 
     pass.setReceiversForCustomObjectsEnabled(true);
     pass.adoptCustomObject(customObject);
-    const receiver = mesh.material;
-    expect(receiver).toBeInstanceOf(CustomObjectEffectMaterial);
+    expect(material.receivesShadow).toBe(true);
 
     pass.render(renderer, camera);
-    expect(mesh.material).toBe(receiver);
+    expect(mesh.material).toBe(material);
 
     pass.setReceiversForCustomObjectsEnabled(false);
-    expect(mesh.material).toBe(source);
+    expect(material.receivesShadow).toBe(false);
 
     pass.render(renderer, camera);
-    expect(mesh.material).toBe(source);
+    expect(mesh.material).toBe(material);
 
     pass.setReceiversForCustomObjectsEnabled(true);
-    expect(mesh.material).toBe(receiver);
+    expect(material.receivesShadow).toBe(true);
 
     renderSpy.mockRestore();
   });
