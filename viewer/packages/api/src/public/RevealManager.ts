@@ -23,6 +23,7 @@ import type {
   ResizeHandler,
   SettableRenderTarget
 } from '@reveal/rendering';
+import type { PickCacheInvalidator } from '@reveal/utilities';
 import { assertNever, EventTrigger } from '@reveal/utilities';
 import type { CameraManager } from '@reveal/camera-manager';
 
@@ -51,6 +52,7 @@ export class RevealManager {
   private readonly _resizeHandler: ResizeHandler;
 
   private _cameraInMotion: boolean = false;
+  private readonly _pickCacheInvalidator: PickCacheInvalidator;
 
   private _isDisposed = false;
   private readonly _subscriptions;
@@ -69,8 +71,10 @@ export class RevealManager {
     pipelineExecutor: RenderPipelineExecutor,
     renderPipeline: RenderPipelineProvider & SettableRenderTarget,
     resizeHandler: ResizeHandler,
-    cameraManager: CameraManager
+    cameraManager: CameraManager,
+    pickCacheInvalidator: PickCacheInvalidator
   ) {
+    this._pickCacheInvalidator = pickCacheInvalidator;
     this._pipelineExecutor = pipelineExecutor;
     this._renderPipeline = renderPipeline;
     this._cadManager = cadManager;
@@ -127,6 +131,13 @@ export class RevealManager {
       this._resizeHandler.needsRedraw ||
       (this._renderPipeline.needsRedraw ?? false)
     );
+  }
+
+  /**
+   * Flag that is set whenever something that can change what a pick hits changes. See {@link PickCacheInvalidator}.
+   */
+  get pickCacheInvalidator(): PickCacheInvalidator {
+    return this._pickCacheInvalidator;
   }
 
   get cameraInMotion(): boolean {
@@ -228,6 +239,7 @@ export class RevealManager {
 
   public render(camera: PerspectiveCamera): void {
     this._resizeHandler.handleResize(camera);
+    this._pointCloudManager.requestPickCacheInvalidationOnUpdatedData();
     this._renderPipeline.setShadowFocus?.(this._cameraManager.getCameraState().target);
     this._pipelineExecutor.render(this._renderPipeline, camera);
     this.resetRedraw();
