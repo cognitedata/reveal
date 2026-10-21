@@ -5,6 +5,7 @@
 import type { PerspectiveCamera, Plane, Scene, WebGLRenderer } from 'three';
 import { BufferGeometry, Mesh } from 'three';
 
+import type { PickCacheInvalidator } from '@reveal/utilities';
 import { assertNever } from '@reveal/utilities';
 import type { LoadingState } from '@reveal/model-base';
 
@@ -39,6 +40,7 @@ export class PointCloudManager {
   private readonly _renderer: WebGLRenderer;
 
   private _needsRedraw: boolean = false;
+  private readonly _pickCacheInvalidator: PickCacheInvalidator;
 
   constructor(
     metadataRepository: PointCloudMetadataRepository,
@@ -46,8 +48,10 @@ export class PointCloudManager {
     modelFactory: PointCloudFactory,
     potreeInstance: Potree,
     scene: Scene,
-    renderer: WebGLRenderer
+    renderer: WebGLRenderer,
+    pickCacheInvalidator: PickCacheInvalidator
   ) {
+    this._pickCacheInvalidator = pickCacheInvalidator;
     this._pointCloudMetadataRepository = metadataRepository;
     this._pointCloudFactory = modelFactory;
     this._materialManager = materialManager;
@@ -94,10 +98,21 @@ export class PointCloudManager {
     );
   }
 
+  /**
+   * Requests a pick cache invalidation if point buffers were loaded since the last drawn frame. Call
+   * before drawing, as drawing marks the loaded buffers as seen.
+   */
+  requestPickCacheInvalidationOnUpdatedData(): void {
+    if (this._loadingStateHandler.needsRedraw(this._pointCloudNodes)) {
+      this._pickCacheInvalidator.request();
+    }
+  }
+
   set clippingPlanes(planes: Plane[]) {
     this._globalClippingPlanes = planes;
     this._pointCloudNodes.forEach(node => node.octree.setGlobalClippingPlane(planes));
     this.requestRedraw();
+    this._pickCacheInvalidator.request();
   }
 
   getLoadingStateObserver(): Observable<LoadingState> {
@@ -133,6 +148,7 @@ export class PointCloudManager {
     this._pointCloudNodes.push(pointCloudNode);
 
     this.requestRedraw();
+    this._pickCacheInvalidator.request();
     this._loadingStateHandler.onModelAdded();
 
     this._modelSubject.next({ modelIdentifier, operation: 'add' });
@@ -151,6 +167,7 @@ export class PointCloudManager {
     }
     node.dispose();
     this._pointCloudNodes.splice(index, 1);
+    this._pickCacheInvalidator.request();
     this._potreeInstance.reset();
 
     this._materialManager.removeModelMaterial(node.modelIdentifier);

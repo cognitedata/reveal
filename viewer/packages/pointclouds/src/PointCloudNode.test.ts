@@ -13,8 +13,17 @@ import type { IPointCloudTreeGeometryNode } from './potree-three-loader/geometry
 import { vi } from 'vitest';
 import type { PointCloudMaterial } from '../../rendering';
 import { DEFAULT_CLASSIFICATION } from '../../rendering';
+import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
 import { PointCloudObjectAppearanceTexture } from '../../rendering/src/pointcloud-rendering';
 import { Cylinder } from '@reveal/utilities';
+import {
+  AnnotationIdPointCloudObjectCollection,
+  DefaultPointCloudAppearance,
+  StyledPointCloudVolumeCollection
+} from '@reveal/pointcloud-styling';
+import { Color, Plane } from 'three';
+import { PickCacheInvalidator } from '@reveal/utilities';
+import type { ClassicDataSourceType } from '@reveal/data-providers';
 
 describe(PointCloudNode.name, () => {
   afterEach(() => {
@@ -124,7 +133,14 @@ describe(PointCloudNode.name, () => {
         .object();
 
       const sourceMatrix = new Matrix4().identity();
-      const node = new PointCloudNode(Symbol(), sourceMatrix, pointCloudOctree, [], { classificationSets: [] });
+      const node = new PointCloudNode(
+        Symbol(),
+        sourceMatrix,
+        pointCloudOctree,
+        [],
+        { classificationSets: [] },
+        new PickCacheInvalidator()
+      );
 
       const box = new Box3(new Vector3(0, 0, 0), new Vector3(10, 10, 10));
 
@@ -133,6 +149,140 @@ describe(PointCloudNode.name, () => {
       expect(result.length).toBe(2);
       expect(result[0].equals(new Vector3(1, 1, 1))).toBeTruthy();
       expect(result[1].equals(new Vector3(5, 5, 5))).toBeTruthy();
+    });
+  });
+
+  describe('pick cache invalidation', () => {
+    const ANNOTATION_ID = 1;
+    const OBJECT_ID = 0;
+    const DEFAULT_CLASS_CODE = 2;
+
+    const createStyledCollection = (appearance: {
+      color?: Color;
+      visible?: boolean;
+    }): StyledPointCloudVolumeCollection<ClassicDataSourceType> =>
+      new StyledPointCloudVolumeCollection(new AnnotationIdPointCloudObjectCollection([ANNOTATION_ID]), {
+        ...DefaultPointCloudAppearance,
+        ...appearance
+      });
+
+    // Style changes only take effect, and are compared, when the appearance texture is rebuilt for rendering
+    const createNodeWithInvalidator = (): {
+      node: PointCloudNode<ClassicDataSourceType>;
+      pickCacheInvalidator: PickCacheInvalidator;
+      rebuildStyles: () => void;
+    } => {
+      const pickCacheInvalidator = new PickCacheInvalidator();
+      const node = createPointCloudNode<ClassicDataSourceType>({ pickCacheInvalidator });
+      const texture = node.octree.material.objectAppearanceTexture;
+      texture.setObjectsMaps({
+        annotationToObjectIds: new Map([[ANNOTATION_ID, OBJECT_ID]]),
+        objectToAnnotationIds: new Map([[OBJECT_ID, ANNOTATION_ID]])
+      });
+      texture.onBeforeRender();
+      // Creating the node sets its initial point size, color type and shape.
+      pickCacheInvalidator.consume();
+      return { node, pickCacheInvalidator, rebuildStyles: () => texture.onBeforeRender() };
+    };
+
+    test('color-only styling redraws but does not invalidate the pick cache', () => {
+      const { node, pickCacheInvalidator, rebuildStyles } = createNodeWithInvalidator();
+      node.resetRedraw();
+
+      node.assignStyledPointCloudObjectCollection(createStyledCollection({ color: new Color('red') }));
+      rebuildStyles();
+
+      expect(node.needsRedraw).toBe(true);
+      expect(pickCacheInvalidator.consume()).toBe(false);
+    });
+
+    test('hiding objects invalidates the pick cache', () => {
+      const { node, pickCacheInvalidator, rebuildStyles } = createNodeWithInvalidator();
+
+      node.assignStyledPointCloudObjectCollection(createStyledCollection({ visible: false }));
+      rebuildStyles();
+
+      expect(pickCacheInvalidator.consume()).toBe(true);
+    });
+
+    test('a color-only style does not invalidate the pick cache while objects are hidden', () => {
+      const { node, pickCacheInvalidator, rebuildStyles } = createNodeWithInvalidator();
+      node.assignStyledPointCloudObjectCollection(createStyledCollection({ visible: false }));
+      rebuildStyles();
+      pickCacheInvalidator.consume();
+
+      // Re-styling the already hidden object with only a color keeps it hidden
+      node.assignStyledPointCloudObjectCollection(createStyledCollection({ color: new Color('red'), visible: false }));
+      rebuildStyles();
+
+      expect(pickCacheInvalidator.consume()).toBe(false);
+    });
+
+    test('removing a hiding style invalidates the pick cache', () => {
+      const { node, pickCacheInvalidator, rebuildStyles } = createNodeWithInvalidator();
+      const hidden = createStyledCollection({ visible: false });
+      node.assignStyledPointCloudObjectCollection(hidden);
+      rebuildStyles();
+      pickCacheInvalidator.consume();
+
+      node.removeStyledPointCloudObjectCollection(hidden);
+      rebuildStyles();
+
+      expect(pickCacheInvalidator.consume()).toBe(true);
+    });
+
+    test('removing all styled objects invalidates the pick cache when a style hid objects', () => {
+      const { node, pickCacheInvalidator, rebuildStyles } = createNodeWithInvalidator();
+      node.assignStyledPointCloudObjectCollection(createStyledCollection({ visible: false }));
+      rebuildStyles();
+      pickCacheInvalidator.consume();
+
+      node.removeAllStyledPointCloudObjects();
+      rebuildStyles();
+
+      expect(pickCacheInvalidator.consume()).toBe(true);
+    });
+
+    test('default appearance invalidates the pick cache only when it changes visibility', () => {
+      const { node, pickCacheInvalidator, rebuildStyles } = createNodeWithInvalidator();
+
+      node.defaultAppearance = { ...DefaultPointCloudAppearance, color: new Color('red') };
+      rebuildStyles();
+      expect(pickCacheInvalidator.consume()).toBe(false);
+
+      node.defaultAppearance = { ...DefaultPointCloudAppearance, visible: false };
+      rebuildStyles();
+      expect(pickCacheInvalidator.consume()).toBe(true);
+    });
+
+    test.each([
+      ['point size', (node: PointCloudNode) => (node.pointSize = 5)],
+      ['point size type', (node: PointCloudNode) => (node.pointSizeType = PointSizeType.Adaptive)],
+      ['point shape', (node: PointCloudNode) => (node.pointShape = PointShape.Square)],
+      [
+        'model transformation',
+        (node: PointCloudNode) => node.setModelTransformation(new Matrix4().makeTranslation(1, 2, 3))
+      ],
+      ['clipping planes', (node: PointCloudNode) => (node.clippingPlanes = [new Plane(new Vector3(1, 0, 0), 2)])],
+      ['class visibility', (node: PointCloudNode) => node.setClassVisible(DEFAULT_CLASS_CODE, false)]
+    ])('%s invalidates the pick cache when it changes, and not when it is set to the same value', (_, change) => {
+      const { node, pickCacheInvalidator } = createNodeWithInvalidator();
+
+      change(node);
+      expect(pickCacheInvalidator.consume()).toBe(true);
+
+      node.resetRedraw();
+      change(node);
+      expect(pickCacheInvalidator.consume()).toBe(false);
+      expect(node.needsRedraw).toBe(false);
+    });
+
+    test('point color type does not invalidate the pick cache', () => {
+      const { node, pickCacheInvalidator } = createNodeWithInvalidator();
+
+      node.pointColorType = PointColorType.Height;
+
+      expect(pickCacheInvalidator.consume()).toBe(false);
     });
   });
 });

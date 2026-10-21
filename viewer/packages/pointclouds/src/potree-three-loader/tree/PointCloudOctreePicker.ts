@@ -56,8 +56,9 @@ export class PointCloudOctreePicker {
   }
 
   /**
-   * Invalidates the cached full-frame pick buffer. Must be called whenever a new frame of the
-   * scene is rendered (camera, point cloud LOD, styling or clipping changes) and on resize.
+   * Invalidates the cached full-frame pick buffer. Must be called whenever scene content that affects
+   * picking changes (point cloud LOD, styling, clipping or resize). Camera changes are detected by
+   * comparing camera matrices.
    */
   invalidateCache(): void {
     if (this._cache !== undefined) {
@@ -215,6 +216,10 @@ export class PointCloudOctreePicker {
     }
 
     const invalidationCountAtStart = this._invalidationCount;
+    // The camera is not covered by the invalidation count, so it is snapshotted before rendering
+    // and compared again once the readback has finished.
+    const cameraMatrixWorld = camera.matrixWorld.clone();
+    const cameraProjectionMatrix = camera.projectionMatrix.clone();
     const { renderedNodes, pixels } = await this.renderAndReadBackPixels(
       camera,
       octrees,
@@ -237,11 +242,14 @@ export class PointCloudOctreePicker {
       nodeIndexBits,
       renderedNodes,
       octrees: [...octrees],
-      cameraMatrixWorld: camera.matrixWorld.clone(),
-      cameraProjectionMatrix: camera.projectionMatrix.clone(),
-      // The scene may have rendered a new frame while the readback was in flight, so the buffer
-      // then describes the previous frame and must not be served.
-      valid: this._invalidationCount === invalidationCountAtStart
+      cameraMatrixWorld,
+      cameraProjectionMatrix,
+      // The scene content may have changed or the camera may have moved while the readback was in flight,
+      // so the buffer then describes a previous frame and must not be served.
+      valid:
+        this._invalidationCount === invalidationCountAtStart &&
+        cameraMatrixWorld.equals(camera.matrixWorld) &&
+        cameraProjectionMatrix.equals(camera.projectionMatrix)
     };
     return this._cache.valid;
   }

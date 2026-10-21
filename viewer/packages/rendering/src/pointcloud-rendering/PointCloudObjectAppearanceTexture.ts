@@ -94,8 +94,15 @@ export class PointCloudObjectAppearanceTexture {
     }
   }
 
+  /**
+   * Called when rebuilding the texture changed the visibility of at least one object. Only visibility affects
+   * what can be picked, so color-only style changes do not call it.
+   */
+  onVisibilityChanged: (() => void) | undefined;
+
   onBeforeRender(): void {
     if (this._needsReconstruction) {
+      const visibilityBefore = this.copyVisibility();
       this.resetTexture();
 
       const sortedStyledCollections = sortBy(this._styledObjectSets, 'importance');
@@ -105,7 +112,25 @@ export class PointCloudObjectAppearanceTexture {
 
       this._objectStyleTexture.needsUpdate = true;
       this._needsReconstruction = false;
+
+      const visibilityAfter = this.copyVisibility();
+      if (visibilityBefore.some((visible, objectId) => visible !== visibilityAfter[objectId])) {
+        this.onVisibilityChanged?.();
+      }
     }
+  }
+
+  private copyVisibility(): Uint8Array {
+    const rawData = this._objectStyleTexture.image.data;
+    if (!rawData) {
+      throw new Error('Point cloud object style texture data is not initialized');
+    }
+    const data = createUint8View(rawData);
+    const visibility = new Uint8Array(this._width * this._height);
+    for (let objectId = 0; objectId < visibility.length; objectId++) {
+      visibility[objectId] = data[4 * objectId + 3];
+    }
+    return visibility;
   }
 
   assignStyledObjectSet(styledCollection: StyledPointCloudVolumeCollection<DataSourceType>): void {

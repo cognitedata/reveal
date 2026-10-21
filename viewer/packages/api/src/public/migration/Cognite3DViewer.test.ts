@@ -11,6 +11,7 @@ import type { SectorCuller } from '@reveal/cad-geometry-loaders';
 
 import { Cognite3DViewer } from './Cognite3DViewer';
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
+import { PointCloudPickingHandler } from '@reveal/pointclouds';
 
 import { It, Mock } from 'moq.ts';
 import type { BeforeSceneRenderedDelegate, DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
@@ -19,6 +20,7 @@ import { mockClientAuthentication, autoMockWebGLRenderer } from '../../../../../
 import type { DataSourceType } from '@reveal/data-providers';
 import type { DefaultImage360Collection, Image360ClusterIntersectionData, Image360Entity } from '@reveal/360-images';
 
+import type { MockInstance } from 'vitest';
 import { vi } from 'vitest';
 import type { ResolutionOptions } from './types';
 
@@ -244,6 +246,60 @@ describe('Cognite3DViewer', () => {
       requestAnimationFrameSpy.mockRestore();
       computedStyleMock.mockReset();
     }
+  });
+
+  describe('point-cloud pick cache invalidation', () => {
+    let requestAnimationFrameCallback: FrameRequestCallback | undefined;
+    const spies: MockInstance[] = [];
+
+    beforeEach(() => {
+      spies.push(
+        vi
+          .spyOn(window, 'getComputedStyle')
+          .mockImplementation(() =>
+            Object.assign(document.createElement('div').style, { visibility: 'visible', display: 'block' })
+          ),
+        vi.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => {
+          requestAnimationFrameCallback = cb;
+          return 1;
+        })
+      );
+    });
+
+    afterEach(() => {
+      spies.splice(0).forEach(spy => spy.mockRestore());
+    });
+
+    function renderFrame(): void {
+      if (!requestAnimationFrameCallback) throw new Error('Animation frame not triggered');
+      requestAnimationFrameCallback(1000);
+    }
+
+    test('plain redraws do not invalidate the pick cache, a restored WebGL context does', () => {
+      const invalidateSpy = vi.spyOn(PointCloudPickingHandler.prototype, 'invalidatePickCache');
+      spies.push(invalidateSpy);
+      const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
+
+      // Settle anything requested while the viewer was created
+      viewer.requestRedraw();
+      renderFrame();
+      invalidateSpy.mockClear();
+
+      viewer.requestRedraw();
+      renderFrame();
+      expect(invalidateSpy).not.toHaveBeenCalled();
+
+      viewer.canvas.dispatchEvent(new Event('webglcontextrestored'));
+      renderFrame();
+      expect(invalidateSpy).toHaveBeenCalledTimes(1);
+
+      // The request is consumed, so the next frame does not invalidate again
+      viewer.requestRedraw();
+      renderFrame();
+      expect(invalidateSpy).toHaveBeenCalledTimes(1);
+
+      viewer.dispose();
+    });
   });
 
   test('fitCameraToBoundingBox with zero duration updates camera immediatly', () => {

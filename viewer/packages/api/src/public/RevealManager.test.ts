@@ -16,7 +16,7 @@ import type {
   PointCloudStylableObjectProvider
 } from '@reveal/data-providers';
 import type { CadManager, SectorCuller } from '@reveal/cad-geometry-loaders';
-import { SceneHandler } from '@reveal/utilities';
+import { PickCacheInvalidator, SceneHandler } from '@reveal/utilities';
 import type { PointCloudManager } from '@reveal/pointclouds';
 import { LocalPointClassificationsProvider } from '@reveal/pointclouds';
 import type { SetPropertyExpression } from 'moq.ts';
@@ -206,7 +206,8 @@ describe('RevealManager', () => {
       {} as Partial<RenderPipelineExecutor> as RenderPipelineExecutor,
       {} as Partial<RenderPipelineProvider & SettableRenderTarget> as RenderPipelineProvider & SettableRenderTarget,
       {} as Partial<ResizeHandler> as ResizeHandler,
-      cameraManagerMock.object()
+      cameraManagerMock.object(),
+      new PickCacheInvalidator()
     );
 
     await rm.addModel('cad', {

@@ -34,6 +34,7 @@ import {
 
 import type { CogniteClient } from '@cognite/sdk';
 import type { SceneHandler } from '@reveal/utilities';
+import { PickCacheInvalidator } from '@reveal/utilities';
 import { BINARY_FILES_CACHE_NAME, DataFileCacheManager } from '@reveal/utilities';
 import { createCadManager } from '@reveal/cad-geometry-loaders';
 import type { IPointClassificationsProvider } from '@reveal/pointclouds';
@@ -143,6 +144,7 @@ export function createRevealManager(
   });
 
   const renderOptions: RenderOptions = revealOptions?.renderOptions ?? {};
+  const pickCacheInvalidator = new PickCacheInvalidator();
   const cadMaterialManager = new CadMaterialManager();
   const pointCloudMaterialManager = new PointCloudMaterialManager();
   const pipelineExecutor = new BasicPipelineExecutor(renderer);
@@ -174,7 +176,8 @@ export function createRevealManager(
     pointCloudMaterialManager,
     cachedProvider,
     sceneHandler.scene,
-    renderer
+    renderer,
+    pickCacheInvalidator
   );
   const cadManager = createCadManager(modelMetadataProvider, cachedProvider, cadMaterialManager, {
     ...revealOptions.internal?.cad,
@@ -186,7 +189,8 @@ export function createRevealManager(
     pipelineExecutor,
     defaultRenderPipeline,
     resizeHandler,
-    cameraManager
+    cameraManager,
+    pickCacheInvalidator
   );
 }
 

@@ -81,4 +81,35 @@ describe(TakenV9SectorMap.name, () => {
     const spent = map.computeSpentBudget();
     expect(spent.forcedDetailedSectorCount).toBe(1);
   });
+
+  test('forced sector cost does not count against the budget', () => {
+    const { map, model } = createMap();
+
+    map.markSectorForced(model, model.scene.root.id);
+
+    // Stub cost is 1 per sector, so a budget of 1 would be exhausted if forced cost counted
+    expect(map.isWithinBudget({ maximumRenderCost: 1, highDetailProximityThreshold: 0 })).toBe(true);
+  });
+
+  test('sector taken normally and then forced no longer counts against the budget', () => {
+    const { map, model } = createMap();
+    const sectorId = model.scene.root.id;
+
+    map.markSectorDetailed(model, sectorId, 100);
+    expect(map.isWithinBudget({ maximumRenderCost: 1, highDetailProximityThreshold: 0 })).toBe(false);
+
+    map.markSectorForced(model, sectorId);
+    expect(map.isWithinBudget({ maximumRenderCost: 1, highDetailProximityThreshold: 0 })).toBe(true);
+  });
+
+  test('forcing the same sector twice does not double-discount cost', () => {
+    const { map, model } = createMap();
+    const sectorId = model.scene.root.id;
+
+    map.markSectorForced(model, sectorId);
+    map.markSectorForced(model, sectorId);
+
+    expect(map.totalCost.renderCost).toBe(1);
+    expect(map.isWithinBudget({ maximumRenderCost: 1, highDetailProximityThreshold: 0 })).toBe(true);
+  });
 });

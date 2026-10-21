@@ -20,6 +20,7 @@ import { type CompletePointCloudAppearance } from '@reveal/pointcloud-styling';
 import type { Color } from 'three';
 import { Matrix4, Group, Box3, Vector3, type Camera, type Plane, type Ray, type WebGLRenderer } from 'three';
 import type { StyledPointCloudVolumeCollection } from '@reveal/pointcloud-styling';
+import type { PickCacheInvalidator } from '@reveal/utilities';
 
 export class PointCloudNode<T extends DataSourceType = DataSourceType> extends Group {
   private readonly _cameraConfiguration?: CameraConfiguration;
@@ -29,6 +30,8 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
   private readonly _classificationHandler: ClassificationHandler;
 
   private _needsRedraw: boolean = false;
+  private _clippingPlanes: Plane[] = [];
+  private readonly _pickCacheInvalidator: PickCacheInvalidator;
   private static readonly pickingWindowSize = 20;
 
   private readonly _modelIdentifier: symbol;
@@ -42,11 +45,14 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
     octree: PointCloudOctree,
     annotations: PointCloudObject<T>[],
     classificationInfo: ClassificationInfo,
+    pickCacheInvalidator: PickCacheInvalidator,
     cameraConfiguration?: CameraConfiguration
   ) {
     super();
+    this._pickCacheInvalidator = pickCacheInvalidator;
 
     this._octree = octree;
+    this._octree.material.objectAppearanceTexture.onVisibilityChanged = () => this._pickCacheInvalidator.request();
     this.add(this._octree);
 
     this.pointSize = 2;
@@ -99,8 +105,12 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
   }
 
   set pointSize(size: number) {
+    if (this._octree.material.size === size) {
+      return;
+    }
     this._octree.material.size = size;
     this._needsRedraw = true;
+    this._pickCacheInvalidator.request();
   }
 
   get pointSizeType(): PointSizeType {
@@ -108,8 +118,12 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
   }
 
   set pointSizeType(pointSizeType: PointSizeType) {
+    if (this._octree.pointSizeType === pointSizeType) {
+      return;
+    }
     this._octree.pointSizeType = pointSizeType;
     this._needsRedraw = true;
+    this._pickCacheInvalidator.request();
   }
 
   get pointColorType(): PointColorType {
@@ -126,8 +140,12 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
   }
 
   set pointShape(value: PointShape) {
+    if (this._octree.material.shape === value) {
+      return;
+    }
     this._octree.material.shape = value;
     this._needsRedraw = true;
+    this._pickCacheInvalidator.request();
   }
 
   get visiblePointCount(): number {
@@ -152,8 +170,12 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
    * @throws Error if the model doesn't have the class given.
    */
   setClassVisible(pointClass: number | WellKnownAsprsPointClassCodes, visible: boolean): void {
+    if (this._classificationHandler.isClassVisible(pointClass) === visible) {
+      return;
+    }
     this._classificationHandler.setClassificationAndRecompute(pointClass, visible);
     this._needsRedraw = true;
+    this._pickCacheInvalidator.request();
   }
 
   /**
@@ -196,11 +218,15 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
   }
 
   setModelTransformation(matrix: Matrix4): void {
+    if (this._customTransform.equals(matrix)) {
+      return;
+    }
     this._customTransform.copy(matrix);
     this.matrix.copy(this._customTransform).multiply(this._sourceTransform);
     this.updateMatrixWorld(true);
 
     this._needsRedraw = true;
+    this._pickCacheInvalidator.request();
   }
 
   getModelTransformation(out: Matrix4 = new Matrix4()): Matrix4 {
@@ -285,8 +311,16 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
   }
 
   set clippingPlanes(clippingPlanes: Plane[]) {
+    if (
+      clippingPlanes.length === this._clippingPlanes.length &&
+      clippingPlanes.every((plane, i) => plane.equals(this._clippingPlanes[i]))
+    ) {
+      return;
+    }
+    this._clippingPlanes = clippingPlanes.map(plane => plane.clone());
     this._octree.setModelClippingPlane(clippingPlanes);
     this._needsRedraw = true;
+    this._pickCacheInvalidator.request();
   }
 
   assignStyledPointCloudObjectCollection(styledCollection: StyledPointCloudVolumeCollection<T>): void {

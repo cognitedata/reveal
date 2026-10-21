@@ -1725,13 +1725,13 @@ __metadata:
     cross-env: 10.1.0
     docusaurus-plugin-typedoc: 1.4.3
     ieee754: 1.2.1
-    react: 19.3.0
-    react-dom: 19.3.0
+    react: 19.3.1
+    react-dom: 19.3.1
     replace: 1.2.2
     rimraf: 6.1.3
     styled-components: 6.6.0
     typedoc: 0.28.20
-    typedoc-plugin-markdown: 4.13.1
+    typedoc-plugin-markdown: 4.14.0
     typedoc-plugin-no-inherit: 1.6.1
     typescript: 6.0.3
   languageName: unknown
@@ -7721,12 +7721,12 @@ __metadata:
   linkType: hard
 
 "follow-redirects@npm:^1.0.0":
-  version: 1.16.0
-  resolution: "follow-redirects@npm:1.16.0"
+  version: 1.16.1
+  resolution: "follow-redirects@npm:1.16.1"
   peerDependenciesMeta:
     debug:
       optional: true
-  checksum: e90dce4607b1f6b8b9883287f912585573c19088209ad82341d550a795b4ba514522b73b1b340cf618279df27975cd46504d09149be60291ba6767384c1fd8f8
+  checksum: d42ff9158fe6c66692567b712fd4bba25ef8736253c1436439642884f9c218df05fe946928d1944367b1b72f7ca5e5d277c26608159e2adf1bad9e42b12d2c30
   languageName: node
   linkType: hard
 
@@ -9566,8 +9566,8 @@ __metadata:
   linkType: hard
 
 "markdown-it@npm:^14.3.0":
-  version: 14.3.2
-  resolution: "markdown-it@npm:14.3.2"
+  version: 14.3.3
+  resolution: "markdown-it@npm:14.3.3"
   dependencies:
     argparse: ^2.0.1
     entities: ^4.5.0
@@ -9577,7 +9577,7 @@ __metadata:
     uc.micro: ^2.1.0
   bin:
     markdown-it: bin/markdown-it.mjs
-  checksum: 50e9de12e1dea0c108a85c51fc049324fbbc434a0f1bad916b701430917a91b68bd2420942797154cad8e27bc79ea38168beab727e70361da80b97013b0d75e0
+  checksum: 45e34ef755aca74d26cb35920b1b27d8fdfdc9ba42811658647735728670342d2cf771a2c54ea107679c3c5c7bead9d9a072313e357072c47bbc160aa94aca6e
   languageName: node
   linkType: hard
 
@@ -12452,14 +12452,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:19.3.0":
-  version: 19.3.0
-  resolution: "react-dom@npm:19.3.0"
+"react-dom@npm:19.3.1":
+  version: 19.3.1
+  resolution: "react-dom@npm:19.3.1"
   dependencies:
     scheduler: ^0.28.0
   peerDependencies:
-    react: ^19.3.0
-  checksum: 0545bc771be35bd6bf060e30151df21da5863db9f8f16c63a7cd466fb914c86f4ae050d4724f2a878805bb10ea30d79d02eb6501446fe5b33b32c1e95f6edd23
+    react: ^19.3.1
+  checksum: f00ab3c46a938720e66850f211cbbc37db4eda120210f468e3f728a1cd40d28e2a7bb6f3fd8b68099a1138ba45c474c9efa3c3ee4154194aff983c9f80f6cf81
   languageName: node
   linkType: hard
 
@@ -12573,10 +12573,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:19.3.0":
-  version: 19.3.0
-  resolution: "react@npm:19.3.0"
-  checksum: b33f946acb704533911e9341f5acac7671d630d0fdfd4af625596b0ec5f2df03933bd1c302c781994416ed013f24674cab8ea99edc1b6714433af2c20376574f
+"react@npm:19.3.1":
+  version: 19.3.1
+  resolution: "react@npm:19.3.1"
+  checksum: 08dc4ff4bf67184da3bc91ec89a03e6526479400270f7bbfd79b4ef36245a341a0861d0ce5e31443b6b9d17dd1006d95555e5d1ebf0c53a5f529947dc3c74dfb
   languageName: node
   linkType: hard
 
@@ -14227,12 +14227,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc-plugin-markdown@npm:4.13.1":
-  version: 4.13.1
-  resolution: "typedoc-plugin-markdown@npm:4.13.1"
+"typedoc-plugin-markdown@npm:4.14.0":
+  version: 4.14.0
+  resolution: "typedoc-plugin-markdown@npm:4.14.0"
   peerDependencies:
     typedoc: 0.28.x
-  checksum: 4c8d0d26b5e0fa514160e808e4eabfc4c76d9d601bb8ecf32e0ba0054e65c25ecfe625f39974ab9ef638d2f4d61e8145f9a925c1825628493b55d415e08f1525
+  checksum: faaf9e7d4b4d6f6ebca75c4d7452a8a9002a2d75dc870c6f98b90e5f5a41f3438b299d563a76c17fac30ff5561a90ba6b7b3194d041ba7549c232346aca4986a
   languageName: node
   linkType: hard
 
