@@ -224,6 +224,12 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
   }
 }
 
+/**
+ * @deprecated Use {@link CustomObjectEffectMaterial}.
+ * @public
+ */
+export const CadShadowReceiverForCustomObjectMaterial = CustomObjectEffectMaterial;
+
 const size = new Vector3();
 const axis = new Vector3();
 const replacements: Replacement[] = [];

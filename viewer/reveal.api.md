@@ -277,6 +277,9 @@ export type CadModelBudget = {
     readonly maximumRenderCost: number;
 };
 
+// @public @deprecated
+export const CadShadowReceiverForCustomObjectMaterial: typeof CustomObjectEffectMaterial;
+
 // @public
 export const CAMERA_MANAGER_EVENT_TYPE_LIST: readonly ["cameraChange", "cameraStop"];
 
