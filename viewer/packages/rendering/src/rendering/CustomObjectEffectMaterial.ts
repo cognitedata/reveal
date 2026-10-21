@@ -299,10 +299,14 @@ function rememberSurface(
   if (sideOf(material) === BackSide) return material;
   const slot = Array.isArray(mesh.material) ? index : undefined;
   const existing = findReplacement(owner, mesh, slot);
+
   if (existing !== undefined) return applyTextureVariation(existing, options);
+
   if (material instanceof CustomObjectEffectMaterial) return material;
+
   const map = mapOf(material);
   const pinned = options.textureVariation && map !== null;
+  
   if (!options.receivesShadow && !pinned) return material;
   if (pinned && map !== null) ensureRepeatWrapping(map);
 
