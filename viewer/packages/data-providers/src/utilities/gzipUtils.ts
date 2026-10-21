@@ -2,8 +2,7 @@
  * Copyright 2026 Cognite AS
  */
 
-import './brotliDecompressTypes';
-import brotliDecompress from 'brotli/decompress';
+import { decompress as brotliDecompress } from 'brotli/decompress';
 
 const GZIP_MAGIC_BYTE_0 = 0x1f;
 const GZIP_MAGIC_BYTE_1 = 0x8b;
