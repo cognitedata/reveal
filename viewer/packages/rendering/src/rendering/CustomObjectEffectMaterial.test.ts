@@ -8,6 +8,7 @@ import {
   Matrix4,
   Mesh,
   MeshBasicMaterial,
+  MirroredRepeatWrapping,
   PerspectiveCamera,
   PlaneGeometry,
   RepeatWrapping,
@@ -132,5 +133,37 @@ describe(CustomObjectEffectMaterial.name, () => {
 
     CustomObjectEffectMaterial.releaseReceivers(owner, [object]);
     expect(mesh.material).toBe(source);
+  });
+
+  test('removes hex tiling and restores the original material when variation is turned off', () => {
+    const source = new MeshBasicMaterial({ map: new Texture() });
+    const mesh = upFacingPlane(source);
+    const owner = {};
+    const object = customObject(mesh);
+    CustomObjectEffectMaterial.adoptReceivers(owner, [object], false, true);
+
+    expect(mesh.material).toBeInstanceOf(CustomObjectEffectMaterial);
+
+    CustomObjectEffectMaterial.adoptReceivers(owner, [object], false, false);
+
+    expect(mesh.material).toBe(source);
+  });
+
+  test('repeats a tiled map and mirrors a stretched map', () => {
+    const repeated = new Texture();
+    repeated.repeat.set(4, 4);
+    const repeatedMesh = upFacingPlane(new MeshBasicMaterial({ map: repeated }));
+    CustomObjectEffectMaterial.adoptReceivers({}, [customObject(repeatedMesh)], true, true);
+
+    expect(repeated.wrapS).toBe(RepeatWrapping);
+    expect(repeated.wrapT).toBe(RepeatWrapping);
+
+    const stretched = new Texture();
+    stretched.repeat.set(1, 1);
+    const stretchedMesh = upFacingPlane(new MeshBasicMaterial({ map: stretched }));
+    CustomObjectEffectMaterial.adoptReceivers({}, [customObject(stretchedMesh)], true, true);
+
+    expect(stretched.wrapS).toBe(MirroredRepeatWrapping);
+    expect(stretched.wrapT).toBe(MirroredRepeatWrapping);
   });
 });
