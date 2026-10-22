@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import type { WebGLRenderer } from 'three';
-import { PerspectiveCamera, Plane } from 'three';
+import { PerspectiveCamera, Plane, Vector3 } from 'three';
 
 import { createRevealManager } from './createRevealManager';
 import { RevealManager } from './RevealManager';
@@ -21,7 +21,7 @@ import type { PointCloudManager } from '@reveal/pointclouds';
 import { LocalPointClassificationsProvider } from '@reveal/pointclouds';
 import type { SetPropertyExpression } from 'moq.ts';
 import { It, Mock } from 'moq.ts';
-import type { CameraManager } from '@reveal/camera-manager';
+import type { CameraChangeDelegate, CameraManager } from '@reveal/camera-manager';
 import type { CadNode } from '@reveal/cad-model';
 import type {
   RenderPipelineExecutor,
@@ -56,20 +56,26 @@ describe('RevealManager', () => {
   const pointClassificationsProvider = new LocalPointClassificationsProvider();
   let manager: RevealManager;
 
-  let onChangeListeners: (() => void)[];
+  let onChangeListeners: CameraChangeDelegate[];
   let onStopListeners: (() => void)[];
+  let camera: PerspectiveCamera;
 
   const cameraManagerMock = new Mock<CameraManager>()
     .setup(p => p.on('cameraChange', It.IsAny()))
     .callback(({ args: [_eventType, callback] }) => onChangeListeners.push(callback))
     .setup(p => p.on('cameraStop', It.IsAny()))
     .callback(({ args: [_eventType, callback] }) => onStopListeners.push(callback))
+    .setup(p => p.getCamera())
+    .callback(() => camera)
     .setup(p => p.off(It.IsAny(), It.IsAny()))
     .returns();
 
   beforeEach(() => {
     vi.clearAllMocks();
 
+    camera = new PerspectiveCamera(70, 1, 0.1, 100);
+    camera.position.set(1, 2, 3);
+    camera.updateProjectionMatrix();
     onChangeListeners = [];
     onStopListeners = [];
 
@@ -129,7 +135,7 @@ describe('RevealManager', () => {
 
     const camera = new PerspectiveCamera(70, 1, 0.1, 100);
 
-    onChangeListeners.forEach(callback => callback());
+    onChangeListeners.forEach(callback => callback(new Vector3(1, 2, 3), new Vector3(0, 0, 0)));
 
     manager.resetRedraw();
     manager.update(camera);
@@ -144,11 +150,48 @@ describe('RevealManager', () => {
   test('cameraInMotion reflects camera change/stop events', () => {
     expect(manager.cameraInMotion).toBe(false);
 
-    onChangeListeners.forEach(callback => callback());
+    onChangeListeners.forEach(callback => callback(new Vector3(1, 2, 3), new Vector3(0, 0, 0)));
     expect(manager.cameraInMotion).toBe(true);
 
     onStopListeners.forEach(callback => callback());
     expect(manager.cameraInMotion).toBe(false);
+  });
+
+  describe('pick cache invalidation on camera change', () => {
+    function fireCameraChange(): boolean {
+      onChangeListeners.forEach(callback => callback(camera.position.clone(), new Vector3()));
+      return manager.pickCacheInvalidator.consume();
+    }
+
+    beforeEach(() => {
+      expect(fireCameraChange()).toBe(true);
+    });
+
+    test('is not requested when the camera reports a change without having moved', () => {
+      expect(fireCameraChange()).toBe(false);
+    });
+
+    test('is requested when the camera position changes', () => {
+      camera.position.set(1, 2, 4);
+      expect(fireCameraChange()).toBe(true);
+    });
+
+    test('is requested when the camera rotates', () => {
+      camera.rotateY(0.1);
+      expect(fireCameraChange()).toBe(true);
+    });
+
+    test('is requested when the projection changes', () => {
+      camera.fov = 30;
+      camera.updateProjectionMatrix();
+      expect(fireCameraChange()).toBe(true);
+    });
+
+    test('is not requested again until the camera changes once more', () => {
+      camera.position.set(1, 2, 4);
+      expect(fireCameraChange()).toBe(true);
+      expect(fireCameraChange()).toBe(false);
+    });
   });
 
   test('dispose() disposes culler', () => {

@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import type { PerspectiveCamera, Plane, Vector3, WebGLRenderTarget } from 'three';
+import type { PerspectiveCamera, Plane, WebGLRenderTarget } from 'three';
+import { Matrix4, Quaternion, Vector3 } from 'three';
 
 import { isEqual } from 'lodash-es';
 
@@ -52,6 +53,12 @@ export class RevealManager {
   private readonly _resizeHandler: ResizeHandler;
 
   private _cameraInMotion: boolean = false;
+  // State of the camera at the last pick cache invalidation. The camera manager also reports camera changes where the
+  // camera itself did not move, such as setting the orbit target on click, which does not change what is picked.
+  private _hasLastCameraState = false;
+  private readonly _lastCameraPosition = new Vector3();
+  private readonly _lastCameraRotation = new Quaternion();
+  private readonly _lastCameraProjection = new Matrix4();
   private readonly _pickCacheInvalidator: PickCacheInvalidator;
 
   private _isDisposed = false;
@@ -83,8 +90,13 @@ export class RevealManager {
     this._subscriptions = this.initLoadingStateObserver(this._cadManager, this._pointCloudManager);
 
     this._cameraManager = cameraManager;
-    this._onCameraChange = (_position: Vector3, _target: Vector3) => (this._cameraInMotion = true);
-    this._onCameraStop = () => (this._cameraInMotion = false);
+    this._onCameraChange = (_position: Vector3, _target: Vector3) => {
+      this._cameraInMotion = true;
+      this.requestPickCacheInvalidationIfCameraChanged();
+    };
+    this._onCameraStop = () => {
+      this._cameraInMotion = false;
+    };
     this._cameraManager.on('cameraChange', this._onCameraChange);
     this._cameraManager.on('cameraStop', this._onCameraStop);
   }
@@ -324,5 +336,22 @@ export class RevealManager {
       lastLoadingState = state;
       this._events.loadingStateChanged.fire(state);
     });
+  }
+
+  private requestPickCacheInvalidationIfCameraChanged(): void {
+    const camera = this._cameraManager.getCamera();
+    if (
+      this._hasLastCameraState &&
+      camera.position.equals(this._lastCameraPosition) &&
+      camera.quaternion.equals(this._lastCameraRotation) &&
+      camera.projectionMatrix.equals(this._lastCameraProjection)
+    ) {
+      return;
+    }
+    this._hasLastCameraState = true;
+    this._lastCameraPosition.copy(camera.position);
+    this._lastCameraRotation.copy(camera.quaternion);
+    this._lastCameraProjection.copy(camera.projectionMatrix);
+    this._pickCacheInvalidator.request();
   }
 }
