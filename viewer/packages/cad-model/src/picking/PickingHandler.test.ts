@@ -181,14 +181,19 @@ describe(PickingHandler.name, () => {
     });
 
     test('uses the cache for as many models as the alpha byte can address', async () => {
-      const { renderer, fullFrameReadCount, singlePixelReadCount } = createRenderer();
+      const { renderer, fullFrameReadCount, singlePixelReadCount } = createRenderer({
+        fullFrame: (index, pixels) =>
+          writeHit(pixels, index, { treeIndex: 5, modelIndex: 254, depthByte: 128 }, PICKED_PIXEL_OFFSET)
+      });
       const handler = new PickingHandler(renderer, createMaterialManager(), new SceneHandler());
       const nodes = Array.from({ length: 255 }, (_, i) => createCadModel(i, i, 1, 1).cadNode);
 
-      await handler.intersectCadNodes(nodes, createInput(renderer, pickCamera));
+      const results = await handler.intersectCadNodes(nodes, createInput(renderer, pickCamera));
 
       expect(fullFrameReadCount()).toBe(2);
       expect(singlePixelReadCount()).toBe(0);
+      expect(results).toHaveLength(1);
+      expect(results[0].cadNode).toBe(nodes[254]);
       expect(getModelIndexUniforms(nodes[254]).every(value => value === 254)).toBe(true);
     });
 
@@ -290,7 +295,10 @@ describe(PickingHandler.name, () => {
     });
 
     test('falls back to per-model picking when invalidated within the holdoff, rebuilds after it', async () => {
-      const { renderer, fullFrameReadCount, singlePixelReadCount } = createRenderer();
+      const { renderer, fullFrameReadCount, singlePixelReadCount } = createRenderer({
+        fullFrame: (index, pixels) =>
+          writeHit(pixels, index, { treeIndex: 5, modelIndex: 0, depthByte: 128 }, PICKED_PIXEL_OFFSET)
+      });
       const handler = new PickingHandler(renderer, createMaterialManager(), new SceneHandler());
       const node = createCadModel(1, 2).cadNode;
 
@@ -310,16 +318,36 @@ describe(PickingHandler.name, () => {
       expect(fullFrameReadCount()).toBe(4);
     });
 
-    test('camera movement makes the cache unusable and triggers a rebuild', async () => {
+    test('falls back to per-model picking when the cached frame has nothing at the picked pixel', async () => {
+      const { renderer, fullFrameReadCount, singlePixelReadCount } = createRenderer();
+      const handler = new PickingHandler(renderer, createMaterialManager(), new SceneHandler());
+      const node = createCadModel(1, 2).cadNode;
+
+      const results = await handler.intersectCadNodes([node], createInput(renderer, pickCamera));
+
+      expect(fullFrameReadCount()).toBe(2);
+      // The cache has no hit for the pixel, so the per-model path decides: one tree index readback, nothing is hit.
+      expect(singlePixelReadCount()).toBe(1);
+      expect(results).toHaveLength(0);
+    });
+
+    test('camera movement alone does not rebuild the cache, an invalidation does', async () => {
       const { renderer, fullFrameReadCount } = createRenderer();
       const handler = new PickingHandler(renderer, createMaterialManager(), new SceneHandler());
       const node = createCadModel(1, 2).cadNode;
 
       await handler.intersectCadNodes([node], createInput(renderer, pickCamera));
+      expect(fullFrameReadCount()).toBe(2);
+
+      // The invalidator reports camera changes, so the cache itself does not compare the camera
       pickCamera.position.set(10, 0, 0);
       pickCamera.updateMatrixWorld();
       await handler.intersectCadNodes([node], createInput(renderer, pickCamera));
+      expect(fullFrameReadCount()).toBe(2);
 
+      handler.invalidatePickCache();
+      nowSpy.mockReturnValue(10_100);
+      await handler.intersectCadNodes([node], createInput(renderer, pickCamera));
       expect(fullFrameReadCount()).toBe(4);
     });
 
@@ -383,28 +411,6 @@ describe(PickingHandler.name, () => {
       nowSpy.mockReturnValue(10_100);
       await handler.intersectCadNodes([node], createInput(renderer, pickCamera));
 
-      expect(fullFrameReadCount()).toBe(4);
-    });
-
-    test('a cache built while the camera moved is not served', async () => {
-      const { renderer, fullFrameReadCount } = createRenderer({
-        fullFrame: (index, pixels) => {
-          writeHit(pixels, index, { treeIndex: 5, modelIndex: 0, depthByte: 128 }, PICKED_PIXEL_OFFSET);
-          if (index === 1) {
-            pickCamera.position.set(10, 0, 0);
-            pickCamera.updateMatrixWorld();
-          }
-        }
-      });
-      const handler = new PickingHandler(renderer, createMaterialManager(), new SceneHandler());
-      const node = createCadModel(1, 2).cadNode;
-
-      await handler.intersectCadNodes([node], createInput(renderer, pickCamera));
-      expect(fullFrameReadCount()).toBe(2);
-
-      await handler.intersectCadNodes([node], createInput(renderer, pickCamera));
-
-      // The first build mixed two cameras, so the second pick rebuilds instead of using it.
       expect(fullFrameReadCount()).toBe(4);
     });
 
