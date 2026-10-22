@@ -17,12 +17,14 @@ import {
   Texture
 } from 'three';
 import { Mock } from 'moq.ts';
-import type { ICustomObject } from '@reveal/utilities';
+import { CustomObject } from '@reveal/utilities';
 import { CustomObjectEffectMaterial } from './CustomObjectEffectMaterial';
 import type { CadShadowMap } from '../render-pipeline-providers/types';
 
-function customObject(mesh: Mesh, receiveShadow?: boolean): ICustomObject {
-  return { object: mesh, receiveShadow } as ICustomObject;
+function customObject(mesh: Mesh, receiveShadow = false): CustomObject {
+  const result = new CustomObject(mesh);
+  result.receiveShadow = receiveShadow;
+  return result;
 }
 
 describe(CustomObjectEffectMaterial.name, () => {
