@@ -8,6 +8,7 @@ import viewerPackageJson from '../../../../../package.json' with { type: 'json' 
 import TWEEN from '@tweenjs/tween.js';
 import { pick } from 'lodash-es';
 
+import type { CustomObjectEffectMaterial } from '@reveal/rendering';
 import { defaultRenderOptions } from '@reveal/rendering';
 
 import type {
