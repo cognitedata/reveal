@@ -4,7 +4,6 @@
 
 import type { Camera, ColorRepresentation, Texture, WebGLRenderer, Scene } from 'three';
 import {
-  BackSide,
   Color,
   GLSL3,
   Matrix3,
@@ -298,7 +297,7 @@ function rememberSurface(
   index: number,
   options: AdoptOptions
 ): void {
-  if (!(material instanceof CustomObjectEffectMaterial) || material.side === BackSide) return;
+  if (!(material instanceof CustomObjectEffectMaterial)) return;
   const slot = Array.isArray(mesh.material) ? index : undefined;
   let surface = findSurface(owner, mesh, slot);
   if (surface === undefined) {
