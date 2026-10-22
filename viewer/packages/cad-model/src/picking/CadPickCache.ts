@@ -2,7 +2,7 @@
  * Copyright 2026 Cognite AS
  */
 
-import type { Matrix4, PerspectiveCamera, WebGLRenderer } from 'three';
+import type { PerspectiveCamera, WebGLRenderer } from 'three';
 import { Color, WebGLRenderTarget } from 'three';
 import type { IntersectInput } from '@reveal/model-base';
 import type { CadMaterialManager, RenderPipelineProvider } from '@reveal/rendering';
@@ -23,8 +23,6 @@ import type { IntersectCadNodesResult } from './types';
 type PickCacheEntry = {
   buffer: CadPickBuffer;
   cadNodes: CadNode[];
-  cameraMatrixWorld: Matrix4;
-  cameraProjectionMatrix: Matrix4;
   valid: boolean;
 };
 
@@ -71,7 +69,8 @@ export class CadPickCache {
   }
 
   /**
-   * Marks the cache stale. Must be called whenever scene content that affects picking changes. Camera changes are detected by comparing camera matrices.
+   * Marks the cache stale. Must be called whenever the camera or scene content that affects picking changes, as the
+   * cache does not compare the camera itself.
    */
   public invalidate(): void {
     if (this._cache !== undefined) {
@@ -108,7 +107,7 @@ export class CadPickCache {
     const width = Math.max(1, Math.floor(input.domElement.clientWidth));
     const height = Math.max(1, Math.floor(input.domElement.clientHeight));
 
-    if (!this.isUsable(visibleCadNodes, input.camera, width, height)) {
+    if (!this.isUsable(visibleCadNodes, width, height)) {
       // A known-in-motion camera is about to invalidate whatever we build anyway and a synchronous
       // full-frame readback would stall the caller.
       const sinceInvalidatedMs = Date.now() - this._lastInvalidatedAt;
@@ -133,15 +132,13 @@ export class CadPickCache {
     return { distance, point, treeIndex: hit.treeIndex, object: cadNode, cadNode };
   }
 
-  private isUsable(visibleCadNodes: CadNode[], camera: PerspectiveCamera, width: number, height: number): boolean {
+  private isUsable(visibleCadNodes: CadNode[], width: number, height: number): boolean {
     const cache = this._cache;
     return (
       cache !== undefined &&
       cache.valid &&
       cache.buffer.width === width &&
       cache.buffer.height === height &&
-      cache.cameraMatrixWorld.equals(camera.matrixWorld) &&
-      cache.cameraProjectionMatrix.equals(camera.projectionMatrix) &&
       cache.cadNodes.length === visibleCadNodes.length &&
       cache.cadNodes.every((node, i) => node === visibleCadNodes[i])
     );
@@ -159,10 +156,6 @@ export class CadPickCache {
   ): Promise<boolean> {
     const { camera, renderer } = input;
     const invalidationCountAtStart = this._invalidationCount;
-    // The camera is not covered by the invalidation count, so it is snapshotted before the first
-    // render and compared again once both passes have been read back.
-    const cameraMatrixWorld = camera.matrixWorld.clone();
-    const cameraProjectionMatrix = camera.projectionMatrix.clone();
 
     // Each model writes its index to the alpha byte of the tree index pass.
     visibleCadNodes.forEach((cadNode, index) => {
@@ -195,14 +188,9 @@ export class CadPickCache {
     this._cache = {
       buffer,
       cadNodes: [...visibleCadNodes],
-      cameraMatrixWorld,
-      cameraProjectionMatrix,
-      // The scene content may have changed or the camera may have moved while the readbacks were in flight, so the
-      // buffer then describes a previous frame (or mixes two cameras) and must not be served.
-      valid:
-        this._invalidationCount === invalidationCountAtStart &&
-        cameraMatrixWorld.equals(camera.matrixWorld) &&
-        cameraProjectionMatrix.equals(camera.projectionMatrix)
+      // The camera or scene content may have changed while the readbacks were in flight, so the buffer then
+      // describes a previous frame and must not be served.
+      valid: this._invalidationCount === invalidationCountAtStart
     };
     return this._cache.valid;
   }
