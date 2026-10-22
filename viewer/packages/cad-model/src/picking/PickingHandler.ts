@@ -110,7 +110,7 @@ export class PickingHandler {
     try {
       const cachedResults = await this._pickCache.intersect(visibleCadNodes, input, shouldRunAsync);
       if (cachedResults !== undefined) {
-        return cachedResults;
+        return [cachedResults];
       }
 
       const filteredCadNodes = this.filterOutOfBoundCadNodes(visibleCadNodes, input);
