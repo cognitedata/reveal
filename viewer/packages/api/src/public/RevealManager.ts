@@ -2,14 +2,13 @@
  * Copyright 2021 Cognite AS
  */
 
-import type { PerspectiveCamera, Plane, WebGLRenderTarget } from 'three';
-import { Matrix4, Quaternion, Vector3 } from 'three';
+import type { PerspectiveCamera, Plane, Vector3, WebGLRenderTarget } from 'three';
 
 import { isEqual } from 'lodash-es';
 
 import type { Subscription } from 'rxjs';
 import { combineLatest, fromEventPattern } from 'rxjs';
-import type { PointCloudBudget } from './types';
+import type { CameraSnapshot, PointCloudBudget } from './types';
 
 import type { GeometryFilter, CadModelSectorLoadStatistics, CadNode } from '@reveal/cad-model';
 import type { PointCloudManager, PointCloudNode } from '@reveal/pointclouds';
@@ -55,10 +54,7 @@ export class RevealManager {
   private _cameraInMotion: boolean = false;
   // State of the camera at the last pick cache invalidation. The camera manager also reports camera changes where the
   // camera itself did not move, such as setting the orbit target on click, which does not change what is picked.
-  private _hasLastCameraState = false;
-  private readonly _lastCameraPosition = new Vector3();
-  private readonly _lastCameraRotation = new Quaternion();
-  private readonly _lastCameraProjection = new Matrix4();
+  private _lastCameraSnapshot: CameraSnapshot | undefined;
   private readonly _pickCacheInvalidator: PickCacheInvalidator;
 
   private _isDisposed = false;
@@ -340,18 +336,26 @@ export class RevealManager {
 
   private requestPickCacheInvalidationIfCameraChanged(): void {
     const camera = this._cameraManager.getCamera();
+    const lastSnapshot = this._lastCameraSnapshot;
     if (
-      this._hasLastCameraState &&
-      camera.position.equals(this._lastCameraPosition) &&
-      camera.quaternion.equals(this._lastCameraRotation) &&
-      camera.projectionMatrix.equals(this._lastCameraProjection)
+      lastSnapshot !== undefined &&
+      camera.position.equals(lastSnapshot.position) &&
+      camera.quaternion.equals(lastSnapshot.rotation) &&
+      camera.projectionMatrix.equals(lastSnapshot.projection)
     ) {
       return;
     }
-    this._hasLastCameraState = true;
-    this._lastCameraPosition.copy(camera.position);
-    this._lastCameraRotation.copy(camera.quaternion);
-    this._lastCameraProjection.copy(camera.projectionMatrix);
+    if (lastSnapshot === undefined) {
+      this._lastCameraSnapshot = {
+        position: camera.position.clone(),
+        rotation: camera.quaternion.clone(),
+        projection: camera.projectionMatrix.clone()
+      };
+    } else {
+      lastSnapshot.position.copy(camera.position);
+      lastSnapshot.rotation.copy(camera.quaternion);
+      lastSnapshot.projection.copy(camera.projectionMatrix);
+    }
     this._pickCacheInvalidator.request();
   }
 }
