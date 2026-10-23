@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import type { PerspectiveCamera, Plane, Vector3, WebGLRenderTarget } from 'three';
+import type { Matrix4, PerspectiveCamera, Plane, Quaternion, Vector3, WebGLRenderTarget } from 'three';
 
 import { isEqual } from 'lodash-es';
 
@@ -44,6 +44,9 @@ export type AddCadModelOptions = {
  */
 export type LoadingStateChangeListener = (loadingState: LoadingState) => any;
 
+/** What a pick depends on: where the camera is, which way it looks, and how it projects. */
+type CameraSnapshot = { position: Vector3; rotation: Quaternion; projection: Matrix4 };
+
 export class RevealManager {
   private readonly _cadManager: CadManager;
   private readonly _pointCloudManager: PointCloudManager;
@@ -52,6 +55,9 @@ export class RevealManager {
   private readonly _resizeHandler: ResizeHandler;
 
   private _cameraInMotion: boolean = false;
+  // State of the camera at the last pick cache invalidation. The camera manager also reports camera changes where the
+  // camera itself did not move, such as setting the orbit target on click, which does not change what is picked.
+  private _lastCameraSnapshot: CameraSnapshot | undefined;
   private readonly _pickCacheInvalidator: PickCacheInvalidator;
 
   private _isDisposed = false;
@@ -83,8 +89,13 @@ export class RevealManager {
     this._subscriptions = this.initLoadingStateObserver(this._cadManager, this._pointCloudManager);
 
     this._cameraManager = cameraManager;
-    this._onCameraChange = (_position: Vector3, _target: Vector3) => (this._cameraInMotion = true);
-    this._onCameraStop = () => (this._cameraInMotion = false);
+    this._onCameraChange = (_position: Vector3, _target: Vector3) => {
+      this._cameraInMotion = true;
+      this.requestPickCacheInvalidationIfCameraChanged();
+    };
+    this._onCameraStop = () => {
+      this._cameraInMotion = false;
+    };
     this._cameraManager.on('cameraChange', this._onCameraChange);
     this._cameraManager.on('cameraStop', this._onCameraStop);
   }
@@ -324,5 +335,30 @@ export class RevealManager {
       lastLoadingState = state;
       this._events.loadingStateChanged.fire(state);
     });
+  }
+
+  private requestPickCacheInvalidationIfCameraChanged(): void {
+    const camera = this._cameraManager.getCamera();
+    const lastSnapshot = this._lastCameraSnapshot;
+    if (
+      lastSnapshot !== undefined &&
+      camera.position.equals(lastSnapshot.position) &&
+      camera.quaternion.equals(lastSnapshot.rotation) &&
+      camera.projectionMatrix.equals(lastSnapshot.projection)
+    ) {
+      return;
+    }
+    if (lastSnapshot === undefined) {
+      this._lastCameraSnapshot = {
+        position: camera.position.clone(),
+        rotation: camera.quaternion.clone(),
+        projection: camera.projectionMatrix.clone()
+      };
+    } else {
+      lastSnapshot.position.copy(camera.position);
+      lastSnapshot.rotation.copy(camera.quaternion);
+      lastSnapshot.projection.copy(camera.projectionMatrix);
+    }
+    this._pickCacheInvalidator.request();
   }
 }
