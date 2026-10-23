@@ -7,7 +7,6 @@ import {
   DepthTexture,
   Matrix4,
   Mesh,
-  MeshBasicMaterial,
   MirroredRepeatWrapping,
   PerspectiveCamera,
   PlaneGeometry,
@@ -84,21 +83,12 @@ describe(CustomObjectEffectMaterial.name, () => {
     expect(receiver.uniforms.tCadShadowMap.value).toBeNull();
   });
 
-  test('leaves a foreign material untouched', () => {
-    const source = new MeshBasicMaterial({ map: new Texture() });
-    const mesh = upFacingPlane(source);
-
-    CustomObjectEffectMaterial.adoptReceivers({}, [customObject(mesh)], true);
-
-    expect(mesh.material).toBe(source);
-  });
-
   test('follows the shadow flag only for objects that receive shadow', () => {
     const receiving = new CustomObjectEffectMaterial();
     const ignoring = new CustomObjectEffectMaterial();
     const owner = {};
-    const objects = [customObject(upFacingPlane(receiving), true), customObject(upFacingPlane(ignoring))];
-    CustomObjectEffectMaterial.adoptReceivers(owner, objects, false);
+    CustomObjectEffectMaterial.registerReceiver(owner, upFacingPlane(receiving), receiving, undefined, false, true);
+    CustomObjectEffectMaterial.registerReceiver(owner, upFacingPlane(ignoring), ignoring, undefined, false, false);
 
     expect(receiving.receivesShadow).toBe(false);
 
@@ -123,7 +113,7 @@ describe(CustomObjectEffectMaterial.name, () => {
     expect(material.textureVariation).toBe(true);
     expect(material.defines.HEX_TILING_TEXTURE_VARIATION).toBeDefined();
 
-    CustomObjectEffectMaterial.adoptReceivers(owner, [object], false);
+    CustomObjectEffectMaterial.registerReceiver(owner, mesh, material, undefined, false, false);
     expect(material.textureVariation).toBe(true);
 
     material.setTextureVariation(false);

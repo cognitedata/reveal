@@ -42,18 +42,25 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
   }
 
   /**
-   * Registers meshes that use this material and applies the current shadow effect.
+   * Registers one material the caller has already chosen and applies the current shadow effect.
    * @internal
    */
-  public static adoptReceivers(owner: object, customObjects: ICustomObject[], install = true): void {
-    for (const customObject of customObjects) {
-      const receivesShadow = customObject.receiveShadow === true;
-      customObject.object.updateMatrixWorld(true);
-      customObject.object.traverse(node => {
-        if (!isSurfaceMesh(node)) return;
-        rememberSurfaces(owner, node, { install, receivesShadow });
-      });
+  public static registerReceiver(
+    owner: object,
+    mesh: SurfaceMesh,
+    material: CustomObjectEffectMaterial,
+    slot: number | undefined,
+    install: boolean,
+    receivesShadow: boolean
+  ): void {
+    let surface = findSurface(owner, mesh, slot);
+    if (surface === undefined) {
+      surface = { owner, mesh, slot, material, receivesShadow: false };
+      adoptedSurfaces.push(surface);
     }
+    surface.material = material;
+    surface.receivesShadow = receivesShadow;
+    material.setReceivesShadow(install && receivesShadow);
   }
 
   /**
@@ -67,7 +74,7 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
         if (isSurfaceMesh(node)) meshes.add(node);
       });
     }
-    forgetSurfaces(owner, meshes);
+    unregisterSurfaces(owner, meshes);
   }
 
   /**
@@ -75,7 +82,7 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
    * @internal
    */
   public static releaseOwner(owner: object): void {
-    forgetSurfaces(owner, undefined);
+    unregisterSurfaces(owner, undefined);
   }
 
   /**
@@ -250,35 +257,6 @@ function isSurfaceMesh(node: object): node is SurfaceMesh {
   return (node as { isMesh?: boolean }).isMesh === true;
 }
 
-type AdoptOptions = {
-  install: boolean;
-  receivesShadow: boolean;
-};
-
-function rememberSurfaces(owner: object, mesh: SurfaceMesh, options: AdoptOptions): void {
-  const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-  materials.forEach((material, index) => rememberSurface(owner, mesh, material, index, options));
-}
-
-function rememberSurface(
-  owner: object,
-  mesh: SurfaceMesh,
-  material: object,
-  index: number,
-  options: AdoptOptions
-): void {
-  if (!(material instanceof CustomObjectEffectMaterial)) return;
-  const slot = Array.isArray(mesh.material) ? index : undefined;
-  let surface = findSurface(owner, mesh, slot);
-  if (surface === undefined) {
-    surface = { owner, mesh, slot, material, receivesShadow: false };
-    adoptedSurfaces.push(surface);
-  }
-  surface.material = material;
-  surface.receivesShadow = options.receivesShadow;
-  material.setReceivesShadow(options.install && options.receivesShadow);
-}
-
 function findSurface(owner: object, mesh: SurfaceMesh, slot: number | undefined): AdoptedSurface | undefined {
   return adoptedSurfaces.find(surface => surface.owner === owner && surface.mesh === mesh && surface.slot === slot);
 }
@@ -292,7 +270,7 @@ function ensureRepeatWrapping(map: Texture): void {
   map.needsUpdate = true;
 }
 
-function forgetSurfaces(owner: object, meshes: Set<object> | undefined): void {
+function unregisterSurfaces(owner: object, meshes: Set<object> | undefined): void {
   for (let index = adoptedSurfaces.length - 1; index >= 0; index--) {
     const surface = adoptedSurfaces[index];
     if (surface.owner !== owner) continue;

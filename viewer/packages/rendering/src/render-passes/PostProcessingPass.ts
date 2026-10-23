@@ -148,7 +148,24 @@ export class PostProcessingPass implements RenderPass {
 
   public adoptCustomObject(customObject: ICustomObject): void {
     if (this._cadShadowPass === undefined) return;
-    CustomObjectEffectMaterial.adoptReceivers(this, [customObject], this._receiversForCustomObjectsEnabled);
+    const receivesShadow = customObject.receiveShadow === true;
+    customObject.object.updateMatrixWorld(true);
+    customObject.object.traverse(node => {
+      if ((node as { isMesh?: boolean }).isMesh !== true) return;
+      const mesh = node as Mesh;
+      const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+      materials.forEach((material, index) => {
+        if (!(material instanceof CustomObjectEffectMaterial)) return;
+        CustomObjectEffectMaterial.registerReceiver(
+          this,
+          mesh,
+          material,
+          Array.isArray(mesh.material) ? index : undefined,
+          this._receiversForCustomObjectsEnabled,
+          receivesShadow
+        );
+      });
+    });
   }
 
   public releaseCustomObject(customObject: ICustomObject): void {
