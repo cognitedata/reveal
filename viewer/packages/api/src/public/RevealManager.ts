@@ -2,13 +2,13 @@
  * Copyright 2021 Cognite AS
  */
 
-import type { PerspectiveCamera, Plane, Vector3, WebGLRenderTarget } from 'three';
+import type { Matrix4, PerspectiveCamera, Plane, Quaternion, Vector3, WebGLRenderTarget } from 'three';
 
 import { isEqual } from 'lodash-es';
 
 import type { Subscription } from 'rxjs';
 import { combineLatest, fromEventPattern } from 'rxjs';
-import type { CameraSnapshot, PointCloudBudget } from './types';
+import type { PointCloudBudget } from './types';
 
 import type { GeometryFilter, CadModelSectorLoadStatistics, CadNode } from '@reveal/cad-model';
 import type { PointCloudManager, PointCloudNode } from '@reveal/pointclouds';
@@ -43,6 +43,9 @@ export type AddCadModelOptions = {
  * Handler for events about data being loaded.
  */
 export type LoadingStateChangeListener = (loadingState: LoadingState) => any;
+
+/** What a pick depends on: where the camera is, which way it looks, and how it projects. */
+type CameraSnapshot = { position: Vector3; rotation: Quaternion; projection: Matrix4 };
 
 export class RevealManager {
   private readonly _cadManager: CadManager;
