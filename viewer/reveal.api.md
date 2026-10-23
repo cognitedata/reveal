@@ -27,7 +27,6 @@ import { Plane } from 'three';
 import { Quaternion } from 'three';
 import { RawShaderMaterial } from 'three';
 import { Raycaster } from 'three';
-import { Scene } from 'three';
 import { Texture } from 'three';
 import { Vector2 } from 'three';
 import { Vector3 } from 'three';
