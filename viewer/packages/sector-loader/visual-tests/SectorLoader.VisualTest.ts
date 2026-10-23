@@ -64,7 +64,7 @@ export default class SectorLoaderVisualTestFixture extends SimpleVisualTestFixtu
   ): Promise<Group> {
     const internalId = modelIdentifier.revealInternalId;
 
-    const cadMaterial = createCadMaterial(sceneJson.maxTreeIndex);
+    const cadMaterial = createCadMaterial(sceneJson.maxTreeIndex, new PickCacheInvalidator());
     cadMaterialManager.addModelMaterials(internalId, cadMaterial);
     for (const material of Object.values(cadMaterialManager.getModelMaterials(internalId)) as RawShaderMaterial[]) {
       material.blending = CustomBlending;

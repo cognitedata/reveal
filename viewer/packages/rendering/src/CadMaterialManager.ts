@@ -372,9 +372,13 @@ function toTextureMaterialName(sectorId: number) {
   return `texturedMaterial_${sectorId}`;
 }
 
-export function createCadMaterial(maxTreeIndex: number): CadMaterial {
+export function createCadMaterial(maxTreeIndex: number, pickCacheInvalidator: PickCacheInvalidator): CadMaterial {
   const nodeAppearanceProvider = new NodeAppearanceProvider();
-  const nodeAppearanceTextureBuilder = new NodeAppearanceTextureBuilder(maxTreeIndex + 1, nodeAppearanceProvider);
+  const nodeAppearanceTextureBuilder = new NodeAppearanceTextureBuilder(
+    maxTreeIndex + 1,
+    nodeAppearanceProvider,
+    pickCacheInvalidator
+  );
   nodeAppearanceTextureBuilder.build();
 
   const nodeTransformProvider = new NodeTransformProvider();

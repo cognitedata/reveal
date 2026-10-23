@@ -64,8 +64,7 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
     this._sectorRepository = sectorRepository;
     this._modelIdentifier = model.modelIdentifier;
     this.treeIndexToSectorsMap = new TreeIndexToSectorsMap(model.scene.maxTreeIndex);
-    this._cadMaterial = createCadMaterial(model.scene.maxTreeIndex);
-    this._cadMaterial.nodeAppearanceTextureBuilder.onPickVisibilityChanged = () => pickCacheInvalidator.request();
+    this._cadMaterial = createCadMaterial(model.scene.maxTreeIndex, pickCacheInvalidator);
 
     this._styledTreeIndexSets = {
       back: this._cadMaterial.nodeAppearanceTextureBuilder.regularNodeTreeIndices,

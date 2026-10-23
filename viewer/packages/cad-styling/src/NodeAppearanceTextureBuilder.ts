@@ -4,6 +4,7 @@
 
 import { DataTexture } from 'three';
 
+import type { PickCacheInvalidator } from '@reveal/utilities';
 import { IndexSet, determinePowerOfTwoDimensions, NumericRange, createUint8View } from '@reveal/utilities';
 import { DefaultNodeAppearance, type NodeAppearance } from './NodeAppearance';
 import type { NodeAppearanceProvider } from './NodeAppearanceProvider';
@@ -13,6 +14,7 @@ type PickableSetsSnapshot = { visible: NumericRange[]; ghosted: NumericRange[] }
 export class NodeAppearanceTextureBuilder {
   private _defaultAppearance: NodeAppearance = {};
   private readonly _styleProvider: NodeAppearanceProvider;
+  private readonly _pickCacheInvalidator: PickCacheInvalidator;
   private readonly _handleStylesChangedListener = this.handleStylesChanged.bind(this);
 
   private _needsUpdate = true;
@@ -24,7 +26,12 @@ export class NodeAppearanceTextureBuilder {
   private readonly _infrontNodesTreeIndices: IndexSet;
   private readonly _visibleNodesTreeIndices: IndexSet;
 
-  constructor(treeIndexCount: number, styleProvider: NodeAppearanceProvider) {
+  constructor(
+    treeIndexCount: number,
+    styleProvider: NodeAppearanceProvider,
+    pickCacheInvalidator: PickCacheInvalidator
+  ) {
+    this._pickCacheInvalidator = pickCacheInvalidator;
     this._allTreeIndices = new IndexSet();
     this._allTreeIndices.addRange(new NumericRange(0, treeIndexCount));
     this._styleProvider = styleProvider;
@@ -84,12 +91,6 @@ export class NodeAppearanceTextureBuilder {
   }
 
   /**
-   * Called when a build changed which nodes are hidden or ghosted. Those are the only styles that affect
-   * picking, as hidden and ghosted nodes cannot be picked. Color, outline and in-front changes do not call it.
-   */
-  onPickVisibilityChanged: (() => void) | undefined;
-
-  /**
    * A texture holding at least one element per node with color override
    * and style information. RGB is used to store color, A is used to store
    * style toggles, with the following bit layout:
@@ -121,12 +122,11 @@ export class NodeAppearanceTextureBuilder {
       throw new Error('Node appearance override color texture data is not initialized');
     }
     const rgba = createUint8View(rawData);
-    // Snapshotting allocates one range object per range, so only do it when someone listens
-    const pickableBefore = this.onPickVisibilityChanged ? this.snapshotPickableSets() : undefined;
+    const pickableBefore = this.snapshotPickableSets();
     this.populateTexture(rgba);
     this.populateNodeSets(rgba);
-    if (pickableBefore && !areSnapshotsEqual(pickableBefore, this.snapshotPickableSets())) {
-      this.onPickVisibilityChanged?.();
+    if (!areSnapshotsEqual(pickableBefore, this.snapshotPickableSets())) {
+      this._pickCacheInvalidator.request();
     }
 
     this._needsUpdate = false;

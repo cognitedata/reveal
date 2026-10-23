@@ -19,13 +19,15 @@ import { createCadNode } from '../../../test-utilities';
 
 describe('CadMaterialManager', () => {
   let manager: CadMaterialManager;
+  let pickCacheInvalidator: PickCacheInvalidator;
 
   const modelIdentifier1 = Symbol('model1');
   const modelIdentifier2 = Symbol('model2');
 
   beforeEach(() => {
     vi.useFakeTimers();
-    manager = new CadMaterialManager(new PickCacheInvalidator());
+    pickCacheInvalidator = new PickCacheInvalidator();
+    manager = new CadMaterialManager(pickCacheInvalidator);
   });
 
   afterEach(() => {
@@ -33,7 +35,7 @@ describe('CadMaterialManager', () => {
   });
 
   test('addModelMaterials creates material and initializes collections for model', () => {
-    manager.addModelMaterials(modelIdentifier1, createCadMaterial(16));
+    manager.addModelMaterials(modelIdentifier1, createCadMaterial(16, pickCacheInvalidator));
     expect(manager.getModelMaterials(modelIdentifier1)).not.to.be.empty;
     expect(manager.getModelBackTreeIndices(modelIdentifier1)).toEqual(new IndexSet(range(0, 17)));
     expect(manager.getModelGhostedTreeIndices(modelIdentifier1)).toEqual(new IndexSet());
@@ -42,7 +44,7 @@ describe('CadMaterialManager', () => {
   });
 
   test('set clipping planes, materials are updated', () => {
-    const cadMaterial = createCadMaterial(16);
+    const cadMaterial = createCadMaterial(16, pickCacheInvalidator);
 
     manager.addModelMaterials(modelIdentifier1, cadMaterial);
     manager.clippingPlanes = [new Plane()];
@@ -51,7 +53,7 @@ describe('CadMaterialManager', () => {
   });
 
   test('set render mode, materials are updated', () => {
-    manager.addModelMaterials(modelIdentifier1, createCadMaterial(16));
+    manager.addModelMaterials(modelIdentifier1, createCadMaterial(16, pickCacheInvalidator));
     const initialRenderMode = cloneDeep(manager.getModelMaterials(modelIdentifier1).box.uniforms['renderMode']);
 
     manager.setRenderMode(RenderMode.TreeIndex);
@@ -59,7 +61,7 @@ describe('CadMaterialManager', () => {
   });
 
   test('setModelDefaultNodeAppearance, node collection are updated', () => {
-    manager.addModelMaterials(modelIdentifier1, createCadMaterial(4));
+    manager.addModelMaterials(modelIdentifier1, createCadMaterial(4, pickCacheInvalidator));
 
     manager.setModelDefaultNodeAppearance(modelIdentifier1, { renderGhosted: true });
 
@@ -83,7 +85,7 @@ describe('CadMaterialManager', () => {
 
   test('transform provider triggers update, triggers materialChanged', () => {
     const modelIdentifier = Symbol('model');
-    manager.addModelMaterials(modelIdentifier, createCadMaterial(4));
+    manager.addModelMaterials(modelIdentifier, createCadMaterial(4, pickCacheInvalidator));
     const listener = vi.fn();
     const provider = manager.getModelNodeTransformProvider(modelIdentifier);
     provider.on('changed', listener);
@@ -99,8 +101,8 @@ describe('CadMaterialManager', () => {
     const globalClipPlanes = [new Plane(), new Plane()];
     manager.clippingPlanes = globalClipPlanes;
 
-    const cadMaterial1 = createCadMaterial(16);
-    const cadMaterial2 = createCadMaterial(16);
+    const cadMaterial1 = createCadMaterial(16, pickCacheInvalidator);
+    const cadMaterial2 = createCadMaterial(16, pickCacheInvalidator);
     manager.addModelMaterials(modelIdentifier1, cadMaterial1);
     manager.addModelMaterials(modelIdentifier2, cadMaterial2);
 
@@ -123,7 +125,7 @@ describe('CadMaterialManager', () => {
 
   test('addTexturedMeshMaterial creates textured material successfully', () => {
     // Arrange
-    manager.addModelMaterials(modelIdentifier1, createCadMaterial(16));
+    manager.addModelMaterials(modelIdentifier1, createCadMaterial(16, pickCacheInvalidator));
     const texture = new Texture();
     const sectorId = 123;
     // Act
@@ -151,7 +153,7 @@ describe('CadMaterialManager', () => {
 
   test('addTexturedMeshMaterial disposes existing textured material when replacing', () => {
     // Arrange
-    manager.addModelMaterials(modelIdentifier1, createCadMaterial(16));
+    manager.addModelMaterials(modelIdentifier1, createCadMaterial(16, pickCacheInvalidator));
     const texture1 = new Texture();
     const texture2 = new Texture();
     const sectorId = 123;
@@ -170,7 +172,7 @@ describe('CadMaterialManager', () => {
 
   test('addTexturedMeshMaterial clones original triangle mesh material properties', () => {
     // Arrange
-    manager.addModelMaterials(modelIdentifier1, createCadMaterial(16));
+    manager.addModelMaterials(modelIdentifier1, createCadMaterial(16, pickCacheInvalidator));
     const texture = new Texture();
     const sectorId = 123;
 
@@ -190,7 +192,7 @@ describe('CadMaterialManager', () => {
   });
 
   test.each([true, false])('setCadLightingEnabled(%s) pushes the flag onto material uniforms', enabled => {
-    manager.addModelMaterials(modelIdentifier1, createCadMaterial(4));
+    manager.addModelMaterials(modelIdentifier1, createCadMaterial(4, pickCacheInvalidator));
 
     manager.setCadLightingEnabled(enabled);
     manager.updateViewLighting(new PerspectiveCamera());
@@ -208,7 +210,7 @@ describe('CadMaterialManager', () => {
   });
 
   test('setCadLightingEnabled(false) writes the off flag and updateViewLighting then does nothing', () => {
-    manager.addModelMaterials(modelIdentifier1, createCadMaterial(4));
+    manager.addModelMaterials(modelIdentifier1, createCadMaterial(4, pickCacheInvalidator));
     const material = manager.getModelMaterials(modelIdentifier1).box;
 
     manager.setCadLightingEnabled(true);
@@ -225,7 +227,7 @@ describe('CadMaterialManager', () => {
 
   test('updateViewLighting enables a model added after the light was turned on', () => {
     manager.setCadLightingEnabled(true);
-    manager.addModelMaterials(modelIdentifier1, createCadMaterial(4));
+    manager.addModelMaterials(modelIdentifier1, createCadMaterial(4, pickCacheInvalidator));
     const material = manager.getModelMaterials(modelIdentifier1).box;
     expect(material.uniforms.cadLightingEnabled.value).toBe(false);
 
@@ -235,7 +237,7 @@ describe('CadMaterialManager', () => {
   });
 
   test('updateViewLighting transforms the world light into view space', () => {
-    manager.addModelMaterials(modelIdentifier1, createCadMaterial(4));
+    manager.addModelMaterials(modelIdentifier1, createCadMaterial(4, pickCacheInvalidator));
     const camera = new PerspectiveCamera();
     camera.position.set(1, 2, 3);
     camera.lookAt(0, 0, 0);
@@ -250,21 +252,15 @@ describe('CadMaterialManager', () => {
 
   describe('pick cache invalidation', () => {
     test('clipping planes invalidate the pick cache', () => {
-      const pickCacheInvalidator = new PickCacheInvalidator();
-      const pickManager = new CadMaterialManager(pickCacheInvalidator);
-
-      pickManager.clippingPlanes = [new Plane()];
+      manager.clippingPlanes = [new Plane()];
 
       expect(pickCacheInvalidator.consume()).toBe(true);
     });
 
     test('lighting changes redraw but do not invalidate the pick cache', () => {
-      const pickCacheInvalidator = new PickCacheInvalidator();
-      const pickManager = new CadMaterialManager(pickCacheInvalidator);
+      manager.setCadLightingEnabled(true);
 
-      pickManager.setCadLightingEnabled(true);
-
-      expect(pickManager.needsRedraw).toBe(true);
+      expect(manager.needsRedraw).toBe(true);
       expect(pickCacheInvalidator.consume()).toBe(false);
     });
   });

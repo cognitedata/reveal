@@ -48,7 +48,12 @@ export class PickingHandler {
 
   private readonly _pickCache: CadPickCache;
 
-  constructor(renderer: WebGLRenderer, materialManager: CadMaterialManager, sceneHandler: SceneHandler) {
+  constructor(
+    renderer: WebGLRenderer,
+    materialManager: CadMaterialManager,
+    sceneHandler: SceneHandler,
+    pickCache: CadPickCache = new CadPickCache(renderer, materialManager, sceneHandler)
+  ) {
     this._clearColor = new Color('black');
     this._clearAlpha = 0;
     this._raycaster = new Raycaster();
@@ -73,7 +78,7 @@ export class PickingHandler {
     this._treeIndexRenderPipeline.setOutputRenderTarget(this._pickPixelColorStorage.renderTarget, false);
     this._depthRenderPipeline.setOutputRenderTarget(this._pickPixelColorStorage.renderTarget, false);
 
-    this._pickCache = new CadPickCache(renderer, materialManager, sceneHandler);
+    this._pickCache = pickCache;
   }
 
   /**
