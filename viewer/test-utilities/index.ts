@@ -10,16 +10,6 @@ export { createV9SceneSectorMetadata } from './src/createSceneSectorMetadata';
 export { createCadModelMetadata } from './src/createCadModelMetadata';
 export { createCadModel } from './src/createCadModel';
 export { createCadNode } from './src/createCadNode';
-export {
-  PICK_CANVAS_WIDTH,
-  PICK_CANVAS_HEIGHT,
-  PICKED_PIXEL_OFFSET,
-  createPickMaterialManager,
-  createPickRenderer,
-  createPickInput,
-  writePickHit,
-  getModelIndexUniforms
-} from './src/cadPickTestUtils';
 export { createPointCloudModel, createPointCloudNode } from './src/createPointCloudModel';
 export { createAnnotationModel } from './src/createAnnotationModel';
 export { createFileInfo } from './src/createFileInfo';

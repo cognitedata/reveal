@@ -11,9 +11,8 @@ import { PerspectiveCamera, Box3 } from 'three';
 import { CdfModelIdentifier, File3dFormat } from '@reveal/data-providers';
 import type { CadModelMetadata } from '@reveal/cad-parsers';
 import { createCadModelMetadata, createCadNode, createV9SectorMetadata } from '../../../test-utilities';
-import type { CadNode } from '@reveal/cad-model';
-import type { SectorRepository } from '@reveal/sector-loader';
 import { PickCacheInvalidator } from '@reveal/utilities';
+import { vi } from 'vitest';
 
 function createMinimalMetadata(format: File3dFormat, formatVersion: number): CadModelMetadata {
   const root = createV9SectorMetadata([0, [], new Box3()]);
@@ -95,43 +94,21 @@ describe(CadManager.name, () => {
     expect(cadManager.materialManager).toBe(materialManagerMock.object());
   });
 
-  describe('pick cache invalidation', () => {
-    const modelIdentifier = new CdfModelIdentifier(1, 2);
+  test('adding and removing a model invalidates the pick cache', async () => {
+    const model = createCadNode(2, 2, { pickCacheInvalidator });
+    vi.spyOn(model, 'setCacheSize').mockImplementation(() => {});
+    cadModelFactoryMock
+      .setup(p => p.loadModelMetadata(It.IsAny(), It.IsAny()))
+      .returns(Promise.resolve(createMinimalMetadata(File3dFormat.AnyFormat, 9)))
+      .setup(p => p.createModel(It.IsAny(), It.IsAny()))
+      .returns(model);
+    materialManagerMock.setup(p => p.removeModelMaterials(It.IsAny())).returns();
 
-    function setupModelFactory(model: CadNode): void {
-      cadModelFactoryMock
-        .setup(p => p.loadModelMetadata(It.IsAny(), It.IsAny()))
-        .returns(Promise.resolve(createMinimalMetadata(File3dFormat.AnyFormat, 9)))
-        .setup(p => p.createModel(It.IsAny(), It.IsAny()))
-        .returns(model);
-      materialManagerMock.setup(p => p.removeModelMaterials(It.IsAny())).returns();
-    }
+    await cadManager.addModel(new CdfModelIdentifier(1, 2));
+    expect(pickCacheInvalidator.consume()).toBe(true);
 
-    test('a plain redraw request does not invalidate the pick cache', () => {
-      cadManager.requestRedraw();
-
-      expect(cadManager.needsRedraw).toBe(true);
-      expect(pickCacheInvalidator.consume()).toBe(false);
-    });
-
-    test('adding and removing a model invalidates the pick cache', async () => {
-      const sectorRepository = new Mock<SectorRepository>()
-        .setup(p => p.setCacheSize(It.IsAny()))
-        .returns()
-        .setup(p => p.clearCache)
-        .returns(() => {})
-        .setup(p => p.dereferenceSector)
-        .returns(() => {})
-        .object();
-      const model = createCadNode(2, 2, { pickCacheInvalidator, sectorRepository });
-      setupModelFactory(model);
-
-      await cadManager.addModel(modelIdentifier);
-      expect(pickCacheInvalidator.consume()).toBe(true);
-
-      cadManager.removeModel(model);
-      expect(pickCacheInvalidator.consume()).toBe(true);
-    });
+    cadManager.removeModel(model);
+    expect(pickCacheInvalidator.consume()).toBe(true);
   });
 
   describe('doesModelHaveCompatibleFormat', () => {

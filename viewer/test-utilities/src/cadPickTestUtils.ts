@@ -11,10 +11,10 @@ import type { IntersectInput } from '../../packages/model-base';
 import type { CadNode } from '../../packages/cad-model';
 import { autoMockWebGLRenderer } from './autoMockWebGLRenderer';
 
-export const PICK_CANVAS_WIDTH = 4;
-export const PICK_CANVAS_HEIGHT = 2;
+const CANVAS_WIDTH = 4;
+const CANVAS_HEIGHT = 2;
 // Pixel (3, 1) of the 4x2 pick buffer, i.e. the one under normalized coordinates (0.5, 0.5).
-export const PICKED_PIXEL_OFFSET = 4 * (3 + 1 * PICK_CANVAS_WIDTH);
+export const PICKED_PIXEL_OFFSET = 4 * (3 + 1 * CANVAS_WIDTH);
 
 type ReadFill = (readIndex: number, pixels: Uint8Array) => void;
 
@@ -40,44 +40,31 @@ export function createPickRenderer(fills: { fullFrame?: ReadFill; singlePixel?: 
 } {
   let fullFrameReads = 0;
   let singlePixelReads = 0;
-  const recordRead = (width: number, height: number, pixels: Uint8Array) => {
-    if (width === PICK_CANVAS_WIDTH && height === PICK_CANVAS_HEIGHT) {
+  const readPixels = (args: unknown[]): Uint8Array => {
+    const [, , , width, height, pixels] = args;
+    if (typeof width !== 'number' || typeof height !== 'number' || !(pixels instanceof Uint8Array)) {
+      throw new Error('Unexpected readRenderTargetPixels arguments');
+    }
+    if (width === CANVAS_WIDTH && height === CANVAS_HEIGHT) {
       fills.fullFrame?.(fullFrameReads, pixels);
       fullFrameReads++;
     } else {
       fills.singlePixel?.(singlePixelReads, pixels);
       singlePixelReads++;
     }
-  };
-
-  const recordReadArgs = (args: unknown[]): Uint8Array => {
-    const [, , , width, height, pixels] = args;
-    if (typeof width !== 'number' || typeof height !== 'number' || !(pixels instanceof Uint8Array)) {
-      throw new Error('Unexpected readRenderTargetPixels arguments');
-    }
-    recordRead(width, height, pixels);
     return pixels;
   };
 
   const renderer = autoMockWebGLRenderer(new Mock<WebGLRenderer>())
     .setup(r => r.readRenderTargetPixelsAsync(It.IsAny(), It.IsAny(), It.IsAny(), It.IsAny(), It.IsAny(), It.IsAny()))
-    .callback(({ args }) => {
-      return Promise.resolve(recordReadArgs(args));
-    })
+    .callback(({ args }) => Promise.resolve(readPixels(args)))
     .setup(r => r.readRenderTargetPixels(It.IsAny(), It.IsAny(), It.IsAny(), It.IsAny(), It.IsAny(), It.IsAny()))
     .callback(({ args }) => {
-      recordReadArgs(args);
+      readPixels(args);
     })
     .object();
 
   return { renderer, fullFrameReadCount: () => fullFrameReads, singlePixelReadCount: () => singlePixelReads };
-}
-
-function createCanvas(): HTMLCanvasElement {
-  const canvas = document.createElement('canvas');
-  Object.defineProperty(canvas, 'clientWidth', { value: PICK_CANVAS_WIDTH });
-  Object.defineProperty(canvas, 'clientHeight', { value: PICK_CANVAS_HEIGHT });
-  return canvas;
 }
 
 export function createPickInput(
@@ -85,14 +72,10 @@ export function createPickInput(
   camera: PerspectiveCamera,
   overrides?: Partial<IntersectInput>
 ): IntersectInput {
-  return {
-    normalizedCoords: new Vector2(0.5, 0.5),
-    renderer,
-    camera,
-    clippingPlanes: [],
-    domElement: createCanvas(),
-    ...overrides
-  };
+  const domElement = document.createElement('canvas');
+  Object.defineProperty(domElement, 'clientWidth', { value: CANVAS_WIDTH });
+  Object.defineProperty(domElement, 'clientHeight', { value: CANVAS_HEIGHT });
+  return { normalizedCoords: new Vector2(0.5, 0.5), renderer, camera, clippingPlanes: [], domElement, ...overrides };
 }
 
 /**
@@ -104,11 +87,7 @@ export function writePickHit(
   hit: { treeIndex: number; modelIndex: number; depthByte: number },
   offset: number
 ): void {
-  if (readIndex % 2 === 0) {
-    pixels.set([0, 0, hit.treeIndex, hit.modelIndex + 1], offset);
-  } else {
-    pixels.set([hit.depthByte, 0, 0, 0], offset);
-  }
+  pixels.set(readIndex % 2 === 0 ? [0, 0, hit.treeIndex, hit.modelIndex + 1] : [hit.depthByte, 0, 0, 0], offset);
 }
 
 export function getModelIndexUniforms(cadNode: CadNode): number[] {

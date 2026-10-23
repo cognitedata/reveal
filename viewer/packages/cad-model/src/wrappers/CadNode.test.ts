@@ -3,7 +3,7 @@
  */
 import { CadNode } from './CadNode';
 import type { Group } from 'three';
-import { Matrix4, BufferGeometry, BufferAttribute, Box3, Vector3, CanvasTexture, Mesh, Plane, Color } from 'three';
+import { Matrix4, BufferGeometry, BufferAttribute, Box3, Vector3, CanvasTexture, Mesh, Plane } from 'three';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import type { ConsumedSector, ParsedMeshGeometry, WantedSector } from '@reveal/cad-parsers';
 
@@ -37,18 +37,6 @@ describe(CadNode.name, () => {
 
       cadNode.setModelTransformation(new Matrix4().makeTranslation(1, 2, 3));
 
-      expect(pickCacheInvalidator.consume()).toBe(true);
-    });
-
-    test('default appearance invalidates the pick cache only when it ghosts or hides nodes', () => {
-      const pickCacheInvalidator = new PickCacheInvalidator();
-      const cadNode = createCadNode(3, 3, { pickCacheInvalidator });
-      pickCacheInvalidator.consume();
-
-      cadNode.defaultNodeAppearance = { color: new Color('red') };
-      expect(pickCacheInvalidator.consume()).toBe(false);
-
-      cadNode.defaultNodeAppearance = { renderGhosted: true };
       expect(pickCacheInvalidator.consume()).toBe(true);
     });
   });

@@ -68,20 +68,14 @@ describe('NodeAppearanceTextureBuilder', () => {
     });
 
     test.each([
-      ['hidden', { visible: false }],
-      ['ghosted', { renderGhosted: true }]
-    ])('is requested when styling makes nodes %s', (_, appearance: NodeAppearance) => {
+      ['hidden', { visible: false }, true],
+      ['ghosted', { renderGhosted: true }, true],
+      ['color', { color: new Color(1, 0, 0) }, false],
+      ['outline', { outlineColor: NodeOutlineColor.Cyan }, false],
+      ['in front', { renderInFront: true }, false]
+    ])('styling nodes as %s requests invalidation: %s', (_, appearance: NodeAppearance, expectedRequest: boolean) => {
       buildAfterStyling(appearance);
-      expect(pickCacheInvalidator.consume()).toBe(true);
-    });
-
-    test.each([
-      ['color', { color: new Color(1, 0, 0) }],
-      ['outline', { outlineColor: NodeOutlineColor.Cyan }],
-      ['in front', { renderInFront: true }]
-    ])('is not requested when styling only changes %s', (_, appearance: NodeAppearance) => {
-      buildAfterStyling(appearance);
-      expect(pickCacheInvalidator.consume()).toBe(false);
+      expect(pickCacheInvalidator.consume()).toBe(expectedRequest);
     });
 
     test('is requested when a hidden style is removed', () => {
