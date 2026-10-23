@@ -26,8 +26,8 @@ const CUSTOM_OBJECT_EFFECT = {
 } as const;
 
 /**
- * Opt-in material for up-facing custom objects, such as a ground plane. Reveal applies its
- * effects only to planes that use it; each effect is included only while its define is set.
+ * Opt-in material for custom objects. Reveal applies CAD shadows and hex tiling only to meshes
+ * that use it. Each effect is included only while its define is set.
  * @public
  */
 export class CustomObjectEffectMaterial extends RawShaderMaterial {
@@ -96,12 +96,15 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
     }
   }
 
-  constructor(color: ColorRepresentation = '#ffffff', map: Texture | null = null) {
+  /**
+   * White and no texture when omitted. Without a texture, texture variation stays off.
+   */
+  constructor(color: ColorRepresentation = '#ffffff', map?: Texture) {
     super({
       vertexShader: effectVertexShader,
       fragmentShader: effectFragmentShader,
       uniforms: {
-        tDiffuse: { value: map },
+        tDiffuse: { value: map ?? null },
         tDiffuseTransform: { value: new Matrix3() },
         diffuseColor: { value: new Color(color) },
         cadShadowApply: { value: 0 },
@@ -119,10 +122,14 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
       },
       glslVersion: GLSL3
     });
-    this.setMap(map);
+    this.setMap(map ?? null);
     this.type = 'CustomObjectEffectMaterial';
   }
 
+  /**
+   * Copies this frame's CAD shadow map. Called by Three.js.
+   * @internal
+   */
   public override onBeforeRender(
     _renderer: WebGLRenderer,
     _scene: Scene,
@@ -139,6 +146,7 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
     this.update(shadowMap, camera);
   }
 
+  /** Sets the diffuse texture. Pass null to clear it. */
   public setMap(map: Texture | null): void {
     this.uniforms.tDiffuse.value = map;
     if (map === null) {
@@ -150,6 +158,7 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
     this.refreshMapTransform();
   }
 
+  /** Turns hex tiling on or off. Stays off when the material has no texture. */
   public setTextureVariation(enabled: boolean): void {
     const map = this.uniforms.tDiffuse.value as Texture | null;
     if (enabled && map !== null) {
@@ -165,7 +174,8 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
     params.copy(tilesAcross < HEX_TILING_FEW_TILES ? HEX_TILING_STRETCHED : HEX_TILING_REPEATED);
   }
 
-  public get textureVariation(): boolean {
+  /** Whether hex tiling is enabled. */
+  public get textureVariationEnabled(): boolean {
     return this.defines[CUSTOM_OBJECT_EFFECT.textureVariation] !== undefined;
   }
 
@@ -177,11 +187,13 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
     this.needsUpdate = true;
   }
 
+  /** Turns the CAD shadow effect on or off for this material. */
   public setReceivesShadow(receivesShadow: boolean): void {
     this.setEffectEnabled(CUSTOM_OBJECT_EFFECT.cadShadow, receivesShadow);
     if (!receivesShadow) this.disableShadows();
   }
 
+  /** Whether the CAD shadow effect is enabled. */
   public get receivesShadow(): boolean {
     return this.cadShadow;
   }
@@ -190,6 +202,7 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
     return this.defines[CUSTOM_OBJECT_EFFECT.cadShadow] !== undefined;
   }
 
+  /** Sets the diffuse color. */
   public setColor(color: ColorRepresentation): void {
     (this.uniforms.diffuseColor.value as Color).set(color);
   }

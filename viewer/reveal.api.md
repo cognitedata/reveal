@@ -870,21 +870,13 @@ export class CustomObject implements ICustomObject {
 
 // @public
 export class CustomObjectEffectMaterial extends RawShaderMaterial {
-    constructor(color?: ColorRepresentation, map?: Texture | null);
-    // (undocumented)
-    onBeforeRender(_renderer: WebGLRenderer, _scene: Scene, camera: Camera, _geometry: unknown, _object: unknown, _group: unknown): void;
-    // (undocumented)
+    constructor(color?: ColorRepresentation, map?: Texture);
     get receivesShadow(): boolean;
-    // (undocumented)
     setColor(color: ColorRepresentation): void;
-    // (undocumented)
     setMap(map: Texture | null): void;
-    // (undocumented)
     setReceivesShadow(receivesShadow: boolean): void;
-    // (undocumented)
     setTextureVariation(enabled: boolean): void;
-    // (undocumented)
-    get textureVariation(): boolean;
+    get textureVariationEnabled(): boolean;
 }
 
 // @beta

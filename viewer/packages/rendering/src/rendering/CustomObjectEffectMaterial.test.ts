@@ -110,18 +110,18 @@ describe(CustomObjectEffectMaterial.name, () => {
     const object = customObject(mesh);
 
     material.setTextureVariation(true);
-    expect(material.textureVariation).toBe(true);
+    expect(material.textureVariationEnabled).toBe(true);
     expect(material.defines.HEX_TILING_TEXTURE_VARIATION).toBeDefined();
 
     CustomObjectEffectMaterial.registerEffect(owner, mesh, material, undefined, false, false);
-    expect(material.textureVariation).toBe(true);
+    expect(material.textureVariationEnabled).toBe(true);
 
     material.setTextureVariation(false);
-    expect(material.textureVariation).toBe(false);
+    expect(material.textureVariationEnabled).toBe(false);
 
     CustomObjectEffectMaterial.releaseEffects(owner, [object]);
     expect(mesh.material).toBe(material);
-    expect(material.textureVariation).toBe(false);
+    expect(material.textureVariationEnabled).toBe(false);
     expect(dispose).not.toHaveBeenCalled();
   });
 
