@@ -510,9 +510,6 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     // @beta
     getVisualSceneBoundingBox(): Box3;
     // @beta
-    get groundPlaneTextureVariationEnabled(): boolean;
-    set groundPlaneTextureVariationEnabled(enabled: boolean);
-    // @beta
     image360Action(action: Image360Action): Promise<void>;
     loadCameraFromModel(model: CogniteModel<DataSourceT>): void;
     get models(): CogniteModel<DataSourceT>[];
@@ -577,8 +574,6 @@ export interface Cognite3DViewerOptions {
     domElement?: HTMLElement;
     enableEdges?: boolean;
     enableFloorIcons?: boolean;
-    // @beta
-    enableGroundPlaneTextureVariation?: boolean;
     enableHtmlClusters?: boolean;
     // @beta
     enableShadows?: boolean;
