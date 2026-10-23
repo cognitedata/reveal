@@ -1,10 +1,10 @@
 precision highp float;
 precision highp int;
 
-uniform vec3 receiverColor;
+uniform vec3 diffuseColor;
 
-#ifdef USE_MAP
-uniform sampler2D tReceiver;
+#ifdef USE_DIFFUSE_TEXTURE
+uniform sampler2D tDiffuse;
 #endif
 
 in vec2 vUv;
@@ -18,16 +18,16 @@ out vec4 fragColor;
 uniform float cadShadowApply;
 #include cadShadow.glsl;
 #endif
-#if defined(USE_MAP) && defined(HEX_TILING_TEXTURE_VARIATION)
+#if defined(USE_DIFFUSE_TEXTURE) && defined(HEX_TILING_TEXTURE_VARIATION)
 #include hexTiling.glsl;
 #endif
 
 vec3 customObjectBaseColor() {
-    vec3 color = receiverColor;
-#if defined(USE_MAP) && defined(HEX_TILING_TEXTURE_VARIATION)
-    color *= hexTileAlbedo(tReceiver, vUv);
-#elif defined(USE_MAP)
-    color *= texture(tReceiver, vUv).rgb;
+    vec3 color = diffuseColor;
+#if defined(USE_DIFFUSE_TEXTURE) && defined(HEX_TILING_TEXTURE_VARIATION)
+    color *= hexTileAlbedo(tDiffuse, vUv);
+#elif defined(USE_DIFFUSE_TEXTURE)
+    color *= texture(tDiffuse, vUv).rgb;
 #endif
     return color;
 }

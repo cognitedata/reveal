@@ -156,7 +156,7 @@ export class PostProcessingPass implements RenderPass {
       const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
       materials.forEach((material, index) => {
         if (!(material instanceof CustomObjectEffectMaterial)) return;
-        CustomObjectEffectMaterial.registerReceiver(
+        CustomObjectEffectMaterial.registerEffect(
           this,
           mesh,
           material,
@@ -170,7 +170,7 @@ export class PostProcessingPass implements RenderPass {
 
   public releaseCustomObject(customObject: ICustomObject): void {
     if (this._cadShadowPass === undefined) return;
-    CustomObjectEffectMaterial.releaseReceivers(this, [customObject]);
+    CustomObjectEffectMaterial.releaseEffects(this, [customObject]);
   }
 
   public setReceiversForCustomObjectsEnabled(enabled: boolean): void {

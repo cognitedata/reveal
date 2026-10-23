@@ -45,7 +45,7 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
    * Registers one material the caller has already chosen and applies the current shadow effect.
    * @internal
    */
-  public static registerReceiver(
+  public static registerEffect(
     owner: object,
     mesh: SurfaceMesh,
     material: CustomObjectEffectMaterial,
@@ -67,7 +67,7 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
    * Forgets the planes of the custom objects. Their materials are left as they are.
    * @internal
    */
-  public static releaseReceivers(owner: object, customObjects: ICustomObject[]): void {
+  public static releaseEffects(owner: object, customObjects: ICustomObject[]): void {
     const meshes = new Set<object>();
     for (const customObject of customObjects) {
       customObject.object.traverse(node => {
@@ -101,9 +101,9 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
       vertexShader: effectVertexShader,
       fragmentShader: effectFragmentShader,
       uniforms: {
-        tReceiver: { value: map },
-        tReceiverTransform: { value: new Matrix3() },
-        receiverColor: { value: new Color(color) },
+        tDiffuse: { value: map },
+        tDiffuseTransform: { value: new Matrix3() },
+        diffuseColor: { value: new Color(color) },
         cadShadowApply: { value: 0 },
         tCadShadowMap: { value: null },
         inverseProjectionMatrix: { value: new Matrix4() },
@@ -140,18 +140,18 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
   }
 
   public setMap(map: Texture | null): void {
-    this.uniforms.tReceiver.value = map;
+    this.uniforms.tDiffuse.value = map;
     if (map === null) {
-      delete this.defines.USE_MAP;
+      delete this.defines.USE_DIFFUSE_TEXTURE;
     } else {
-      this.defines.USE_MAP = '';
+      this.defines.USE_DIFFUSE_TEXTURE = '';
     }
     this.needsUpdate = true;
     this.refreshMapTransform();
   }
 
   public setTextureVariation(enabled: boolean): void {
-    const map = this.uniforms.tReceiver.value as Texture | null;
+    const map = this.uniforms.tDiffuse.value as Texture | null;
     if (enabled && map !== null) {
       ensureRepeatWrapping(map);
       this.fitTextureVariationToMap(map);
@@ -191,7 +191,7 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
   }
 
   public setColor(color: ColorRepresentation): void {
-    (this.uniforms.receiverColor.value as Color).set(color);
+    (this.uniforms.diffuseColor.value as Color).set(color);
   }
 
   /** @internal */
@@ -214,8 +214,8 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
   }
 
   private refreshMapTransform(): void {
-    const map = this.uniforms.tReceiver.value as Texture | null;
-    const transform = this.uniforms.tReceiverTransform.value as Matrix3;
+    const map = this.uniforms.tDiffuse.value as Texture | null;
+    const transform = this.uniforms.tDiffuseTransform.value as Matrix3;
     if (map === null) {
       transform.identity();
       return;

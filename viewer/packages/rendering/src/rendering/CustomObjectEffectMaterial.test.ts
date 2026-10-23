@@ -64,31 +64,31 @@ describe(CustomObjectEffectMaterial.name, () => {
     map.wrapT = RepeatWrapping;
     map.repeat.set(4, 2);
     map.offset.set(0.1, 0.25);
-    const receiver = new CustomObjectEffectMaterial('#88aa44', map);
-    receiver.setReceivesShadow(true);
+    const material = new CustomObjectEffectMaterial('#88aa44', map);
+    material.setReceivesShadow(true);
     CustomObjectEffectMaterial.setFrameShadowMap(shadowMap);
 
-    draw(receiver);
+    draw(material);
 
-    expect(receiver.uniforms.cadShadowApply.value).toBe(1);
-    expect(receiver.uniforms.tCadShadowMap.value).toBe(shadowMap.depthTexture);
-    expect(receiver.uniforms.cadShadowMatrix.value.elements).toEqual(shadowMatrix.elements);
-    expect(receiver.uniforms.cadCameraMatrixWorld.value.elements).toEqual(camera.matrixWorld.elements);
-    expect((receiver.uniforms.tReceiverTransform.value as Matrix3).elements).toEqual([...map.matrix.elements]);
+    expect(material.uniforms.cadShadowApply.value).toBe(1);
+    expect(material.uniforms.tCadShadowMap.value).toBe(shadowMap.depthTexture);
+    expect(material.uniforms.cadShadowMatrix.value.elements).toEqual(shadowMatrix.elements);
+    expect(material.uniforms.cadCameraMatrixWorld.value.elements).toEqual(camera.matrixWorld.elements);
+    expect((material.uniforms.tDiffuseTransform.value as Matrix3).elements).toEqual([...map.matrix.elements]);
 
     CustomObjectEffectMaterial.setFrameShadowMap(undefined);
-    draw(receiver);
+    draw(material);
 
-    expect(receiver.uniforms.cadShadowApply.value).toBe(0);
-    expect(receiver.uniforms.tCadShadowMap.value).toBeNull();
+    expect(material.uniforms.cadShadowApply.value).toBe(0);
+    expect(material.uniforms.tCadShadowMap.value).toBeNull();
   });
 
   test('follows the shadow flag only for objects that receive shadow', () => {
     const receiving = new CustomObjectEffectMaterial();
     const ignoring = new CustomObjectEffectMaterial();
     const owner = {};
-    CustomObjectEffectMaterial.registerReceiver(owner, upFacingPlane(receiving), receiving, undefined, false, true);
-    CustomObjectEffectMaterial.registerReceiver(owner, upFacingPlane(ignoring), ignoring, undefined, false, false);
+    CustomObjectEffectMaterial.registerEffect(owner, upFacingPlane(receiving), receiving, undefined, false, true);
+    CustomObjectEffectMaterial.registerEffect(owner, upFacingPlane(ignoring), ignoring, undefined, false, false);
 
     expect(receiving.receivesShadow).toBe(false);
 
@@ -113,13 +113,13 @@ describe(CustomObjectEffectMaterial.name, () => {
     expect(material.textureVariation).toBe(true);
     expect(material.defines.HEX_TILING_TEXTURE_VARIATION).toBeDefined();
 
-    CustomObjectEffectMaterial.registerReceiver(owner, mesh, material, undefined, false, false);
+    CustomObjectEffectMaterial.registerEffect(owner, mesh, material, undefined, false, false);
     expect(material.textureVariation).toBe(true);
 
     material.setTextureVariation(false);
     expect(material.textureVariation).toBe(false);
 
-    CustomObjectEffectMaterial.releaseReceivers(owner, [object]);
+    CustomObjectEffectMaterial.releaseEffects(owner, [object]);
     expect(mesh.material).toBe(material);
     expect(material.textureVariation).toBe(false);
     expect(dispose).not.toHaveBeenCalled();
