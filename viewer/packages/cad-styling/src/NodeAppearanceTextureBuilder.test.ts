@@ -6,7 +6,7 @@ import type { DataTexture } from 'three';
 
 import { NodeAppearanceTextureBuilder } from './NodeAppearanceTextureBuilder';
 
-import { IndexSet, createUint8View } from '@reveal/utilities';
+import { IndexSet, PickCacheInvalidator, createUint8View } from '@reveal/utilities';
 
 import { NodeAppearanceProvider } from './NodeAppearanceProvider';
 import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
@@ -25,11 +25,13 @@ describe('NodeAppearanceTextureBuilder', () => {
   let styleProvider: NodeAppearanceProvider;
   let builder: NodeAppearanceTextureBuilder;
   let nodeCollection: TreeIndexNodeCollection;
+  let pickCacheInvalidator: PickCacheInvalidator;
 
   beforeEach(() => {
     vi.useFakeTimers();
     styleProvider = new NodeAppearanceProvider();
-    builder = new NodeAppearanceTextureBuilder(1, styleProvider);
+    pickCacheInvalidator = new PickCacheInvalidator();
+    builder = new NodeAppearanceTextureBuilder(1, styleProvider, pickCacheInvalidator);
     nodeCollection = new TreeIndexNodeCollection([0]);
   });
 
@@ -51,6 +53,41 @@ describe('NodeAppearanceTextureBuilder', () => {
     styleProvider.assignStyledNodeCollection(nodeCollection, { renderGhosted: true });
     vi.runAllTimers();
     expect(builder.needsUpdate).toBeTruthy();
+  });
+
+  describe('pick cache invalidation', () => {
+    const buildAfterStyling = (appearance: NodeAppearance): void => {
+      styleProvider.assignStyledNodeCollection(nodeCollection, appearance);
+      vi.runAllTimers();
+      builder.build();
+    };
+
+    beforeEach(() => {
+      builder.build();
+      pickCacheInvalidator.consume();
+    });
+
+    test.each([
+      ['hidden', { visible: false }, true],
+      ['ghosted', { renderGhosted: true }, true],
+      ['color', { color: new Color(1, 0, 0) }, false],
+      ['outline', { outlineColor: NodeOutlineColor.Cyan }, false],
+      ['in front', { renderInFront: true }, false]
+    ])('styling nodes as %s requests invalidation: %s', (_, appearance: NodeAppearance, expectedRequest: boolean) => {
+      buildAfterStyling(appearance);
+      expect(pickCacheInvalidator.consume()).toBe(expectedRequest);
+    });
+
+    test('is requested when a hidden style is removed', () => {
+      buildAfterStyling({ visible: false });
+      pickCacheInvalidator.consume();
+
+      styleProvider.unassignStyledNodeCollection(nodeCollection);
+      vi.runAllTimers();
+      builder.build();
+
+      expect(pickCacheInvalidator.consume()).toBe(true);
+    });
   });
 
   test('build() applies color override', () => {
@@ -171,7 +208,7 @@ describe('NodeAppearanceTextureBuilder', () => {
 
   test('add custom color then updating superset without color keeps color', () => {
     // Need to do this here, as we want two elements in our buffer
-    const builder = new NodeAppearanceTextureBuilder(2, styleProvider);
+    const builder = new NodeAppearanceTextureBuilder(2, styleProvider, pickCacheInvalidator);
 
     const customColor = new Color(0.496, 0.5, 0.504);
     const expectedBytes = toByteTuple(customColor);
@@ -195,7 +232,7 @@ describe('NodeAppearanceTextureBuilder', () => {
 
   test('add 0, 0, 0 color then updating default with custom color keeps original node color', () => {
     // Need to do this here, as we want two elements in our buffer
-    const builder = new NodeAppearanceTextureBuilder(2, styleProvider);
+    const builder = new NodeAppearanceTextureBuilder(2, styleProvider, pickCacheInvalidator);
 
     const black = new Color(0, 0, 0);
     const expectedBytes = toByteTuple(black);
@@ -241,7 +278,7 @@ describe('NodeAppearanceTextureBuilder', () => {
   });
 
   test('setDefaultStyle() recomputes geometry type collections', () => {
-    const builder = new NodeAppearanceTextureBuilder(3, styleProvider);
+    const builder = new NodeAppearanceTextureBuilder(3, styleProvider, pickCacheInvalidator);
     builder.build();
     // Initially, all nodes are 'regular'
     expect(builder.regularNodeTreeIndices).toEqual(new IndexSet([0, 1, 2]));

@@ -12,6 +12,7 @@ import type { SectorCuller } from '@reveal/cad-geometry-loaders';
 import { Cognite3DViewer } from './Cognite3DViewer';
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import { PointCloudPickingHandler } from '@reveal/pointclouds';
+import { PickingHandler } from '@reveal/cad-model';
 
 import { It, Mock } from 'moq.ts';
 import type { BeforeSceneRenderedDelegate, DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
@@ -20,7 +21,7 @@ import { mockClientAuthentication, autoMockWebGLRenderer } from '../../../../../
 import type { DataSourceType } from '@reveal/data-providers';
 import type { DefaultImage360Collection, Image360ClusterIntersectionData, Image360Entity } from '@reveal/360-images';
 
-import type { MockInstance } from 'vitest';
+import type { Mock as VitestMock, MockInstance } from 'vitest';
 import { vi } from 'vitest';
 import type { ResolutionOptions } from './types';
 
@@ -248,57 +249,63 @@ describe('Cognite3DViewer', () => {
     }
   });
 
-  describe('point-cloud pick cache invalidation', () => {
-    let requestAnimationFrameCallback: FrameRequestCallback | undefined;
-    const spies: MockInstance[] = [];
+  describe('pick cache invalidation', () => {
+    let domElement: HTMLDivElement;
+    let viewer: Cognite3DViewer;
+    let pointCloudInvalidateSpy: MockInstance<PointCloudPickingHandler['invalidatePickCache']>;
+    let cadInvalidateSpy: MockInstance<PickingHandler['invalidatePickCache']>;
+    let onRendered: VitestMock<SceneRenderedDelegate>;
 
     beforeEach(() => {
-      spies.push(
-        vi
-          .spyOn(window, 'getComputedStyle')
-          .mockImplementation(() =>
-            Object.assign(document.createElement('div').style, { visibility: 'visible', display: 'block' })
-          ),
-        vi.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => {
-          requestAnimationFrameCallback = cb;
-          return 1;
-        })
-      );
+      pointCloudInvalidateSpy = vi.spyOn(PointCloudPickingHandler.prototype, 'invalidatePickCache');
+      cadInvalidateSpy = vi.spyOn(PickingHandler.prototype, 'invalidatePickCache');
+
+      // The viewer only renders while its canvas is visible, which needs the viewer to be part of the document
+      // and the visibility to be set, as the test DOM does not compute it
+      domElement = document.body.appendChild(document.createElement('div'));
+      viewer = new Cognite3DViewer({ sdk, renderer, domElement, _sectorCuller, logMetrics: false });
+      viewer.canvas.style.visibility = 'visible';
+      viewer.canvas.style.display = 'block';
+
+      onRendered = vi.fn<SceneRenderedDelegate>();
+      viewer.on('sceneRendered', onRendered);
     });
 
     afterEach(() => {
-      spies.splice(0).forEach(spy => spy.mockRestore());
+      viewer.dispose();
+      viewer.canvas.style.removeProperty('visibility');
+      viewer.canvas.style.removeProperty('display');
+      domElement.remove();
+      pointCloudInvalidateSpy.mockRestore();
+      cadInvalidateSpy.mockRestore();
     });
 
-    function renderFrame(): void {
-      if (!requestAnimationFrameCallback) throw new Error('Animation frame not triggered');
-      requestAnimationFrameCallback(1000);
-    }
-
-    test('plain redraws do not invalidate the pick cache, a restored WebGL context does', () => {
-      const invalidateSpy = vi.spyOn(PointCloudPickingHandler.prototype, 'invalidatePickCache');
-      spies.push(invalidateSpy);
-      const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });
-
+    test('plain redraws do not invalidate the pick caches, a restored WebGL context does', () => {
       // Settle anything requested while the viewer was created
       viewer.requestRedraw();
-      renderFrame();
-      invalidateSpy.mockClear();
+      vi.advanceTimersToNextFrame();
+      expect(onRendered).toHaveBeenCalledTimes(1);
+      pointCloudInvalidateSpy.mockClear();
+      cadInvalidateSpy.mockClear();
 
       viewer.requestRedraw();
-      renderFrame();
-      expect(invalidateSpy).not.toHaveBeenCalled();
+      vi.advanceTimersToNextFrame();
+      expect(onRendered).toHaveBeenCalledTimes(2);
+      expect(pointCloudInvalidateSpy).not.toHaveBeenCalled();
+      expect(cadInvalidateSpy).not.toHaveBeenCalled();
 
       viewer.canvas.dispatchEvent(new Event('webglcontextrestored'));
-      renderFrame();
-      expect(invalidateSpy).toHaveBeenCalledTimes(1);
+      vi.advanceTimersToNextFrame();
+      expect(onRendered).toHaveBeenCalledTimes(3);
+      expect(pointCloudInvalidateSpy).toHaveBeenCalledTimes(1);
+      expect(cadInvalidateSpy).toHaveBeenCalledTimes(1);
 
       // The request is consumed, so the next frame does not invalidate again
       viewer.requestRedraw();
-      renderFrame();
-      expect(invalidateSpy).toHaveBeenCalledTimes(1);
-
-      viewer.dispose();
+      vi.advanceTimersToNextFrame();
+      expect(onRendered).toHaveBeenCalledTimes(4);
+      expect(pointCloudInvalidateSpy).toHaveBeenCalledTimes(1);
+      expect(cadInvalidateSpy).toHaveBeenCalledTimes(1);
     });
   });
 

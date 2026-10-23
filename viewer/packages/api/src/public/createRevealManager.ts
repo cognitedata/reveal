@@ -145,7 +145,7 @@ export function createRevealManager(
 
   const renderOptions: RenderOptions = revealOptions?.renderOptions ?? {};
   const pickCacheInvalidator = new PickCacheInvalidator();
-  const cadMaterialManager = new CadMaterialManager();
+  const cadMaterialManager = new CadMaterialManager(pickCacheInvalidator);
   const pointCloudMaterialManager = new PointCloudMaterialManager();
   const pipelineExecutor = new BasicPipelineExecutor(renderer);
   const defaultRenderPipeline = new DefaultRenderPipelineProvider(
@@ -179,10 +179,16 @@ export function createRevealManager(
     renderer,
     pickCacheInvalidator
   );
-  const cadManager = createCadManager(modelMetadataProvider, cachedProvider, cadMaterialManager, {
-    ...revealOptions.internal?.cad,
-    continuousModelStreaming: revealOptions.continuousModelStreaming
-  });
+  const cadManager = createCadManager(
+    modelMetadataProvider,
+    cachedProvider,
+    cadMaterialManager,
+    {
+      ...revealOptions.internal?.cad,
+      continuousModelStreaming: revealOptions.continuousModelStreaming
+    },
+    pickCacheInvalidator
+  );
   return new RevealManager(
     cadManager,
     pointCloudManager,

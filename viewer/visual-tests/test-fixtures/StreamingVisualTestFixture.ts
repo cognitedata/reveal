@@ -176,7 +176,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
 
     this._controls = new OrbitControls(this._perspectiveCamera, this._renderer.domElement);
 
-    this._materialManager = new CadMaterialManager();
+    this._materialManager = new CadMaterialManager(this._pickCacheInvalidator);
     this._pcMaterialManager = new PointCloudMaterialManager();
     this._pipelineExecutor = new BasicPipelineExecutor(this._renderer);
 
@@ -226,9 +226,19 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       this._pickCacheInvalidator
     );
     const sectorCuller = new ByScreenSizeSectorCuller();
-    const cadModelFactory = new CadModelFactory(this._materialManager, modelMetadataProvider, modelDataProvider);
+    const cadModelFactory = new CadModelFactory(
+      this._materialManager,
+      modelMetadataProvider,
+      modelDataProvider,
+      this._pickCacheInvalidator
+    );
     const cadModelUpdateHandler = new CadModelUpdateHandler(sectorCuller, false);
-    this._cadManager = new CadManager(this._materialManager, cadModelFactory, cadModelUpdateHandler);
+    this._cadManager = new CadManager(
+      this._materialManager,
+      cadModelFactory,
+      cadModelUpdateHandler,
+      this._pickCacheInvalidator
+    );
 
     const model = await this.addModel(
       modelIdentifier,

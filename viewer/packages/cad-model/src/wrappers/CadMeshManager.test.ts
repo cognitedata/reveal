@@ -4,6 +4,7 @@
 
 import { CadMeshManager } from './CadMeshManager';
 import { createCadMaterial } from '@reveal/rendering';
+import { PickCacheInvalidator } from '@reveal/utilities';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import type { ParsedMeshGeometry } from '@reveal/cad-parsers';
 import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
@@ -38,7 +39,7 @@ describe(CadMeshManager.name, () => {
 
   beforeEach(() => {
     treeIndexToSectorsMap = new TreeIndexToSectorsMap(1000); // Max tree index
-    const cadMaterial = createCadMaterial(100);
+    const cadMaterial = createCadMaterial(100, new PickCacheInvalidator());
     meshManager = new CadMeshManager(cadMaterial, treeIndexToSectorsMap);
   });
 
