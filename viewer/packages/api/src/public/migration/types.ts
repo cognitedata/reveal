@@ -11,14 +11,14 @@ import type { CameraManager } from '@reveal/camera-manager';
 
 import type { CogniteCadModel } from '@reveal/cad-model';
 import type { DataSource } from '@reveal/data-source';
-import type { EdlOptions } from '@reveal/rendering';
+import type { CustomObjectEffectMaterial, EdlOptions } from '@reveal/rendering';
 import { Cognite3DViewer } from './Cognite3DViewer';
 import { DefaultCameraManager } from '@reveal/camera-manager';
 import type { CommonModelOptions } from '@reveal/data-providers';
 import { CdfModelIdentifier } from '@reveal/data-providers';
 import type { Image360, Image360AnnotationFilterOptions, Image360Collection } from '@reveal/360-images';
 import type { Vector2, WebGLRenderTarget, WebGLRenderer, Matrix4, Vector3 } from 'three';
-import type { CustomObjectIntersection } from '@reveal/utilities';
+import type { CustomObjectIntersection, ICustomObject } from '@reveal/utilities';
 import type { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '@reveal/data-providers';
 
 /**
@@ -184,7 +184,8 @@ export interface Cognite3DViewerOptions {
    * them. Turning shadows on changes the CAD look even where no shadow is cast, including
    * ghosted nodes. Defaults to false. Can also be toggled at runtime through
    * {@link Cognite3DViewer.shadowsEnabled}.
-   * GPU resources for shadows are only allocated the first time they are enabled.
+   * Custom objects receive shadows when they use {@link CustomObjectEffectMaterial} and set
+   * {@link ICustomObject.receiveShadow}. GPU resources are only allocated when first enabled.
    * @beta
    */
   enableShadows?: boolean;
