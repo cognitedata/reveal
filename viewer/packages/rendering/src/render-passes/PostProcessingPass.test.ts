@@ -207,10 +207,9 @@ describe(PostProcessingPass.name, () => {
     disposeSpy.mockRestore();
   });
 
-  test('leaves a foreign material on an up-facing plane untouched', () => {
+  test('leaves a foreign material untouched', () => {
     const source = new MeshBasicMaterial({ color: '#446688' });
     const mesh = new Mesh(new PlaneGeometry(10, 8), source);
-    mesh.rotation.x = -Math.PI / 2;
     const customObject = new Mock<ICustomObject>()
       .setup(p => p.object)
       .returns(mesh)
