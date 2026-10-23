@@ -190,13 +190,6 @@ export interface Cognite3DViewerOptions {
    */
   enableShadows?: boolean;
 
-  /**
-   * Hides texture repetition on ground planes that use {@link CustomObjectEffectMaterial}.
-   * Defaults to false. Toggle at runtime through {@link Cognite3DViewer.groundPlaneTextureVariationEnabled}.
-   * @beta
-   */
-  enableGroundPlaneTextureVariation?: boolean;
-
   /** Callback to download stream progress. */
   onLoading?: OnLoadingCallback;
 

@@ -40,7 +40,6 @@ export class PostProcessingPass implements RenderPass {
   private readonly _backBlitMaterial: RawShaderMaterial;
   private readonly setBlendFactorByBackVisibility: () => void;
   private _receiversForCustomObjectsEnabled = false;
-  private _textureVariationForCustomObjectsEnabled = false;
 
   public updateRenderObjectsVisibility(visibilityParameters: PostProcessingObjectsVisibilityParameters): void {
     this._postProcessingObjects[0].visible = visibilityParameters.cad.back;
@@ -149,20 +148,7 @@ export class PostProcessingPass implements RenderPass {
 
   public adoptCustomObject(customObject: ICustomObject): void {
     if (this._cadShadowPass === undefined) return;
-    CustomObjectEffectMaterial.adoptReceivers(
-      this,
-      [customObject],
-      this._receiversForCustomObjectsEnabled,
-      this._textureVariationForCustomObjectsEnabled
-    );
-  }
-
-  public get textureVariationForCustomObjectsEnabled(): boolean {
-    return this._textureVariationForCustomObjectsEnabled;
-  }
-
-  public setTextureVariationForCustomObjectsEnabled(enabled: boolean): void {
-    this._textureVariationForCustomObjectsEnabled = enabled;
+    CustomObjectEffectMaterial.adoptReceivers(this, [customObject], this._receiversForCustomObjectsEnabled);
   }
 
   public releaseCustomObject(customObject: ICustomObject): void {

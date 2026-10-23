@@ -88,7 +88,7 @@ describe(CustomObjectEffectMaterial.name, () => {
     const source = new MeshBasicMaterial({ map: new Texture() });
     const mesh = upFacingPlane(source);
 
-    CustomObjectEffectMaterial.adoptReceivers({}, [customObject(mesh)], true, true);
+    CustomObjectEffectMaterial.adoptReceivers({}, [customObject(mesh)], true);
 
     expect(mesh.material).toBe(source);
   });
@@ -112,22 +112,26 @@ describe(CustomObjectEffectMaterial.name, () => {
     CustomObjectEffectMaterial.releaseOwner(owner);
   });
 
-  test('turns hex tiling on and off through re-adoption and keeps the material on release', () => {
+  test('keeps hex tiling that the material set through adoption and release', () => {
     const material = new CustomObjectEffectMaterial('#ffffff', new Texture());
     const dispose = vi.spyOn(material, 'dispose');
     const mesh = upFacingPlane(material);
     const owner = {};
     const object = customObject(mesh);
 
-    CustomObjectEffectMaterial.adoptReceivers(owner, [object], false, true);
+    material.setTextureVariation(true);
     expect(material.textureVariation).toBe(true);
     expect(material.defines.HEX_TILING_TEXTURE_VARIATION).toBeDefined();
 
-    CustomObjectEffectMaterial.adoptReceivers(owner, [object], false, false);
+    CustomObjectEffectMaterial.adoptReceivers(owner, [object], false);
+    expect(material.textureVariation).toBe(true);
+
+    material.setTextureVariation(false);
     expect(material.textureVariation).toBe(false);
 
     CustomObjectEffectMaterial.releaseReceivers(owner, [object]);
     expect(mesh.material).toBe(material);
+    expect(material.textureVariation).toBe(false);
     expect(dispose).not.toHaveBeenCalled();
   });
 

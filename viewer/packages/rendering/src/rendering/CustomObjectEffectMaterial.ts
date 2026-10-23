@@ -42,21 +42,16 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
   }
 
   /**
-   * Registers the up-facing planes that use this material and applies the current effects.
+   * Registers meshes that use this material and applies the current shadow effect.
    * @internal
    */
-  public static adoptReceivers(
-    owner: object,
-    customObjects: ICustomObject[],
-    install = true,
-    textureVariation = false
-  ): void {
+  public static adoptReceivers(owner: object, customObjects: ICustomObject[], install = true): void {
     for (const customObject of customObjects) {
       const receivesShadow = customObject.receiveShadow === true;
       customObject.object.updateMatrixWorld(true);
       customObject.object.traverse(node => {
-        if (!isSurfaceMesh(node) || !isUpFacingPlane(node)) return;
-        rememberSurfaces(owner, node, { install, receivesShadow, textureVariation });
+        if (!isSurfaceMesh(node)) return;
+        rememberSurfaces(owner, node, { install, receivesShadow });
       });
     }
   }
@@ -224,13 +219,12 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
 }
 
 /**
+ * Alias for {@link CustomObjectEffectMaterial}.
  * @deprecated Use {@link CustomObjectEffectMaterial}.
  * @public
  */
 export const CadShadowReceiverForCustomObjectMaterial = CustomObjectEffectMaterial;
 
-const size = new Vector3();
-const axis = new Vector3();
 const adoptedSurfaces: AdoptedSurface[] = [];
 
 // x: rotation, y: luminance falloff, z: blend exponent.
@@ -249,11 +243,6 @@ type AdoptedSurface = {
 
 type SurfaceMesh = {
   isMesh: true;
-  geometry: {
-    boundingBox: { getSize: (target: Vector3) => Vector3 } | null;
-    computeBoundingBox: () => void;
-  };
-  matrixWorld: Matrix4;
   material: object | object[];
 };
 
@@ -261,28 +250,9 @@ function isSurfaceMesh(node: object): node is SurfaceMesh {
   return (node as { isMesh?: boolean }).isMesh === true;
 }
 
-function isUpFacingPlane(mesh: SurfaceMesh): boolean {
-  const { geometry } = mesh;
-  if (geometry.boundingBox === null) geometry.computeBoundingBox();
-  const box = geometry.boundingBox;
-  if (box === null) return false;
-
-  box.getSize(size);
-  const thin = Math.min(size.x, size.y, size.z);
-  const broad = Math.max(size.x, size.y, size.z);
-  if (broad <= 1e-4 || thin > Math.max(broad * 0.25, 1e-4)) return false;
-
-  if (size.x === thin) axis.set(1, 0, 0);
-  else if (size.y === thin) axis.set(0, 1, 0);
-  else axis.set(0, 0, 1);
-  axis.transformDirection(mesh.matrixWorld);
-  return axis.y > 0.75;
-}
-
 type AdoptOptions = {
   install: boolean;
   receivesShadow: boolean;
-  textureVariation: boolean;
 };
 
 function rememberSurfaces(owner: object, mesh: SurfaceMesh, options: AdoptOptions): void {
@@ -307,7 +277,6 @@ function rememberSurface(
   surface.material = material;
   surface.receivesShadow = options.receivesShadow;
   material.setReceivesShadow(options.install && options.receivesShadow);
-  material.setTextureVariation(options.textureVariation);
 }
 
 function findSurface(owner: object, mesh: SurfaceMesh, slot: number | undefined): AdoptedSurface | undefined {

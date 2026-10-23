@@ -16,7 +16,6 @@ export interface RenderPipelineProvider {
   pipeline(renderer: WebGLRenderer): Generator<RenderPass>;
   dispose(): void;
   shadowsEnabled?: boolean;
-  groundPlaneTextureVariationEnabled?: boolean;
   setShadowFocus?(focus: Vector3): void;
   readonly needsRedraw?: boolean;
 }

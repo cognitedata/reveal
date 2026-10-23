@@ -3,14 +3,13 @@
  */
 
 import type { WebGLRenderer } from 'three';
-import { Color, Mesh, Object3D, PlaneGeometry, Texture, Vector2 } from 'three';
+import { Color, Object3D, Vector2 } from 'three';
 import type { IMock } from 'moq.ts';
 import { It, Mock } from 'moq.ts';
 import { DefaultRenderPipelineProvider } from './DefaultRenderPipelineProvider';
 import type { CadMaterialManager } from '../CadMaterialManager';
 import { IndexSet, SceneHandler } from '@reveal/utilities';
 import { defaultRenderOptions } from '../rendering/types';
-import { CustomObjectEffectMaterial } from '../rendering/CustomObjectEffectMaterial';
 import { createCadModel, createPointCloudModel } from '../../../../test-utilities';
 import type { PointCloudMaterialManager } from '../PointCloudMaterialManager';
 
@@ -276,37 +275,6 @@ describe(DefaultRenderPipelineProvider.name, () => {
     }
 
     expect(numberOfRenderPasses).toBe(4); // Point cloud, Post, BlitToCanvas
-  });
-
-  test('turns ground plane texture variation on and off for an existing plane', () => {
-    const materialManagerMock = createCadMaterialManagerMock();
-    const pcMaterialManagerMock = new Mock<PointCloudMaterialManager>()
-      .setup(p => p.setModelsMaterialParameters({}))
-      .returns();
-    const sceneHandler = new SceneHandler();
-    const provider = new DefaultRenderPipelineProvider(
-      materialManagerMock.object(),
-      pcMaterialManagerMock.object(),
-      sceneHandler,
-      defaultRenderOptions
-    );
-    const material = new CustomObjectEffectMaterial('#ffffff', new Texture());
-    const mesh = new Mesh(new PlaneGeometry(12, 8), material);
-    mesh.rotation.x = -Math.PI / 2;
-    sceneHandler.addObject3D(mesh);
-
-    expect(provider.groundPlaneTextureVariationEnabled).toBe(false);
-    expect(material.textureVariation).toBe(false);
-
-    provider.groundPlaneTextureVariationEnabled = true;
-
-    expect(provider.groundPlaneTextureVariationEnabled).toBe(true);
-    expect(material.textureVariation).toBe(true);
-
-    provider.groundPlaneTextureVariationEnabled = false;
-
-    expect(provider.groundPlaneTextureVariationEnabled).toBe(false);
-    expect(material.textureVariation).toBe(false);
   });
 });
 

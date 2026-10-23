@@ -61,18 +61,6 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     this._postProcessingPass.setReceiversForCustomObjectsEnabled(enabled);
   }
 
-  public get groundPlaneTextureVariationEnabled(): boolean {
-    return this._postProcessingPass.textureVariationForCustomObjectsEnabled;
-  }
-
-  public set groundPlaneTextureVariationEnabled(enabled: boolean) {
-    if (this.groundPlaneTextureVariationEnabled === enabled) return;
-    this._postProcessingPass.setTextureVariationForCustomObjectsEnabled(enabled);
-    for (const customObject of this._customObjects) {
-      this._postProcessingPass.adoptCustomObject(customObject);
-    }
-  }
-
   set renderOptions(renderOptions: RenderOptions) {
     const { ssaoRenderParameters } = renderOptions;
     const resolvedSsaoParams = ssaoRenderParameters ?? defaultRenderOptions.ssaoRenderParameters;
@@ -105,8 +93,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
       target: WebGLRenderTarget;
       autoSize?: boolean;
     },
-    enableShadows: boolean = false,
-    enableGroundPlaneTextureVariation: boolean = false
+    enableShadows: boolean = false
   ) {
     this._materialManager = materialManager;
     this._viewerScene = sceneHandler.scene;
@@ -158,7 +145,6 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
       ...this._cadGeometryRenderPipeline.cadGeometryRenderTargets
     });
     this._postProcessingPass.setReceiversForCustomObjectsEnabled(enableShadows);
-    this._postProcessingPass.setTextureVariationForCustomObjectsEnabled(enableGroundPlaneTextureVariation);
     sceneHandler.onCustomObjectAdded = customObject => this._postProcessingPass.adoptCustomObject(customObject);
     sceneHandler.onCustomObjectRemoved = customObject => this._postProcessingPass.releaseCustomObject(customObject);
 

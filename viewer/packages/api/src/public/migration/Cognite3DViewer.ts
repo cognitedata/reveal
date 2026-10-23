@@ -256,23 +256,6 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   }
 
   /**
-   * Gets whether ground plane texture variation is currently enabled.
-   * @beta
-   */
-  public get groundPlaneTextureVariationEnabled(): boolean {
-    return this.revealManager.groundPlaneTextureVariationEnabled;
-  }
-
-  /**
-   * Enables or disables hex tiling on ground planes that use {@link CustomObjectEffectMaterial}.
-   * @beta
-   */
-  public set groundPlaneTextureVariationEnabled(enabled: boolean) {
-    this.revealManager.groundPlaneTextureVariationEnabled = enabled;
-    this.requestRedraw();
-  }
-
-  /**
    * Returns the point cloud budget. The budget is shared between all loaded
    * point cloud models.
    */
@@ -1202,7 +1185,9 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * viewer.addCustomObject(customObject);
    *
    * // Ground plane that receives CAD shadows and texture variation
-   * const plane = new Mesh(new PlaneGeometry(100, 100), new CustomObjectEffectMaterial('#ffffff', texture));
+   * const groundMaterial = new CustomObjectEffectMaterial('#ffffff', texture);
+   * groundMaterial.setTextureVariation(true);
+   * const plane = new Mesh(new PlaneGeometry(100, 100), groundMaterial);
    * const ground = CustomObject(plane);
    * ground.receiveShadow = true;
    * viewer.addCustomObject(ground);
@@ -2246,7 +2231,6 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions, devic
   const revealOptions: RevealOptions = {
     continuousModelStreaming: viewerOptions.continuousModelStreaming,
     enableShadows: viewerOptions.enableShadows ?? false,
-    enableGroundPlaneTextureVariation: viewerOptions.enableGroundPlaneTextureVariation ?? false,
     outputRenderTarget,
     rendererResolutionThreshold: resolutionCap,
     internal: {}
