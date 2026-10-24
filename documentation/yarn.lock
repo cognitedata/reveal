@@ -13243,9 +13243,9 @@ __metadata:
   linkType: hard
 
 "serialize-javascript@npm:^7.0.3":
-  version: 7.1.2
-  resolution: "serialize-javascript@npm:7.1.2"
-  checksum: 67a1066978fb3507bf062017465bb9005b5c8b87d56a92b7ee4e5766e3e26c79b5664cc1feb8478ad5df15e781dd568e5927b91a5c3ee0fd9e38c8824bba54c9
+  version: 7.1.4
+  resolution: "serialize-javascript@npm:7.1.4"
+  checksum: 101618ab38189f825e87928008a62e1e639dde21f2aa818a9b0fe5f82ef465b7a40162dd6ccadb9b0c505c22a51839cb705daf9c7db930f13b3b1435ca03a1e8
   languageName: node
   linkType: hard
 
