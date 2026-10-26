@@ -25,7 +25,8 @@ export type { OctreeMaterialParams } from './src/pointcloud-rendering';
 export { PointCloudMaterial } from './src/pointcloud-rendering';
 export {
   CustomObjectEffectMaterial,
-  CadShadowReceiverForCustomObjectMaterial
+  CadShadowReceiverForCustomObjectMaterial,
+  type TextureVariationType
 } from './src/rendering/CustomObjectEffectMaterial';
 
 export { DefaultRenderPipelineProvider } from './src/render-pipeline-providers/DefaultRenderPipelineProvider';

@@ -58,6 +58,12 @@ describe(CustomObjectEffectMaterial.name, () => {
     return mesh;
   }
 
+  function tiledTexture(repeat = 4): Texture {
+    const map = new Texture();
+    map.repeat.set(repeat, repeat);
+    return map;
+  }
+
   test('applies the frame shadow map while drawing and clears it afterwards', () => {
     const map = new Texture();
     map.wrapS = RepeatWrapping;
@@ -83,6 +89,20 @@ describe(CustomObjectEffectMaterial.name, () => {
     expect(material.uniforms.tCadShadowMap.value).toBeNull();
   });
 
+  test('follows an animated texture offset without shadows', () => {
+    const map = tiledTexture();
+    const material = new CustomObjectEffectMaterial('#ffffff', map);
+    draw(material);
+    const before = [...(material.uniforms.tDiffuseTransform.value as Matrix3).elements];
+
+    map.offset.set(0.3, 0.7);
+    draw(material);
+
+    const after = (material.uniforms.tDiffuseTransform.value as Matrix3).elements;
+    expect(after).not.toEqual(before);
+    expect(after).toEqual([...map.matrix.elements]);
+  });
+
   test('follows the shadow flag only for objects that receive shadow', () => {
     const receiving = new CustomObjectEffectMaterial();
     const ignoring = new CustomObjectEffectMaterial();
@@ -102,42 +122,79 @@ describe(CustomObjectEffectMaterial.name, () => {
     CustomObjectEffectMaterial.releaseOwner(owner);
   });
 
-  test('keeps hex tiling that the material set through adoption and release', () => {
-    const material = new CustomObjectEffectMaterial('#ffffff', new Texture());
+  test('keeps the texture variation the material set through adoption and release', () => {
+    const material = new CustomObjectEffectMaterial('#ffffff', tiledTexture());
     const dispose = vi.spyOn(material, 'dispose');
     const mesh = upFacingPlane(material);
     const owner = {};
     const object = customObject(mesh);
 
-    material.setTextureVariation(true);
-    expect(material.textureVariationEnabled).toBe(true);
+    material.setTextureVariation('hexTiling');
+    expect(material.textureVariation).toBe('hexTiling');
     expect(material.defines.HEX_TILING_TEXTURE_VARIATION).toBeDefined();
 
     CustomObjectEffectMaterial.registerEffect(owner, mesh, material, undefined, false, false);
-    expect(material.textureVariationEnabled).toBe(true);
+    expect(material.textureVariation).toBe('hexTiling');
 
-    material.setTextureVariation(false);
-    expect(material.textureVariationEnabled).toBe(false);
+    material.setTextureVariation('none');
+    expect(material.textureVariation).toBe('none');
 
     CustomObjectEffectMaterial.releaseEffects(owner, [object]);
     expect(mesh.material).toBe(material);
-    expect(material.textureVariationEnabled).toBe(false);
+    expect(material.textureVariation).toBe('none');
     expect(dispose).not.toHaveBeenCalled();
   });
 
-  test('repeats a tiled map and mirrors a stretched map', () => {
-    const repeated = new Texture();
-    repeated.repeat.set(4, 4);
-    new CustomObjectEffectMaterial('#ffffff', repeated).setTextureVariation(true);
+  test('compiles only the chosen texture variation technique', () => {
+    const material = new CustomObjectEffectMaterial('#ffffff', tiledTexture());
+
+    material.setTextureVariation('waterTiling');
+    expect(material.textureVariation).toBe('waterTiling');
+    expect(material.defines.WATER_TILING_TEXTURE_VARIATION).toBeDefined();
+    expect(material.defines.HEX_TILING_TEXTURE_VARIATION).toBeUndefined();
+
+    material.setTextureVariation('hexTiling');
+    expect(material.textureVariation).toBe('hexTiling');
+    expect(material.defines.HEX_TILING_TEXTURE_VARIATION).toBeDefined();
+    expect(material.defines.WATER_TILING_TEXTURE_VARIATION).toBeUndefined();
+
+    material.setTextureVariation('none');
+    expect(material.defines.HEX_TILING_TEXTURE_VARIATION).toBeUndefined();
+    expect(material.defines.WATER_TILING_TEXTURE_VARIATION).toBeUndefined();
+  });
+
+  test('stays off without a texture and starts once a texture is set', () => {
+    const material = new CustomObjectEffectMaterial('#ffffff');
+
+    material.setTextureVariation('waterTiling');
+    expect(material.textureVariation).toBe('none');
+
+    material.setMap(tiledTexture());
+    expect(material.textureVariation).toBe('waterTiling');
+
+    material.setMap(null);
+    expect(material.textureVariation).toBe('none');
+  });
+
+  test('hex tiling repeats a tiled map and mirrors a stretched map', () => {
+    const repeated = tiledTexture(4);
+    new CustomObjectEffectMaterial('#ffffff', repeated).setTextureVariation('hexTiling');
 
     expect(repeated.wrapS).toBe(RepeatWrapping);
     expect(repeated.wrapT).toBe(RepeatWrapping);
 
-    const stretched = new Texture();
-    stretched.repeat.set(1, 1);
-    new CustomObjectEffectMaterial('#ffffff', stretched).setTextureVariation(true);
+    const stretched = tiledTexture(1);
+    new CustomObjectEffectMaterial('#ffffff', stretched).setTextureVariation('hexTiling');
 
     expect(stretched.wrapS).toBe(MirroredRepeatWrapping);
     expect(stretched.wrapT).toBe(MirroredRepeatWrapping);
+  });
+
+  test('water tiling never mirrors, so waves keep their direction', () => {
+    const stretched = tiledTexture(1);
+    new CustomObjectEffectMaterial('#ffffff', stretched).setTextureVariation('waterTiling');
+
+    expect(stretched.wrapS).toBe(RepeatWrapping);
+    expect(stretched.wrapT).toBe(RepeatWrapping);
   });
 });

@@ -279,6 +279,9 @@ export type CadModelBudget = {
 // @public @deprecated
 export const CadShadowReceiverForCustomObjectMaterial: typeof CustomObjectEffectMaterial;
 
+// @public @deprecated
+export type CadShadowReceiverForCustomObjectMaterial = CustomObjectEffectMaterial;
+
 // @public
 export const CAMERA_MANAGER_EVENT_TYPE_LIST: readonly ["cameraChange", "cameraStop"];
 
@@ -869,13 +872,13 @@ export class CustomObject implements ICustomObject {
 
 // @public
 export class CustomObjectEffectMaterial extends RawShaderMaterial {
-    constructor(color?: ColorRepresentation, map?: Texture);
+    constructor(color?: ColorRepresentation, map?: Texture | null);
     get receivesShadow(): boolean;
     setColor(color: ColorRepresentation): void;
     setMap(map: Texture | null): void;
     setReceivesShadow(receivesShadow: boolean): void;
-    setTextureVariation(enabled: boolean): void;
-    get textureVariationEnabled(): boolean;
+    setTextureVariation(type: TextureVariationType): void;
+    get textureVariation(): TextureVariationType;
 }
 
 // @beta
@@ -2140,6 +2143,9 @@ export class StyledPointCloudVolumeCollection<T extends DataSourceType> {
 
 // @public (undocumented)
 export type SupportedModelTypes = 'pointcloud' | 'cad';
+
+// @public
+export type TextureVariationType = 'none' | 'hexTiling' | 'waterTiling';
 
 // @public
 export type TimelineDateUpdateDelegate = (event: {
