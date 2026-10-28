@@ -58,7 +58,6 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     this._shadowMapPass.setEnabled(enabled);
     // Sun shading is tied to shadows so the default look stays unchanged.
     this._materialManager.setCadLightingEnabled(enabled);
-    this._postProcessingPass.setReceiversForCustomObjectsEnabled(enabled);
   }
 
   set renderOptions(renderOptions: RenderOptions) {
@@ -144,9 +143,6 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
       ...this._pointCloudRenderPipeline.pointCloudRenderTargets,
       ...this._cadGeometryRenderPipeline.cadGeometryRenderTargets
     });
-    this._postProcessingPass.setReceiversForCustomObjectsEnabled(enableShadows);
-    sceneHandler.onCustomObjectAdded = customObject => this._postProcessingPass.adoptCustomObject(customObject);
-    sceneHandler.onCustomObjectRemoved = customObject => this._postProcessingPass.releaseCustomObject(customObject);
 
     this._blitToScreenMaterial = new RawShaderMaterial({
       vertexShader: blitShaders.vertex,

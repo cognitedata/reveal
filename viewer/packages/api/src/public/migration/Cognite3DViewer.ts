@@ -1186,11 +1186,10 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    *
    * // Ground plane that receives CAD shadows and texture variation
    * const groundMaterial = new CustomObjectEffectMaterial('#ffffff', texture);
+   * groundMaterial.setReceivesShadow(true);
    * groundMaterial.setTextureVariation(true);
    * const plane = new Mesh(new PlaneGeometry(100, 100), groundMaterial);
-   * const ground = CustomObject(plane);
-   * ground.receiveShadow = true;
-   * viewer.addCustomObject(ground);
+   * viewer.addCustomObject(CustomObject(plane));
    * ```
    * @beta
    */

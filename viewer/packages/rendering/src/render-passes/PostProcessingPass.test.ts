@@ -8,17 +8,14 @@ import {
   DepthTexture,
   Matrix4,
   Mesh,
-  MeshBasicMaterial,
   OrthographicCamera,
   PerspectiveCamera,
-  PlaneGeometry,
   Scene,
   ShaderMaterial,
   Texture,
   Vector2,
   WebGLRenderTarget
 } from 'three';
-import type { ICustomObject } from '@reveal/utilities';
 import { PostProcessingPass } from './PostProcessingPass';
 import type { CadShadowMap, PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
 import { CadShadowPass } from './CadShadowPass';
@@ -166,7 +163,7 @@ describe(PostProcessingPass.name, () => {
       material.onBeforeRender(rendererMock.object(), scene, camera, undefined, undefined, undefined);
 
       expect(renderSpy).toHaveBeenCalledTimes(applied);
-      expect(material.uniforms.cadShadowApply.value).toBe(applied);
+      expect(material.defines.CAD_SHADOW !== undefined).toBe(enabled);
     } finally {
       renderSpy.mockRestore();
     }
@@ -202,59 +199,34 @@ describe(PostProcessingPass.name, () => {
 
     expect(setSizeSpy).toHaveBeenCalledWith(64, 32);
     expect(disposeSpy).toHaveBeenCalledOnce();
-    expect(material.uniforms.cadShadowApply.value).toBe(0);
+    expect(material.defines.CAD_SHADOW).toBeUndefined();
+    expect(material.uniforms.tCadShadowMap.value).toBeNull();
     setSizeSpy.mockRestore();
     disposeSpy.mockRestore();
   });
 
-  test('leaves a foreign material untouched', () => {
-    const source = new MeshBasicMaterial({ color: '#446688' });
-    const mesh = new Mesh(new PlaneGeometry(10, 8), source);
-    const customObject = new Mock<ICustomObject>()
-      .setup(p => p.object)
-      .returns(mesh)
-      .setup(p => p.receiveShadow)
-      .returns(true)
-      .object();
-    const pass = new PostProcessingPass(scene, createOptions({ map: createShadowMap(true) }));
-    pass.setReceiversForCustomObjectsEnabled(true);
-
-    pass.adoptCustomObject(customObject);
-
-    expect(mesh.material).toBe(source);
-  });
-
-  test('turns the shadow effect on and off with the shadow flag', () => {
+  test('hands each scene its own shadow map so viewers on one page do not share it', () => {
     const renderSpy = vi.spyOn(CadShadowPass.prototype, 'render').mockImplementation(() => undefined);
-    const material = new CustomObjectEffectMaterial('#446688');
-    const mesh = new Mesh(new PlaneGeometry(10, 8), material);
-    mesh.rotation.x = -Math.PI / 2;
-    const customObject = new Mock<ICustomObject>()
-      .setup(p => p.object)
-      .returns(mesh)
-      .setup(p => p.receiveShadow)
-      .returns(true)
-      .object();
-    const pass = new PostProcessingPass(scene, createOptions({ map: createShadowMap(true) }));
-    const renderer = autoMockWebGLRenderer(new Mock<WebGLRenderer>()).object();
-    const camera = new PerspectiveCamera();
+    try {
+      const renderer = autoMockWebGLRenderer(new Mock<WebGLRenderer>()).object();
+      const camera = new PerspectiveCamera();
+      const otherScene = new Scene();
+      const withShadows = new PostProcessingPass(scene, createOptions({ map: createShadowMap(true) }));
+      const withoutShadows = new PostProcessingPass(otherScene, createOptions({ map: createShadowMap(false) }));
+      const material = createReceiverMaterial();
+      material.setReceivesShadow(true);
 
-    pass.setReceiversForCustomObjectsEnabled(true);
-    pass.adoptCustomObject(customObject);
-    expect(material.receivesShadow).toBe(true);
+      // The second render must not clear what the first one handed to its own scene.
+      withShadows.render(renderer, camera);
+      withoutShadows.render(renderer, camera);
 
-    pass.render(renderer, camera);
-    expect(mesh.material).toBe(material);
+      material.onBeforeRender(renderer, scene, camera, undefined, undefined, undefined);
+      expect(material.defines.CAD_SHADOW).toBeDefined();
 
-    pass.setReceiversForCustomObjectsEnabled(false);
-    expect(material.receivesShadow).toBe(false);
-
-    pass.render(renderer, camera);
-    expect(mesh.material).toBe(material);
-
-    pass.setReceiversForCustomObjectsEnabled(true);
-    expect(material.receivesShadow).toBe(true);
-
-    renderSpy.mockRestore();
+      material.onBeforeRender(renderer, otherScene, camera, undefined, undefined, undefined);
+      expect(material.defines.CAD_SHADOW).toBeUndefined();
+    } finally {
+      renderSpy.mockRestore();
+    }
   });
 });
