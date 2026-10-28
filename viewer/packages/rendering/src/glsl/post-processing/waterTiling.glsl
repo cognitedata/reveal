@@ -56,12 +56,20 @@ vec3 waterTileAlbedo(sampler2D textureMap, vec2 uv) {
     vec2 uvDx = dFdx(uv);
     vec2 uvDy = dFdy(uv);
     float pixelFootprint = max(length(uvDx), length(uvDy));
-    vec3 mean = textureLod(textureMap, uv, WATER_MEAN_LOD).rgb;
 
-    vec3 color = waterTileSample(textureMap, uv, uvDx, uvDy, mean);
-    // Far away the mips average the texture, so one sample is enough.
+    // Far away the mips average the texture, so one sample is enough. The branches only hold
+    // textureGrad and textureLod, which take explicit gradients, so skipping them per pixel is safe.
     float singleSampleBlend = smoothstep(WATER_SINGLE_SAMPLE_FOOTPRINT_START, WATER_SINGLE_SAMPLE_FOOTPRINT_END, pixelFootprint);
-    color = mix(color, textureGrad(textureMap, uv, uvDx, uvDy).rgb, singleSampleBlend);
+    vec3 color;
+    if (singleSampleBlend >= 1.0) {
+        color = textureGrad(textureMap, uv, uvDx, uvDy).rgb;
+    } else {
+        vec3 mean = textureLod(textureMap, uv, WATER_MEAN_LOD).rgb;
+        color = waterTileSample(textureMap, uv, uvDx, uvDy, mean);
+        if (singleSampleBlend > 0.0) {
+            color = mix(color, textureGrad(textureMap, uv, uvDx, uvDy).rgb, singleSampleBlend);
+        }
+    }
 
     float macroStrength = waterTilingParams.z;
     float shade = mix(1.0 - macroStrength, 1.0 + macroStrength, hexValueNoise(uv * WATER_MACRO_SCALE));
