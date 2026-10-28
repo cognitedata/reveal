@@ -1186,8 +1186,12 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * customObject.isPartOfBoundingBox = false;
    * viewer.addCustomObject(customObject);
    *
-   * const mesh = new Mesh(new PlaneGeometry(100, 100), new CustomObjectEffectMaterial());
-   * viewer.addCustomObject(CustomObject(mesh));
+   * // Ground plane that receives CAD shadows and texture variation
+   * const groundMaterial = new CustomObjectEffectMaterial('#ffffff', texture);
+   * groundMaterial.setReceivesShadow(true);
+   * groundMaterial.setTextureVariation('hexTiling');
+   * const plane = new Mesh(new PlaneGeometry(100, 100), groundMaterial);
+   * viewer.addCustomObject(CustomObject(plane));
    * ```
    * @beta
    */

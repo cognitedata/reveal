@@ -37,18 +37,17 @@ The examples application exposes the same switch in the **Rendering** folder as 
 
 CAD geometry casts the shadow and receives it. A custom object does not, unless the application opts in.
 
-`viewer.addObject3D` wraps the mesh in a `CustomObject` with `receiveShadow` left at its default, `false`. To receive the shadow, construct the `CustomObject` yourself, set `receiveShadow` to `true`, and add it with `addCustomObject`:
+A custom object receives the shadow when its mesh uses a `CustomObjectEffectMaterial` that requested it with `setReceivesShadow(true)`. `viewer.addObject3D` and `viewer.addCustomObject` both work:
 
 ```jsx
-import { CustomObject } from '@cognite/reveal';
+import { CustomObjectEffectMaterial } from '@cognite/reveal';
 
-const floor = new CustomObject(planeMesh);
-floor.receiveShadow = true;
-viewer.addCustomObject(floor);
+const floorMaterial = new CustomObjectEffectMaterial('#ffffff', floorTexture);
+floorMaterial.setReceivesShadow(true);
+const floor = new Mesh(new PlaneGeometry(100, 100), floorMaterial);
+viewer.addObject3D(floor);
 ```
 
-Reveal only applies that shadow to a thin, up-facing surface:
+The request belongs to the material. `viewer.shadowsEnabled` only decides whether the shadow is drawn: turning shadows on does not shade a material that did not ask for it, and turning them off keeps the request for when they come back. Meshes that share one material share its request; use separate materials to shade one and not the other.
 
-- The mesh bounding box must be flat. Its shortest side is at most a quarter of its longest side.
-- After the mesh world transform, that short side must point mostly upward. Its world Y component must be greater than 0.75. A horizontal plane qualifies. A box or a vertical wall does not.
-- A material drawn on the back side, such as a skybox, stays on its own material, so the shadow does not cover the sky.
+`ICustomObject.receiveShadow` is deprecated and no longer read.

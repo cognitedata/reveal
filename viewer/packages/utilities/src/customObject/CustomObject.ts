@@ -92,6 +92,8 @@ export class CustomObject implements ICustomObject {
   /**
    * Whether CAD shadows fall on this object.
    * Default is false.
+   * @deprecated No longer read. Request the shadow on the material instead with
+   * `CustomObjectEffectMaterial.setReceivesShadow`.
    * @beta
    */
   get receiveShadow(): boolean {
