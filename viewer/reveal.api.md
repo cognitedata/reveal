@@ -27,7 +27,6 @@ import { Plane } from 'three';
 import { Quaternion } from 'three';
 import { RawShaderMaterial } from 'three';
 import { Raycaster } from 'three';
-import { Scene } from 'three';
 import { Texture } from 'three';
 import { Vector2 } from 'three';
 import { Vector3 } from 'three';
@@ -277,16 +276,11 @@ export type CadModelBudget = {
     readonly maximumRenderCost: number;
 };
 
-// @public
-export class CadShadowReceiverForCustomObjectMaterial extends RawShaderMaterial {
-    constructor(color?: ColorRepresentation, map?: Texture | null);
-    // (undocumented)
-    onBeforeRender(_renderer: WebGLRenderer, _scene: Scene, camera: Camera, _geometry: unknown, _object: unknown, _group: unknown): void;
-    // (undocumented)
-    setColor(color: ColorRepresentation): void;
-    // (undocumented)
-    setMap(map: Texture | null): void;
-}
+// @public @deprecated
+export const CadShadowReceiverForCustomObjectMaterial: typeof CustomObjectEffectMaterial;
+
+// @public @deprecated
+export type CadShadowReceiverForCustomObjectMaterial = CustomObjectEffectMaterial;
 
 // @public
 export const CAMERA_MANAGER_EVENT_TYPE_LIST: readonly ["cameraChange", "cameraStop"];
@@ -866,6 +860,7 @@ export class CustomObject implements ICustomObject {
     get isPartOfBoundingBox(): boolean;
     set isPartOfBoundingBox(value: boolean);
     get object(): Object3D;
+    // @deprecated
     get receiveShadow(): boolean;
     set receiveShadow(value: boolean);
     get shouldPick(): boolean;
@@ -874,6 +869,19 @@ export class CustomObject implements ICustomObject {
     set shouldPickBoundingBox(value: boolean);
     get useDepthTest(): boolean;
     set useDepthTest(value: boolean);
+}
+
+// @public
+export class CustomObjectEffectMaterial extends RawShaderMaterial {
+    constructor(color?: ColorRepresentation, diffuseTexture?: Texture | null);
+    get receivesShadow(): boolean;
+    setColor(color: ColorRepresentation): void;
+    setDiffuseTexture(texture: Texture | null): void;
+    // @deprecated
+    setMap(map: Texture | null): void;
+    setReceivesShadow(receivesShadow: boolean): void;
+    setTextureVariation(enabled: boolean): void;
+    get textureVariationEnabled(): boolean;
 }
 
 // @beta
@@ -1254,6 +1262,7 @@ export interface ICustomObject {
     intersectIfCloser(intersectInput: CustomObjectIntersectInput, closestDistance: number | undefined): undefined | CustomObjectIntersection;
     get isPartOfBoundingBox(): boolean;
     get object(): Object3D;
+    // @deprecated
     readonly receiveShadow?: boolean;
     get shouldPick(): boolean;
     get shouldPickBoundingBox(): boolean;

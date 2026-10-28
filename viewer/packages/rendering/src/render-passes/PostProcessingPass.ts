@@ -21,8 +21,7 @@ import type {
   PointCloudBlitUniformName,
   PostProcessingPipelineOptions
 } from '../render-pipeline-providers/types';
-import { CadShadowReceiverForCustomObjectMaterial } from '../rendering/CadShadowReceiverForCustomObjectMaterial';
-import type { ICustomObject } from '@reveal/utilities';
+import { CustomObjectEffectMaterial } from '../rendering/CustomObjectEffectMaterial';
 
 /**
  * Single pass that applies post processing effects and
@@ -39,7 +38,6 @@ export class PostProcessingPass implements RenderPass {
   private readonly _cadShadowMap: CadShadowMap | undefined;
   private readonly _backBlitMaterial: RawShaderMaterial;
   private readonly setBlendFactorByBackVisibility: () => void;
-  private _receiversForCustomObjectsEnabled = false;
 
   public updateRenderObjectsVisibility(visibilityParameters: PostProcessingObjectsVisibilityParameters): void {
     this._postProcessingObjects[0].visible = visibilityParameters.cad.back;
@@ -146,26 +144,6 @@ export class PostProcessingPass implements RenderPass {
     this._cadShadowPass?.setSize(width, height);
   }
 
-  public adoptCustomObject(customObject: ICustomObject): void {
-    if (this._cadShadowPass === undefined) return;
-    CadShadowReceiverForCustomObjectMaterial.adoptReceivers(
-      this,
-      [customObject],
-      this._receiversForCustomObjectsEnabled
-    );
-  }
-
-  public releaseCustomObject(customObject: ICustomObject): void {
-    if (this._cadShadowPass === undefined) return;
-    CadShadowReceiverForCustomObjectMaterial.releaseReceivers(this, [customObject]);
-  }
-
-  public setReceiversForCustomObjectsEnabled(enabled: boolean): void {
-    if (this._receiversForCustomObjectsEnabled === enabled) return;
-    this._receiversForCustomObjectsEnabled = enabled;
-    CadShadowReceiverForCustomObjectMaterial.setShadowMaterialsVisible(this, enabled);
-  }
-
   public render(renderer: WebGLRenderer, camera: Camera): void {
     // Both EDL and gap filling need the current render size in the normalize shader. The
     // uniforms only exist when one of them is enabled, so the setters skip missing ones.
@@ -203,7 +181,7 @@ export class PostProcessingPass implements RenderPass {
     const uniforms = this._backBlitMaterial.uniforms;
     // The shadow composition is only compiled into the blit when a depth texture exists.
     if (this._cadShadowPass === undefined || uniforms.cadShadowEnabled === undefined) {
-      CadShadowReceiverForCustomObjectMaterial.setFrameShadowMap(undefined);
+      CustomObjectEffectMaterial.setFrameShadowMap(this._scene, undefined);
       return;
     }
 
@@ -211,12 +189,12 @@ export class PostProcessingPass implements RenderPass {
     if (this._cadShadowMap?.enabled !== true) {
       uniforms.cadShadowEnabled.value = false;
       uniforms.tCadShadow.value = null;
-      CadShadowReceiverForCustomObjectMaterial.setFrameShadowMap(undefined);
+      CustomObjectEffectMaterial.setFrameShadowMap(this._scene, undefined);
       return;
     }
 
     this._cadShadowPass.render(renderer, camera);
-    CadShadowReceiverForCustomObjectMaterial.setFrameShadowMap(this._cadShadowMap);
+    CustomObjectEffectMaterial.setFrameShadowMap(this._scene, this._cadShadowMap);
     uniforms.cadShadowEnabled.value = true;
     uniforms.tCadShadow.value = this._cadShadowPass.texture;
 
@@ -225,8 +203,7 @@ export class PostProcessingPass implements RenderPass {
 
   public dispose(): void {
     this._cadShadowPass?.dispose();
-    CadShadowReceiverForCustomObjectMaterial.releaseOwner(this);
-    CadShadowReceiverForCustomObjectMaterial.setFrameShadowMap(undefined);
+    CustomObjectEffectMaterial.setFrameShadowMap(this._scene, undefined);
     this._postProcessingObjects.forEach(postProcessingObject => {
       postProcessingObject.geometry.dispose();
       (postProcessingObject.material as Material).dispose();

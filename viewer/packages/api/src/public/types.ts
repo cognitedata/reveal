@@ -15,7 +15,13 @@ export type CogniteModel<T extends DataSourceType = ClassicDataSourceType> =
 
 export { WellKnownAsprsPointClassCodes } from '@reveal/pointclouds';
 
-export { PointShape, PointColorType, PointSizeType, CadShadowReceiverForCustomObjectMaterial } from '@reveal/rendering';
+export {
+  PointShape,
+  PointColorType,
+  PointSizeType,
+  CustomObjectEffectMaterial,
+  CadShadowReceiverForCustomObjectMaterial
+} from '@reveal/rendering';
 
 /**
  * A tuple of a 360 image and its collection.
