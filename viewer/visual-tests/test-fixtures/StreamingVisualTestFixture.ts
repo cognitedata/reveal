@@ -21,7 +21,13 @@ import {
 import { createDataProviders } from './utilities/createDataProviders';
 import type { VisualTestFixture } from './VisualTestFixture';
 import type { BeforeSceneRenderedDelegate } from '../../packages/utilities';
-import { DeferredPromise, EventTrigger, fitCameraToBoundingBox, SceneHandler } from '../../packages/utilities';
+import {
+  DeferredPromise,
+  EventTrigger,
+  fitCameraToBoundingBox,
+  PickCacheInvalidator,
+  SceneHandler
+} from '../../packages/utilities';
 
 import type {
   ModelIdentifier,
@@ -72,6 +78,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   private readonly _controls: OrbitControls;
   private readonly _materialManager: CadMaterialManager;
   protected readonly _pcMaterialManager: PointCloudMaterialManager;
+  protected readonly _pickCacheInvalidator = new PickCacheInvalidator();
   private readonly _localModelUrl: string;
   private readonly _statsJs = new Stats();
   private readonly _cadNodes: Array<CadNode>;
@@ -135,7 +142,8 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       new DummyPointCloudStylableObjectProvider(),
       new DummyPointCloudDMStylableObjectProvider(),
       new LocalPointClassificationsProvider(),
-      this._pcMaterialManager
+      this._pcMaterialManager,
+      this._pickCacheInvalidator
     );
   }
 
@@ -168,7 +176,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
 
     this._controls = new OrbitControls(this._perspectiveCamera, this._renderer.domElement);
 
-    this._materialManager = new CadMaterialManager();
+    this._materialManager = new CadMaterialManager(this._pickCacheInvalidator);
     this._pcMaterialManager = new PointCloudMaterialManager();
     this._pipelineExecutor = new BasicPipelineExecutor(this._renderer);
 
@@ -214,12 +222,23 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       pointCloudFactory,
       this._potreeInstance,
       this._sceneHandler.scene,
-      this._renderer
+      this._renderer,
+      this._pickCacheInvalidator
     );
     const sectorCuller = new ByScreenSizeSectorCuller();
-    const cadModelFactory = new CadModelFactory(this._materialManager, modelMetadataProvider, modelDataProvider);
+    const cadModelFactory = new CadModelFactory(
+      this._materialManager,
+      modelMetadataProvider,
+      modelDataProvider,
+      this._pickCacheInvalidator
+    );
     const cadModelUpdateHandler = new CadModelUpdateHandler(sectorCuller, false);
-    this._cadManager = new CadManager(this._materialManager, cadModelFactory, cadModelUpdateHandler);
+    this._cadManager = new CadManager(
+      this._materialManager,
+      cadModelFactory,
+      cadModelUpdateHandler,
+      this._pickCacheInvalidator
+    );
 
     const model = await this.addModel(
       modelIdentifier,

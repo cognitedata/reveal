@@ -15,6 +15,7 @@ import type { CadModelBudget } from './CadModelBudget';
 import { defaultDesktopCadModelBudget } from './CadModelBudget';
 import type { CadModelFactory, CadModelSectorLoadStatistics, CadNode, GeometryFilter } from '@reveal/cad-model';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
+import type { PickCacheInvalidator } from '@reveal/utilities';
 import { batchedDebounce, EventTrigger } from '@reveal/utilities';
 import { assert } from '@reveal/utilities/assert';
 
@@ -35,6 +36,7 @@ export class CadManager {
     | undefined = undefined;
 
   private _needsRedraw: boolean = false;
+  private readonly _pickCacheInvalidator: PickCacheInvalidator;
 
   private readonly _loadingStateChangedTrigger = new EventTrigger<(loadingState: LoadingState) => void>();
 
@@ -70,8 +72,10 @@ export class CadManager {
   constructor(
     materialManger: CadMaterialManager,
     cadModelFactory: CadModelFactory,
-    cadModelUpdateHandler: CadModelUpdateHandler
+    cadModelUpdateHandler: CadModelUpdateHandler,
+    pickCacheInvalidator: PickCacheInvalidator
   ) {
+    this._pickCacheInvalidator = pickCacheInvalidator;
     this._materialManager = materialManger;
     this._cadModelFactory = cadModelFactory;
     this._cadModelUpdateHandler = cadModelUpdateHandler;
@@ -176,6 +180,7 @@ export class CadManager {
     this._materialManager.clippingPlanes = clippingPlanes;
     this._cadModelUpdateHandler.clippingPlanes = clippingPlanes;
     this._needsRedraw = true;
+    this._pickCacheInvalidator.request();
   }
 
   get renderMode(): RenderMode {
@@ -226,6 +231,7 @@ export class CadManager {
     model.addEventListener('update', this._markNeedsRedrawBound);
 
     this._cadModelMap.set(model.cadModelIdentifier, model);
+    this._pickCacheInvalidator.request();
     this._cadModelUpdateHandler.addModel(model);
     this.setCacheSizeForModel(model, this.budget);
     return model;
@@ -236,6 +242,7 @@ export class CadManager {
       throw new Error(`Could not remove model ${String(model.cadModelIdentifier)} because it's not added`);
     }
     model.removeEventListener('update', this._markNeedsRedrawBound);
+    this._pickCacheInvalidator.request();
     this._cadModelUpdateHandler.removeModel(model);
     this.materialManager.removeModelMaterials(model.cadModelMetadata.modelIdentifier.revealInternalId);
   }
@@ -275,6 +282,7 @@ export class CadManager {
 
   private markNeedsRedraw(): void {
     this._needsRedraw = true;
+    this._pickCacheInvalidator.request();
   }
 
   private updateTreeIndexToSectorsMap(cadModel: CadNode, sector: ConsumedSector): void {

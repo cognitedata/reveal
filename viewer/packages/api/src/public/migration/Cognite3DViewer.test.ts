@@ -11,6 +11,8 @@ import type { SectorCuller } from '@reveal/cad-geometry-loaders';
 
 import { Cognite3DViewer } from './Cognite3DViewer';
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
+import { PointCloudPickingHandler } from '@reveal/pointclouds';
+import { PickingHandler } from '@reveal/cad-model';
 
 import { It, Mock } from 'moq.ts';
 import type { BeforeSceneRenderedDelegate, DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
@@ -19,6 +21,7 @@ import { mockClientAuthentication, autoMockWebGLRenderer } from '../../../../../
 import type { DataSourceType } from '@reveal/data-providers';
 import type { DefaultImage360Collection, Image360ClusterIntersectionData, Image360Entity } from '@reveal/360-images';
 
+import type { Mock as VitestMock, MockInstance } from 'vitest';
 import { vi } from 'vitest';
 import type { ResolutionOptions } from './types';
 
@@ -244,6 +247,66 @@ describe('Cognite3DViewer', () => {
       requestAnimationFrameSpy.mockRestore();
       computedStyleMock.mockReset();
     }
+  });
+
+  describe('pick cache invalidation', () => {
+    let domElement: HTMLDivElement;
+    let viewer: Cognite3DViewer;
+    let pointCloudInvalidateSpy: MockInstance<PointCloudPickingHandler['invalidatePickCache']>;
+    let cadInvalidateSpy: MockInstance<PickingHandler['invalidatePickCache']>;
+    let onRendered: VitestMock<SceneRenderedDelegate>;
+
+    beforeEach(() => {
+      pointCloudInvalidateSpy = vi.spyOn(PointCloudPickingHandler.prototype, 'invalidatePickCache');
+      cadInvalidateSpy = vi.spyOn(PickingHandler.prototype, 'invalidatePickCache');
+
+      // The viewer only renders while its canvas is visible, which needs the viewer to be part of the document
+      // and the visibility to be set, as the test DOM does not compute it
+      domElement = document.body.appendChild(document.createElement('div'));
+      viewer = new Cognite3DViewer({ sdk, renderer, domElement, _sectorCuller, logMetrics: false });
+      viewer.canvas.style.visibility = 'visible';
+      viewer.canvas.style.display = 'block';
+
+      onRendered = vi.fn<SceneRenderedDelegate>();
+      viewer.on('sceneRendered', onRendered);
+    });
+
+    afterEach(() => {
+      viewer.dispose();
+      viewer.canvas.style.removeProperty('visibility');
+      viewer.canvas.style.removeProperty('display');
+      domElement.remove();
+      pointCloudInvalidateSpy.mockRestore();
+      cadInvalidateSpy.mockRestore();
+    });
+
+    test('plain redraws do not invalidate the pick caches, a restored WebGL context does', () => {
+      // Settle anything requested while the viewer was created
+      viewer.requestRedraw();
+      vi.advanceTimersToNextFrame();
+      expect(onRendered).toHaveBeenCalledTimes(1);
+      pointCloudInvalidateSpy.mockClear();
+      cadInvalidateSpy.mockClear();
+
+      viewer.requestRedraw();
+      vi.advanceTimersToNextFrame();
+      expect(onRendered).toHaveBeenCalledTimes(2);
+      expect(pointCloudInvalidateSpy).not.toHaveBeenCalled();
+      expect(cadInvalidateSpy).not.toHaveBeenCalled();
+
+      viewer.canvas.dispatchEvent(new Event('webglcontextrestored'));
+      vi.advanceTimersToNextFrame();
+      expect(onRendered).toHaveBeenCalledTimes(3);
+      expect(pointCloudInvalidateSpy).toHaveBeenCalledTimes(1);
+      expect(cadInvalidateSpy).toHaveBeenCalledTimes(1);
+
+      // The request is consumed, so the next frame does not invalidate again
+      viewer.requestRedraw();
+      vi.advanceTimersToNextFrame();
+      expect(onRendered).toHaveBeenCalledTimes(4);
+      expect(pointCloudInvalidateSpy).toHaveBeenCalledTimes(1);
+      expect(cadInvalidateSpy).toHaveBeenCalledTimes(1);
+    });
   });
 
   test('fitCameraToBoundingBox with zero duration updates camera immediatly', () => {

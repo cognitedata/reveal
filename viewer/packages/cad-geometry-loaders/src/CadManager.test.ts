@@ -8,9 +8,11 @@ import type { CadModelUpdateHandler } from './CadModelUpdateHandler';
 import type { IMock } from 'moq.ts';
 import { It, Mock } from 'moq.ts';
 import { PerspectiveCamera, Box3 } from 'three';
-import { File3dFormat } from '@reveal/data-providers';
+import { CdfModelIdentifier, File3dFormat } from '@reveal/data-providers';
 import type { CadModelMetadata } from '@reveal/cad-parsers';
-import { createCadModelMetadata, createV9SectorMetadata } from '../../../test-utilities';
+import { createCadModelMetadata, createCadNode, createV9SectorMetadata } from '../../../test-utilities';
+import { PickCacheInvalidator } from '@reveal/utilities';
+import { vi } from 'vitest';
 
 function createMinimalMetadata(format: File3dFormat, formatVersion: number): CadModelMetadata {
   const root = createV9SectorMetadata([0, [], new Box3()]);
@@ -23,6 +25,7 @@ describe(CadManager.name, () => {
   let materialManagerMock: IMock<CadMaterialManager>;
   let cadModelFactoryMock: IMock<CadModelFactory>;
   let updateHandlerMock: IMock<CadModelUpdateHandler>;
+  let pickCacheInvalidator: PickCacheInvalidator;
 
   beforeEach(() => {
     materialManagerMock = new Mock<CadMaterialManager>().setup(p => p.dispose()).returns();
@@ -50,7 +53,13 @@ describe(CadManager.name, () => {
       .setup(p => (p.clippingPlanes = It.IsAny()))
       .callback(() => {});
 
-    cadManager = new CadManager(materialManagerMock.object(), cadModelFactoryMock.object(), updateHandlerMock.object());
+    pickCacheInvalidator = new PickCacheInvalidator();
+    cadManager = new CadManager(
+      materialManagerMock.object(),
+      cadModelFactoryMock.object(),
+      updateHandlerMock.object(),
+      pickCacheInvalidator
+    );
   });
 
   test('should initialize CadManager with proper dependencies', () => {
@@ -83,6 +92,23 @@ describe(CadManager.name, () => {
 
   test('should access material manager correctly', () => {
     expect(cadManager.materialManager).toBe(materialManagerMock.object());
+  });
+
+  test('adding and removing a model invalidates the pick cache', async () => {
+    const model = createCadNode(2, 2, { pickCacheInvalidator });
+    vi.spyOn(model, 'setCacheSize').mockImplementation(() => {});
+    cadModelFactoryMock
+      .setup(p => p.loadModelMetadata(It.IsAny(), It.IsAny()))
+      .returns(Promise.resolve(createMinimalMetadata(File3dFormat.AnyFormat, 9)))
+      .setup(p => p.createModel(It.IsAny(), It.IsAny()))
+      .returns(model);
+    materialManagerMock.setup(p => p.removeModelMaterials(It.IsAny())).returns();
+
+    await cadManager.addModel(new CdfModelIdentifier(1, 2));
+    expect(pickCacheInvalidator.consume()).toBe(true);
+
+    cadManager.removeModel(model);
+    expect(pickCacheInvalidator.consume()).toBe(true);
   });
 
   describe('doesModelHaveCompatibleFormat', () => {

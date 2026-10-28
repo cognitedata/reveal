@@ -5,14 +5,14 @@
 import type { WebGLRenderer } from 'three';
 import { Box3, PerspectiveCamera, Vector3 } from 'three';
 import { It, Mock, Times } from 'moq.ts';
-import { SceneHandler } from '@reveal/utilities';
+import { PickCacheInvalidator, SceneHandler } from '@reveal/utilities';
 import { resolveShadowMapResolution, ShadowMapPass } from './ShadowMapPass';
 import { CadMaterialManager } from '../CadMaterialManager';
 import { autoMockWebGLRenderer } from '../../../../test-utilities';
 
 describe(ShadowMapPass.name, () => {
   const sceneHandler = new SceneHandler();
-  const materialManager = new CadMaterialManager();
+  const materialManager = new CadMaterialManager(new PickCacheInvalidator());
   const bounds = new Box3(new Vector3(-1, -1, -1), new Vector3(1, 1, 1));
 
   test('is disabled until both user-enabled and given non-empty bounds', () => {

@@ -4,13 +4,17 @@
 
 import { DataTexture } from 'three';
 
+import type { PickCacheInvalidator } from '@reveal/utilities';
 import { IndexSet, determinePowerOfTwoDimensions, NumericRange, createUint8View } from '@reveal/utilities';
 import { DefaultNodeAppearance, type NodeAppearance } from './NodeAppearance';
 import type { NodeAppearanceProvider } from './NodeAppearanceProvider';
 
+type PickableSetsSnapshot = { visible: NumericRange[]; ghosted: NumericRange[] };
+
 export class NodeAppearanceTextureBuilder {
   private _defaultAppearance: NodeAppearance = {};
   private readonly _styleProvider: NodeAppearanceProvider;
+  private readonly _pickCacheInvalidator: PickCacheInvalidator;
   private readonly _handleStylesChangedListener = this.handleStylesChanged.bind(this);
 
   private _needsUpdate = true;
@@ -22,7 +26,12 @@ export class NodeAppearanceTextureBuilder {
   private readonly _infrontNodesTreeIndices: IndexSet;
   private readonly _visibleNodesTreeIndices: IndexSet;
 
-  constructor(treeIndexCount: number, styleProvider: NodeAppearanceProvider) {
+  constructor(
+    treeIndexCount: number,
+    styleProvider: NodeAppearanceProvider,
+    pickCacheInvalidator: PickCacheInvalidator
+  ) {
+    this._pickCacheInvalidator = pickCacheInvalidator;
     this._allTreeIndices = new IndexSet();
     this._allTreeIndices.addRange(new NumericRange(0, treeIndexCount));
     this._styleProvider = styleProvider;
@@ -113,10 +122,22 @@ export class NodeAppearanceTextureBuilder {
       throw new Error('Node appearance override color texture data is not initialized');
     }
     const rgba = createUint8View(rawData);
+    const pickableBefore = this.snapshotPickableSets();
     this.populateTexture(rgba);
     this.populateNodeSets(rgba);
+    if (!areSnapshotsEqual(pickableBefore, this.snapshotPickableSets())) {
+      this._pickCacheInvalidator.request();
+    }
 
     this._needsUpdate = false;
+  }
+
+  /** The sets that decide whether a node can be picked: hidden nodes are not visible, ghosted nodes are not drawn. */
+  private snapshotPickableSets(): PickableSetsSnapshot {
+    return {
+      visible: this._visibleNodesTreeIndices.toRangeArray(),
+      ghosted: this._ghostedNodesTreeIndices.toRangeArray()
+    };
   }
 
   private populateTexture(rgbaBuffer: Uint8Array | Uint8ClampedArray) {
@@ -210,6 +231,14 @@ export class NodeAppearanceTextureBuilder {
   private handleStylesChanged() {
     this._needsUpdate = true;
   }
+}
+
+function areSnapshotsEqual(a: PickableSetsSnapshot, b: PickableSetsSnapshot): boolean {
+  return areRangesEqual(a.visible, b.visible) && areRangesEqual(a.ghosted, b.ghosted);
+}
+
+function areRangesEqual(a: NumericRange[], b: NumericRange[]): boolean {
+  return a.length === b.length && a.every((range, i) => range.from === b[i].from && range.count === b[i].count);
 }
 
 function allocateOverrideColorPerTreeIndexTexture(treeIndexCount: number): DataTexture {
