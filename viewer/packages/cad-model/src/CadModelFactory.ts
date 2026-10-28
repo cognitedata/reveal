@@ -3,6 +3,7 @@
  */
 import { Box3 } from 'three';
 
+import type { PickCacheInvalidator } from '@reveal/utilities';
 import { BoundingBoxClipper } from './utilities/BoundingBoxClipper';
 import type { GeometryFilter } from './types';
 
@@ -19,6 +20,7 @@ import { CadNode } from './wrappers/CadNode';
 
 export class CadModelFactory {
   private readonly _materialManager: CadMaterialManager;
+  private readonly _pickCacheInvalidator: PickCacheInvalidator;
   private readonly _modelDataProvider: ModelDataProvider;
   private readonly _cadModelMetadataRepository: CadModelMetadataRepository;
   private _gltfSectorRepository: GltfSectorRepository | undefined;
@@ -26,9 +28,11 @@ export class CadModelFactory {
   constructor(
     materialManager: CadMaterialManager,
     modelMetadataProvider: ModelMetadataProvider,
-    modelDataProvider: ModelDataProvider
+    modelDataProvider: ModelDataProvider,
+    pickCacheInvalidator: PickCacheInvalidator
   ) {
     this._materialManager = materialManager;
+    this._pickCacheInvalidator = pickCacheInvalidator;
     this._modelDataProvider = modelDataProvider;
     this._cadModelMetadataRepository = new CadModelMetadataRepository(modelMetadataProvider, modelDataProvider);
   }
@@ -52,7 +56,7 @@ export class CadModelFactory {
     );
     const sectorRepository = this.getSectorRepository(format, formatVersion);
 
-    const cadModel = new CadNode(modelMetadata, sectorRepository);
+    const cadModel = new CadNode(modelMetadata, sectorRepository, this._pickCacheInvalidator);
     this._materialManager.addModelMaterials(modelIdentifier.revealInternalId, cadModel.cadMaterial);
 
     if (modelMetadata.geometryClipBox !== null) {

@@ -189,17 +189,22 @@ describe(PointCloudOctreePicker.name, () => {
       expect(renderSpy.mock.calls[2][3]).toBeUndefined();
     });
 
-    test('camera movement makes the cache unusable and triggers a rebuild', async () => {
+    test('camera movement alone does not rebuild the cache, an invalidation does', async () => {
       const { renderSpy } = setupPickerHelperMocks(renderedNodes);
       const picker = new PointCloudOctreePicker(createMockRenderer());
 
       await picker.pick(camera, ray, [octree]);
       expect(renderSpy).toHaveBeenCalledTimes(1);
 
+      // The invalidator reports camera changes, so the cache itself does not compare the camera
       camera.position.set(10, 0, 0);
       camera.updateMatrixWorld();
       await picker.pick(camera, ray, [octree]);
+      expect(renderSpy).toHaveBeenCalledTimes(1);
 
+      picker.invalidateCache();
+      nowSpy.mockReturnValue(10_100);
+      await picker.pick(camera, ray, [octree]);
       expect(renderSpy).toHaveBeenCalledTimes(2);
       expect(renderSpy.mock.calls[1][3]).toBeUndefined();
     });
@@ -212,23 +217,6 @@ describe(PointCloudOctreePicker.name, () => {
       expect(renderSpy).toHaveBeenCalledTimes(1);
 
       picker.dispose();
-      await picker.pick(camera, ray, [octree]);
-
-      expect(renderSpy).toHaveBeenCalledTimes(2);
-      expect(renderSpy.mock.calls[1][3]).toBeUndefined();
-    });
-
-    test('camera projection change makes the cache unusable and triggers a rebuild', async () => {
-      const { renderSpy } = setupPickerHelperMocks(renderedNodes);
-      const picker = new PointCloudOctreePicker(createMockRenderer());
-
-      await picker.pick(camera, ray, [octree]);
-      expect(renderSpy).toHaveBeenCalledTimes(1);
-
-      // Same position/orientation, but a changed projection (e.g. fov/zoom) changes
-      // projectionMatrix without touching matrixWorld.
-      camera.fov = 30;
-      camera.updateProjectionMatrix();
       await picker.pick(camera, ray, [octree]);
 
       expect(renderSpy).toHaveBeenCalledTimes(2);

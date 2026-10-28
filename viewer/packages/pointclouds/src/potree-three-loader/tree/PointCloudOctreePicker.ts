@@ -1,5 +1,4 @@
 import type { Camera, Ray, WebGLRenderer } from 'three';
-import type { Matrix4 } from 'three';
 import { Vector2, Vector3, MathUtils } from 'three';
 import { DEFAULT_PICK_WINDOW_SIZE } from '@reveal/rendering';
 import type { PointCloudOctree } from './PointCloudOctree';
@@ -18,8 +17,6 @@ type PickCache = {
   nodeIndexBits: number;
   renderedNodes: RenderedNode[];
   octrees: PointCloudOctree[];
-  cameraMatrixWorld: Matrix4;
-  cameraProjectionMatrix: Matrix4;
   valid: boolean;
 };
 
@@ -56,8 +53,8 @@ export class PointCloudOctreePicker {
   }
 
   /**
-   * Invalidates the cached full-frame pick buffer. Must be called whenever a new frame of the
-   * scene is rendered (camera, point cloud LOD, styling or clipping changes) and on resize.
+   * Invalidates the cached full-frame pick buffer. Must be called whenever the camera or scene content that
+   * affects picking changes (point cloud LOD, styling or clipping), as the cache does not compare the camera itself.
    */
   invalidateCache(): void {
     if (this._cache !== undefined) {
@@ -94,7 +91,7 @@ export class PointCloudOctreePicker {
       const centerX = (ndc.x + 1) * width * 0.5;
       const centerY = (ndc.y + 1) * height * 0.5;
 
-      if (this.isCacheUsable(camera, octrees, width, height)) {
+      if (this.isCacheUsable(octrees, width, height)) {
         return this.pickFromCache(camera, centerX, centerY, pickWndSize);
       }
 
@@ -172,18 +169,12 @@ export class PointCloudOctreePicker {
     return pickPoint;
   }
 
-  private isCacheUsable(camera: Camera, octrees: PointCloudOctree[], width: number, height: number): boolean {
+  private isCacheUsable(octrees: PointCloudOctree[], width: number, height: number): boolean {
     const cache = this._cache;
     if (cache === undefined || !cache.valid) {
       return false;
     }
     if (cache.width !== width || cache.height !== height) {
-      return false;
-    }
-    if (
-      !cache.cameraMatrixWorld.equals(camera.matrixWorld) ||
-      !cache.cameraProjectionMatrix.equals(camera.projectionMatrix)
-    ) {
       return false;
     }
     if (cache.octrees.length !== octrees.length || !cache.octrees.every((octree, i) => octree === octrees[i])) {
@@ -237,10 +228,8 @@ export class PointCloudOctreePicker {
       nodeIndexBits,
       renderedNodes,
       octrees: [...octrees],
-      cameraMatrixWorld: camera.matrixWorld.clone(),
-      cameraProjectionMatrix: camera.projectionMatrix.clone(),
-      // The scene may have rendered a new frame while the readback was in flight, so the buffer
-      // then describes the previous frame and must not be served.
+      // The camera or scene content may have changed while the readback was in flight, so the buffer then
+      // describes a previous frame and must not be served.
       valid: this._invalidationCount === invalidationCountAtStart
     };
     return this._cache.valid;

@@ -2,8 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
-import type { Box3, Object3D, PerspectiveCamera, Ray, WebGLRenderer } from 'three';
-import { Color, Raycaster, Scene, Vector3, Vector4, WebGLRenderTarget } from 'three';
+import type { Box3, PerspectiveCamera, Ray, WebGLRenderer } from 'three';
+import { Color, Raycaster, Scene, Vector3, WebGLRenderTarget } from 'three';
 import type { IntersectInput } from '@reveal/model-base';
 import type { CadMaterialManager, RenderPipelineProvider } from '@reveal/rendering';
 import { BasicPipelineExecutor, CadGeometryRenderModePipelineProvider, RenderMode } from '@reveal/rendering';
@@ -11,6 +11,10 @@ import type { SceneHandler } from '@reveal/utilities';
 import { WebGLRendererStateHelper } from '@reveal/utilities';
 import type { CadNode } from '../wrappers/CadNode';
 import { Mutex } from 'async-mutex';
+import { CadPickBuffer } from './CadPickBuffer';
+import { CadPickCache } from './CadPickCache';
+import { depthToIntersection } from './depthToIntersection';
+import type { IntersectCadNodesResult } from './types';
 
 type PickingInput = {
   normalizedCoords: {
@@ -27,14 +31,6 @@ type TreeIndexPickingInput = PickingInput & {
   cadNode: CadNode;
 };
 
-type IntersectCadNodesResult = {
-  distance: number;
-  point: Vector3;
-  treeIndex: number;
-  cadNode: CadNode;
-  object: Object3D; // always CadNode
-};
-
 export class PickingHandler {
   private readonly _clearColor: Color;
   private readonly _clearAlpha: number;
@@ -45,24 +41,19 @@ export class PickingHandler {
     pixelBuffer: Uint8Array;
   };
 
-  private readonly _rgbaVector = new Vector4();
-
-  /**
-   * These factors are used for undoing the `packDepthToRGBA` GLSL operation defined by ThreeJS.
-   * They are taken from https://github.com/WestLangley/three.js/blob/bc58fecba18150103b95fbde5aaa3cc7cddf95a7/src/renderers/shaders/ShaderChunk/packing.glsl.js#L19
-   */
-  private readonly _unpackFactors = new Vector4(
-    255 / 256,
-    255 / 256 / 256,
-    255 / 256 / (256 * 256),
-    1 / (256 * 256 * 256)
-  );
   private readonly _pipelineExecutor: BasicPipelineExecutor;
   private readonly _depthRenderPipeline: CadGeometryRenderModePipelineProvider;
   private readonly _treeIndexRenderPipeline: CadGeometryRenderModePipelineProvider;
   private readonly _mutex = new Mutex();
 
-  constructor(renderer: WebGLRenderer, materialManager: CadMaterialManager, sceneHandler: SceneHandler) {
+  private readonly _pickCache: CadPickCache;
+
+  constructor(
+    renderer: WebGLRenderer,
+    materialManager: CadMaterialManager,
+    sceneHandler: SceneHandler,
+    pickCache: CadPickCache = new CadPickCache(renderer, materialManager, sceneHandler)
+  ) {
     this._clearColor = new Color('black');
     this._clearAlpha = 0;
     this._raycaster = new Raycaster();
@@ -86,6 +77,21 @@ export class PickingHandler {
 
     this._treeIndexRenderPipeline.setOutputRenderTarget(this._pickPixelColorStorage.renderTarget, false);
     this._depthRenderPipeline.setOutputRenderTarget(this._pickPixelColorStorage.renderTarget, false);
+
+    this._pickCache = pickCache;
+  }
+
+  /**
+   * Invalidates the cached full-frame pick buffer. Must be called whenever a new frame of the
+   * scene content that affects picking changes (sector loading, styling, clipping or model transforms).
+   */
+  public invalidatePickCache(): void {
+    this._pickCache.invalidate();
+  }
+
+  public dispose(): void {
+    this._pickCache.dispose();
+    this._pickPixelColorStorage.renderTarget.dispose();
   }
 
   public async intersectCadNodes(
@@ -106,10 +112,14 @@ export class PickingHandler {
     // Identify the treeIndex associated with the position.
     // Get CadNodes which are visible.
     const visibleCadNodes = cadNodes.filter(node => node.visible);
-    // Filter nodes which cannot hit pick point.
-    const filteredCadNodes = this.filterOutOfBoundCadNodes(visibleCadNodes, input);
-
     try {
+      const cachedResults = await this._pickCache.intersect(visibleCadNodes, input, shouldRunAsync);
+      if (cachedResults !== undefined) {
+        return [cachedResults];
+      }
+
+      const filteredCadNodes = this.filterOutOfBoundCadNodes(visibleCadNodes, input);
+
       for (const cadNodeData of filteredCadNodes) {
         // Skip cad node when its bounds is further away than any already hit position.
         const minIntersectCadNodeDistance = cadNodeData.intersectPosition.distanceTo(input.camera.position);
@@ -187,16 +197,8 @@ export class PickingHandler {
   }
 
   private async intersectCadNodeDepth(input: PickingInput, shouldRunAsync: boolean) {
-    const { camera } = input;
     const depth = await this.pickDepth(input, shouldRunAsync);
-
-    const viewZ = this.perspectiveDepthToViewZ(depth, camera.near, camera.far);
-    const point = this.getPosition(input, viewZ);
-    const distance = new Vector3().subVectors(point, camera.position).length();
-    return {
-      distance,
-      point
-    };
+    return depthToIntersection(depth, input.camera, input.normalizedCoords);
   }
 
   private async intersectCadNodeTreeIndex(
@@ -241,10 +243,6 @@ export class PickingHandler {
     return treeIndex;
   }
 
-  private perspectiveDepthToViewZ(invClipZ: number, near: number, far: number) {
-    return (near * far) / ((far - near) * invClipZ - far);
-  }
-
   private async pickDepth(input: PickingInput, shouldRunAsync: boolean): Promise<number> {
     const pixelBuffer = await this.pickPixel(
       input,
@@ -254,17 +252,7 @@ export class PickingHandler {
       shouldRunAsync
     );
 
-    return this.unpackRGBAToDepth(pixelBuffer);
-  }
-
-  private getPosition(input: PickingInput, viewZ: number): Vector3 {
-    const { camera, normalizedCoords } = input;
-    const position = new Vector3();
-    position.set(normalizedCoords.x, normalizedCoords.y, 0.5).applyMatrix4(camera.projectionMatrixInverse);
-
-    position.multiplyScalar(viewZ / position.z);
-    position.applyMatrix4(camera.matrixWorld);
-    return position;
+    return CadPickBuffer.unpackDepth(pixelBuffer, 0);
   }
 
   private async pickPixel(
@@ -300,12 +288,5 @@ export class PickingHandler {
     }
     await readPixelsPromise;
     return pixelBuffer;
-  }
-
-  private unpackRGBAToDepth(rgbaBuffer: Uint8Array) {
-    return this._rgbaVector
-      .fromArray(rgbaBuffer)
-      .multiplyScalar(1 / 255)
-      .dot(this._unpackFactors);
   }
 }

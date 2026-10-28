@@ -18,6 +18,7 @@ import {
   NodeTransformTextureBuilder
 } from '@reveal/cad-styling';
 import type { IndexSet } from '@reveal/utilities';
+import type { PickCacheInvalidator } from '@reveal/utilities';
 
 import { getMatCapTextureData } from './rendering/matCapTextureData';
 import { cadLightDirectionInViewSpace, cadUpDirectionInViewSpace } from './rendering/cadLighting';
@@ -49,6 +50,7 @@ export class CadMaterialManager {
       this.updateClippingPlanesForModel(modelIdentifier);
     }
     this._needsRedraw = true;
+    this._pickCacheInvalidator.request();
   }
 
   get needsRedraw(): boolean {
@@ -63,6 +65,11 @@ export class CadMaterialManager {
   // TODO: j-bjorne 29-04-2020: Move into separate cliping manager?
   private _clippingPlanes: Plane[] = [];
   private _needsRedraw: boolean = false;
+  private readonly _pickCacheInvalidator: PickCacheInvalidator;
+
+  constructor(pickCacheInvalidator: PickCacheInvalidator) {
+    this._pickCacheInvalidator = pickCacheInvalidator;
+  }
 
   addModelMaterials(modelIdentifier: symbol, cadMaterial: CadMaterial): void {
     const {
@@ -93,6 +100,7 @@ export class CadMaterialManager {
     clippingPlanesProvider.on('changed', () => {
       this.updateClippingPlanesForModel(modelIdentifier);
       this._needsRedraw = true;
+      this._pickCacheInvalidator.request();
     });
 
     const colorWrite = this._renderMode !== RenderMode.DepthBufferOnly;
@@ -322,6 +330,7 @@ export class CadMaterialManager {
       });
     }
     this._needsRedraw = true;
+    this._pickCacheInvalidator.request();
   }
 
   private getModelMaterialsWrapper(modelIdentifier: symbol): MaterialsWrapper {
@@ -363,9 +372,13 @@ function toTextureMaterialName(sectorId: number) {
   return `texturedMaterial_${sectorId}`;
 }
 
-export function createCadMaterial(maxTreeIndex: number): CadMaterial {
+export function createCadMaterial(maxTreeIndex: number, pickCacheInvalidator: PickCacheInvalidator): CadMaterial {
   const nodeAppearanceProvider = new NodeAppearanceProvider();
-  const nodeAppearanceTextureBuilder = new NodeAppearanceTextureBuilder(maxTreeIndex + 1, nodeAppearanceProvider);
+  const nodeAppearanceTextureBuilder = new NodeAppearanceTextureBuilder(
+    maxTreeIndex + 1,
+    nodeAppearanceProvider,
+    pickCacheInvalidator
+  );
   nodeAppearanceTextureBuilder.build();
 
   const nodeTransformProvider = new NodeTransformProvider();
