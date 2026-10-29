@@ -1175,6 +1175,8 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
 
   /**
    * Add a CustomObject to the viewer.
+   * Meshes in the custom object can use {@link CustomObjectEffectMaterial}, which supports
+   * effects specific to custom objects.
    * @param customObject
    * @example
    * ```js
@@ -1189,7 +1191,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * // Ground plane that receives CAD shadows and texture variation
    * const groundMaterial = new CustomObjectEffectMaterial('#ffffff', texture);
    * groundMaterial.setReceivesShadow(true);
-   * groundMaterial.setTextureVariation(true);
+   * groundMaterial.setTextureVariation('hexTiling');
    * const plane = new Mesh(new PlaneGeometry(100, 100), groundMaterial);
    * viewer.addCustomObject(CustomObject(plane));
    * ```

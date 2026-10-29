@@ -20,7 +20,8 @@ export {
   PointColorType,
   PointSizeType,
   CustomObjectEffectMaterial,
-  CadShadowReceiverForCustomObjectMaterial
+  CadShadowReceiverForCustomObjectMaterial,
+  type TextureVariationType
 } from '@reveal/rendering';
 
 /**

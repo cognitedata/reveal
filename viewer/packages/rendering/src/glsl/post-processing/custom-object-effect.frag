@@ -18,14 +18,22 @@ out vec4 fragColor;
 #if defined(CAD_SHADOW)
 #include cadShadow.glsl;
 #endif
+#if defined(USE_DIFFUSE_TEXTURE) && (defined(HEX_TILING_TEXTURE_VARIATION) || defined(WATER_TILING_TEXTURE_VARIATION))
+#include hexGrid.glsl;
+#endif
 #if defined(USE_DIFFUSE_TEXTURE) && defined(HEX_TILING_TEXTURE_VARIATION)
 #include hexTiling.glsl;
+#endif
+#if defined(USE_DIFFUSE_TEXTURE) && defined(WATER_TILING_TEXTURE_VARIATION)
+#include waterTiling.glsl;
 #endif
 
 vec3 customObjectBaseColor() {
     vec3 color = diffuseColor;
 #if defined(USE_DIFFUSE_TEXTURE) && defined(HEX_TILING_TEXTURE_VARIATION)
     color *= hexTileAlbedo(tDiffuse, vUv);
+#elif defined(USE_DIFFUSE_TEXTURE) && defined(WATER_TILING_TEXTURE_VARIATION)
+    color *= waterTileAlbedo(tDiffuse, vUv);
 #elif defined(USE_DIFFUSE_TEXTURE)
     color *= texture(tDiffuse, vUv).rgb;
 #endif

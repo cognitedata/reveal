@@ -880,8 +880,8 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
     // @deprecated
     setMap(map: Texture | null): void;
     setReceivesShadow(receivesShadow: boolean): void;
-    setTextureVariation(enabled: boolean): void;
-    get textureVariationEnabled(): boolean;
+    setTextureVariation(type: TextureVariationType): void;
+    get textureVariation(): TextureVariationType;
 }
 
 // @beta
@@ -2147,6 +2147,9 @@ export class StyledPointCloudVolumeCollection<T extends DataSourceType> {
 
 // @public (undocumented)
 export type SupportedModelTypes = 'pointcloud' | 'cad';
+
+// @public
+export type TextureVariationType = 'none' | 'hexTiling' | 'waterTiling';
 
 // @public
 export type TimelineDateUpdateDelegate = (event: {

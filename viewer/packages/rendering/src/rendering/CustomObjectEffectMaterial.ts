@@ -2,7 +2,7 @@
  * Copyright 2026 Cognite AS
  */
 
-import type { Camera, ColorRepresentation, Texture, WebGLRenderer, Scene } from 'three';
+import type { Camera, ColorRepresentation, Texture, WebGLRenderer, Scene, Wrapping } from 'three';
 import {
   Color,
   GLSL3,
@@ -18,11 +18,28 @@ import { CAD_LIGHT_WORLD, CAD_SHADOW_STRENGTH } from './cadLighting';
 import effectFragmentShader from '../glsl/post-processing/custom-object-effect.frag';
 import effectVertexShader from '../glsl/post-processing/custom-object-effect.vert';
 
+/**
+ * Technique that hides the repeat of a tiled texture.
+ * - `'none'`: the texture is sampled as is.
+ * - `'hexTiling'`: cells rotate and shift the texture. Suits ground such as concrete, gravel and grass.
+ * - `'waterTiling'`: cells shift the texture without rotating it, so waves keep their direction.
+ * A second, larger copy of the texture is blended in and the contrast is kept. Suits water and ocean.
+ * @public
+ */
+export type TextureVariationType = 'none' | 'hexTiling' | 'waterTiling';
+
 // Define name in custom-object-effect.frag for each effect.
 enum CustomObjectEffect {
   CadShadow = 'CAD_SHADOW',
-  TextureVariation = 'HEX_TILING_TEXTURE_VARIATION'
+  HexTiling = 'HEX_TILING_TEXTURE_VARIATION',
+  WaterTiling = 'WATER_TILING_TEXTURE_VARIATION'
 }
+
+// Effect compiled for each texture variation technique.
+const TEXTURE_VARIATION_EFFECT: Record<Exclude<TextureVariationType, 'none'>, CustomObjectEffect> = {
+  hexTiling: CustomObjectEffect.HexTiling,
+  waterTiling: CustomObjectEffect.WaterTiling
+};
 
 // Shadow map of the current frame per viewer scene. A WeakMap so a disposed viewer's scene takes
 // its entry with it, and so no value is ever shared between viewers.
@@ -31,8 +48,10 @@ const frameShadowMaps = new WeakMap<Scene, CadShadowMap>();
 // x: rotation, y: luminance falloff, z: blend exponent.
 const HEX_TILING_REPEATED = new Vector3(0.3, 0.6, 7.0);
 const HEX_TILING_STRETCHED = new Vector3(0.0, 0.0, 1.5);
+// x: blend exponent, y: scale of the second layer, z: strength of the slow brightness change.
+const WATER_TILING = new Vector3(2.0, 0.41, 0.06);
 // Tile count below which the texture is treated as stretched.
-const HEX_TILING_FEW_TILES = 3;
+const TEXTURE_VARIATION_FEW_TILES = 3;
 
 /**
  * Opt-in material for custom objects: an effect is compiled into the shader only while requested.
@@ -46,8 +65,8 @@ const HEX_TILING_FEW_TILES = 3;
 export class CustomObjectEffectMaterial extends RawShaderMaterial {
   // If this material instance should receive shadows.
   private _receivesShadow = false;
-  // If this material instance should use texture variation. Only drawn while it has a texture.
-  private _textureVariation = false;
+  // Texture variation this material instance should use. Only drawn while it has a texture.
+  private _textureVariation: TextureVariationType = 'none';
 
   /**
    * White and no texture when omitted. Effects are requested afterwards through their setters.
@@ -72,7 +91,8 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
         cadShadowDepthRange: { value: 1 },
         cadShadowStrength: { value: CAD_SHADOW_STRENGTH },
         cadShadowTerminatorFade: { value: 0 },
-        hexTilingParams: { value: HEX_TILING_REPEATED.clone() }
+        hexTilingParams: { value: HEX_TILING_REPEATED.clone() },
+        waterTilingParams: { value: WATER_TILING.clone() }
       },
       glslVersion: GLSL3
     });
@@ -145,34 +165,36 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
   }
 
   /**
-   * Requests or drops hex tiling for this material. It is drawn only while the material has a
-   * texture; the request itself is kept, so it may be made before or after the texture is set.
+   * Chooses the technique that hides the repeat of the texture. It is drawn only while the material has a
+   * texture; the choice itself is kept, so it may be made before or after the texture is set.
    */
-  public setTextureVariation(enabled: boolean): void {
-    this._textureVariation = enabled;
+  public setTextureVariation(type: TextureVariationType): void {
+    this._textureVariation = type;
     this.applyTextureVariation();
   }
 
-  // The shader includes hex tiling only when it was requested and there is a texture to tile.
+  /** The texture variation this material requested. */
+  public get textureVariation(): TextureVariationType {
+    return this._textureVariation;
+  }
+
+  // The shader includes the requested technique only while there is a texture to vary.
   private applyTextureVariation(): void {
     const texture = this.uniforms.tDiffuse.value as Texture | null;
-    const apply = this._textureVariation && texture !== null;
-    if (apply) {
-      ensureRepeatWrapping(texture);
-      this.fitTextureVariationToTexture(texture);
+    const applied = texture === null ? 'none' : this._textureVariation;
+    if (texture !== null && applied === 'hexTiling') {
+      // A stretched texture mirrors so its edges meet, and blends softly instead of rotating.
+      const stretched = isStretched(texture);
+      ensureWrapping(texture, stretched ? MirroredRepeatWrapping : RepeatWrapping);
+      (this.uniforms.hexTilingParams.value as Vector3).copy(stretched ? HEX_TILING_STRETCHED : HEX_TILING_REPEATED);
     }
-    this.setEffectEnabled(CustomObjectEffect.TextureVariation, apply);
-  }
-
-  private fitTextureVariationToTexture(texture: Texture): void {
-    const params = this.uniforms.hexTilingParams.value as Vector3;
-    const tilesAcross = Math.max(Math.abs(texture.repeat.x), Math.abs(texture.repeat.y));
-    params.copy(tilesAcross < HEX_TILING_FEW_TILES ? HEX_TILING_STRETCHED : HEX_TILING_REPEATED);
-  }
-
-  /** Whether this material requested hex tiling. */
-  public get textureVariationEnabled(): boolean {
-    return this._textureVariation;
+    if (texture !== null && applied === 'waterTiling') {
+      // Mirroring would flip the wave direction.
+      ensureWrapping(texture, RepeatWrapping);
+    }
+    for (const [type, effect] of Object.entries(TEXTURE_VARIATION_EFFECT)) {
+      this.setEffectEnabled(effect, type === applied);
+    }
   }
 
   private setEffectEnabled(effect: CustomObjectEffect, enabled: boolean): void {
@@ -226,9 +248,12 @@ export class CustomObjectEffectMaterial extends RawShaderMaterial {
   }
 }
 
-function ensureRepeatWrapping(texture: Texture): void {
+function isStretched(texture: Texture): boolean {
   const tilesAcross = Math.max(Math.abs(texture.repeat.x), Math.abs(texture.repeat.y));
-  const wrapping = tilesAcross < HEX_TILING_FEW_TILES ? MirroredRepeatWrapping : RepeatWrapping;
+  return tilesAcross < TEXTURE_VARIATION_FEW_TILES;
+}
+
+function ensureWrapping(texture: Texture, wrapping: Wrapping): void {
   if (texture.wrapS === wrapping && texture.wrapT === wrapping) return;
   texture.wrapS = wrapping;
   texture.wrapT = wrapping;
@@ -243,8 +268,7 @@ function ensureRepeatWrapping(texture: Texture): void {
 export const CadShadowReceiverForCustomObjectMaterial = CustomObjectEffectMaterial;
 
 /**
- * Alias for {@link CustomObjectEffectMaterial}. Declared next to the constant of the same name so
- * the alias keeps working in type position, as it did while it was a class.
+ * Alias for {@link CustomObjectEffectMaterial}, so the old name still works as a type.
  * @deprecated Use {@link CustomObjectEffectMaterial}.
  * @public
  */
