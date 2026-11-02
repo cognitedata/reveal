@@ -11,7 +11,7 @@ import {
   makePartialJpegBlob
 } from '../utils/JpegDataStreamParser';
 import type { Texture, TextureLoader } from 'three';
-import { CanvasTexture } from 'three';
+import { CanvasTexture, LinearFilter } from 'three';
 
 export type Image360FaceWithUrl = Image360Face & { downloadUrl: string };
 
@@ -19,10 +19,24 @@ export function hasDownloadUrl(face: Image360Face): face is Image360FaceWithUrl 
   return face.downloadUrl !== undefined;
 }
 
-type CanvasTextureState = {
-  canvas: HTMLCanvasElement;
-  ctx: CanvasRenderingContext2D;
+// Minimum time between two progressive scans being drawn and re-uploaded for the same face.
+const MIN_PROGRESSIVE_SCAN_INTERVAL_MS = 250;
+
+// Canvas-backed textures that only live while a face is streaming.
+const intermediateTextures = new WeakSet<Texture>();
+
+export function disposeFaceTexture(texture: Texture): void {
+  texture.dispose();
+  if (intermediateTextures.delete(texture) && texture.image instanceof HTMLCanvasElement) {
+    texture.image.width = 0;
+    texture.image.height = 0;
+  }
+}
+
+type ProgressiveTextureState = {
+  ctx: CanvasRenderingContext2D | undefined;
   texture: CanvasTexture | undefined;
+  lastScanAppliedAt: number | undefined;
 };
 
 type StreamResult = {
@@ -75,21 +89,28 @@ export class Image360FaceTextureLoader implements FaceTextureLoader {
   }
 
   private async loadFromBuffer(face: Image360Face): Promise<Image360Texture> {
-    const blob = new Blob([face.data], { type: face.mimeType });
+    const texture = await this.decodeTexture(new Blob([face.data], { type: face.mimeType }));
+    return { face: face.face, texture };
+  }
+
+  private async decodeTexture(blob: Blob): Promise<Texture> {
     const url = window.URL.createObjectURL(blob);
-    let faceTexture: Texture<HTMLImageElement | HTMLCanvasElement> = await this._textureLoader.loadAsync(url);
+    try {
+      let faceTexture: Texture<HTMLImageElement | HTMLCanvasElement> = await this._textureLoader.loadAsync(url);
 
-    if (
-      this._device.deviceType === 'mobile' &&
-      (faceTexture.image.width > this.MAX_MOBILE_IMAGE_SIZE || faceTexture.image.height > this.MAX_MOBILE_IMAGE_SIZE)
-    ) {
-      faceTexture = await getScaledImageTexture(faceTexture, this.MAX_MOBILE_IMAGE_SIZE);
+      if (
+        this._device.deviceType === 'mobile' &&
+        (faceTexture.image.width > this.MAX_MOBILE_IMAGE_SIZE || faceTexture.image.height > this.MAX_MOBILE_IMAGE_SIZE)
+      ) {
+        faceTexture = await getScaledImageTexture(faceTexture, this.MAX_MOBILE_IMAGE_SIZE);
+      }
+
+      faceTexture.center.set(0.5, 0.5);
+      faceTexture.repeat.set(-1, 1);
+      return faceTexture;
+    } finally {
+      window.URL.revokeObjectURL(url);
     }
-
-    window.URL.revokeObjectURL(url);
-    faceTexture.center.set(0.5, 0.5);
-    faceTexture.repeat.set(-1, 1);
-    return { face: face.face, texture: faceTexture };
   }
 
   private async streamFaceTexture(
@@ -99,66 +120,99 @@ export class Image360FaceTextureLoader implements FaceTextureLoader {
     abortSignal?: AbortSignal
   ): Promise<Image360Texture> {
     const { body, contentLength } = await fetchFace(face, abortSignal);
-    const textureState = createCanvasTextureState();
+    const progressiveState: ProgressiveTextureState = {
+      ctx: undefined,
+      texture: undefined,
+      lastScanAppliedAt: undefined
+    };
+    let finalTexture: Texture | undefined;
 
-    const { fullBuffer, bytesReceived, jpegType } = await readStream(
-      body,
-      contentLength,
-      onJpegTypeDetected,
-      async (partialBlob: Blob) => {
-        const bitmap = await createImageBitmap(partialBlob).catch(() => null);
-        if (bitmap) this.applyBitmapToTexture(bitmap, face, textureState, onFirstFaceReady);
+    try {
+      const { fullBuffer, bytesReceived } = await readStream(
+        body,
+        contentLength,
+        onJpegTypeDetected,
+        async (partialBlob: Blob) => {
+          if (!shouldApplyScan(progressiveState)) return;
+          const bitmap = await createImageBitmap(partialBlob).catch(() => null);
+          if (bitmap) this.applyBitmapToTexture(bitmap, face, progressiveState, onFirstFaceReady);
+        }
+      );
+
+      this.throwIfNoLongerNeeded(face, abortSignal);
+      const texture = await this.decodeTexture(
+        new Blob([fullBuffer.subarray(0, bytesReceived)], { type: face.mimeType })
+      );
+      try {
+        this.throwIfNoLongerNeeded(face, abortSignal);
+      } catch (error) {
+        texture.dispose();
+        throw error;
       }
-    );
 
-    await this.finalizeTexture(jpegType, fullBuffer, bytesReceived, face, textureState, onFirstFaceReady);
-
-    if (!textureState.texture) {
-      throw new Error(`No texture decoded for face: ${face.face}`);
+      finalTexture = texture;
+      this._updateFaceTexture(face.face, finalTexture);
+      if (progressiveState.texture === undefined) {
+        onFirstFaceReady?.();
+      }
+      this._onUpdate();
+      return { face: face.face, texture: finalTexture };
+    } finally {
+      if (progressiveState.texture !== undefined && (finalTexture !== undefined || !this._isMeshAlive())) {
+        disposeFaceTexture(progressiveState.texture);
+      }
     }
-    return { face: face.face, texture: textureState.texture };
   }
 
-  private async finalizeTexture(
-    jpegType: JpegType | 'unknown',
-    fullBuffer: Uint8Array<ArrayBuffer>,
-    bytesReceived: number,
-    face: Image360FaceWithUrl,
-    state: CanvasTextureState,
-    onFirstFaceReady: (() => void) | undefined
-  ): Promise<void> {
-    if (jpegType === 'progressive') return;
-    const blob = new Blob([fullBuffer.subarray(0, bytesReceived)], { type: 'image/jpeg' });
-    const bitmap = await createImageBitmap(blob);
-    this.applyBitmapToTexture(bitmap, face, state, onFirstFaceReady);
+  private throwIfNoLongerNeeded(face: Image360FaceWithUrl, abortSignal: AbortSignal | undefined): void {
+    if (abortSignal?.aborted === true || !this._isMeshAlive()) {
+      throw new Error(`360 image face ${face.face} is no longer needed`);
+    }
   }
 
   private applyBitmapToTexture(
     bitmap: ImageBitmap,
     face: Image360FaceWithUrl,
-    state: CanvasTextureState,
+    state: ProgressiveTextureState,
     onFirstFaceReady: (() => void) | undefined
   ): void {
     if (!this._isMeshAlive()) {
       bitmap.close();
       return;
     }
-    if (!state.texture) {
-      state.canvas.width = bitmap.width;
-      state.canvas.height = bitmap.height;
-      state.ctx.drawImage(bitmap, 0, 0);
-      state.texture = new CanvasTexture(state.canvas);
-      state.texture.center.set(0.5, 0.5);
-      state.texture.repeat.set(-1, 1);
+    if (state.texture === undefined || state.ctx === undefined) {
+      const { canvas, ctx } = createCanvas(bitmap.width, bitmap.height);
+      ctx.drawImage(bitmap, 0, 0);
+      state.ctx = ctx;
+      state.texture = createIntermediateTexture(canvas);
       this._updateFaceTexture(face.face, state.texture);
       onFirstFaceReady?.();
     } else {
       state.ctx.drawImage(bitmap, 0, 0);
       state.texture.needsUpdate = true;
     }
+    state.lastScanAppliedAt = performance.now();
     bitmap.close();
     this._onUpdate();
   }
+}
+
+function shouldApplyScan(state: ProgressiveTextureState): boolean {
+  return (
+    state.lastScanAppliedAt === undefined ||
+    performance.now() - state.lastScanAppliedAt >= MIN_PROGRESSIVE_SCAN_INTERVAL_MS
+  );
+}
+
+function createIntermediateTexture(canvas: HTMLCanvasElement): CanvasTexture {
+  const texture = new CanvasTexture(canvas);
+  // Replaced by the final texture when the download completes, so skip mipmap generation on every scan.
+  texture.generateMipmaps = false;
+  texture.minFilter = LinearFilter;
+  texture.center.set(0.5, 0.5);
+  texture.repeat.set(-1, 1);
+  intermediateTextures.add(texture);
+  return texture;
 }
 async function getScaledImageTexture(
   texture: Texture<HTMLImageElement | HTMLCanvasElement>,
@@ -246,11 +300,13 @@ async function fetchFace(
   return { body: response.body, contentLength: response.headers.get('content-length') };
 }
 
-function createCanvasTextureState(): CanvasTextureState {
+function createCanvas(width: number, height: number): { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D } {
   const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
   const ctx = canvas.getContext('2d');
   if (!ctx) {
     throw new Error('Failed to obtain 2D rendering context for canvas texture.');
   }
-  return { canvas, ctx, texture: undefined };
+  return { canvas, ctx };
 }

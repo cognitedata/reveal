@@ -183,6 +183,10 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
       return;
     }
     const previewTextures = await this._image360VisualizationBox.loadFaceTextures(previewImageFiles);
+    if (isAborted(abortSignal)) {
+      previewTextures.forEach(t => t.texture.dispose());
+      throw createAbortError();
+    }
     this._previewTextures = previewTextures;
   }
 
@@ -195,6 +199,10 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
       this._image360Descriptor.faceDescriptors,
       abortSignal
     );
+    // Starting to load faces creates a placeholder mesh, so do not start once the request has been aborted.
+    if (isAborted(abortSignal)) {
+      throw createAbortError();
+    }
 
     const textures = await this._image360VisualizationBox.loadFaceTextures(
       fullImageFiles,
@@ -202,6 +210,12 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
       onFirstFaceTypeDetected,
       abortSignal
     );
+    // An aborted request may already have been purged from the cache; applying its textures
+    // would rebuild a mesh that nothing releases.
+    if (isAborted(abortSignal)) {
+      textures.forEach(t => t.texture.dispose());
+      throw createAbortError();
+    }
     this._fullResolutionTextures = textures;
     this._image360VisualizationBox.setImages(textures);
   }
@@ -324,6 +338,15 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
   public getDescriptors(): Image360Descriptor<T> {
     return this._image360Descriptor;
   }
+}
+
+// A function call keeps TypeScript from narrowing `aborted` across awaits, where it can change.
+function isAborted(abortSignal: AbortSignal | undefined): boolean {
+  return abortSignal?.aborted === true;
+}
+
+function createAbortError(): DOMException {
+  return new DOMException('360 image texture load was aborted', 'AbortError');
 }
 
 function isDefined<T extends DataSourceType>(
