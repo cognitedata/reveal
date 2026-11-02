@@ -25,12 +25,42 @@ const MIN_PROGRESSIVE_SCAN_INTERVAL_MS = 250;
 // Canvas-backed textures that only live while a face is streaming.
 const intermediateTextures = new WeakSet<Texture>();
 
+// TEMPORARY: memory tracking for the WebGL context lost investigation.
+const faceTextureMemory = { textures: 0, textureBytes: 0, canvases: 0, canvasBytes: 0 };
+
 export function disposeFaceTexture(texture: Texture): void {
   texture.dispose();
   if (intermediateTextures.delete(texture) && texture.image instanceof HTMLCanvasElement) {
+    faceTextureMemory.canvases--;
+    faceTextureMemory.canvasBytes -= texture.image.width * texture.image.height * 4;
     texture.image.width = 0;
     texture.image.height = 0;
   }
+}
+
+function trackTextureMemory(texture: Texture): void {
+  const image = texture.image as { width: number; height: number } | null;
+  const bytes = (image?.width ?? 0) * (image?.height ?? 0) * 4 * (texture.generateMipmaps ? 4 / 3 : 1);
+  faceTextureMemory.textures++;
+  faceTextureMemory.textureBytes += bytes;
+  const onDispose = (): void => {
+    texture.removeEventListener('dispose', onDispose);
+    faceTextureMemory.textures--;
+    faceTextureMemory.textureBytes -= bytes;
+  };
+  texture.addEventListener('dispose', onDispose);
+}
+
+export function logFaceTextureMemory(reason: string): void {
+  const toMb = (bytes: number): number => Math.round(bytes / (1024 * 1024));
+  const { textures, textureBytes, canvases, canvasBytes } = faceTextureMemory;
+  const heap = (performance as Performance & { memory?: { usedJSHeapSize: number } }).memory?.usedJSHeapSize;
+  // eslint-disable-next-line no-console
+  console.log(
+    `[Reveal 360 memory] ${reason}: ${textures} face textures (~${toMb(textureBytes)} MB), ` +
+      `${canvases} streaming canvases (~${toMb(canvasBytes)} MB)` +
+      (heap !== undefined ? `, JS heap ${toMb(heap)} MB` : '')
+  );
 }
 
 type ProgressiveTextureState = {
@@ -107,6 +137,7 @@ export class Image360FaceTextureLoader implements FaceTextureLoader {
 
       faceTexture.center.set(0.5, 0.5);
       faceTexture.repeat.set(-1, 1);
+      trackTextureMemory(faceTexture);
       return faceTexture;
     } finally {
       window.URL.revokeObjectURL(url);
@@ -182,6 +213,8 @@ export class Image360FaceTextureLoader implements FaceTextureLoader {
     }
     if (state.texture === undefined || state.ctx === undefined) {
       const { canvas, ctx } = createCanvas(bitmap.width, bitmap.height);
+      faceTextureMemory.canvases++;
+      faceTextureMemory.canvasBytes += canvas.width * canvas.height * 4;
       ctx.drawImage(bitmap, 0, 0);
       state.ctx = ctx;
       state.texture = createIntermediateTexture(canvas);
@@ -212,6 +245,7 @@ function createIntermediateTexture(canvas: HTMLCanvasElement): CanvasTexture {
   texture.center.set(0.5, 0.5);
   texture.repeat.set(-1, 1);
   intermediateTextures.add(texture);
+  trackTextureMemory(texture);
   return texture;
 }
 async function getScaledImageTexture(
