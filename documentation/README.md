@@ -51,20 +51,20 @@ We have several versions of our documentation for different reveal versions. We 
 
 * `next` (`/docs` folder) – your main place to create documentation for new features. 
     Write docs well before release, and you won't need to edit other sections ever.
-* `2.x` or latest (`/versioned_docs/version-2.x/` folder). 
-  On the website this is default documentation section for users because it describes
-  the latest reveal version that published to NPM. Edit the latest version only when you want
-  to apply some hotfix to documentation of the release that already published.
+* `4.x` or latest (`/versioned_docs/version-4.x/` folder).
+  On the website this is the default documentation section for users because it describes
+  the latest reveal version that is published to NPM. Edit the latest version only when you want
+  to apply some hotfix to documentation of the release that is already published.
   **You must also apply the same fix to `next` version**
-  because `/versioned_docs/version-2.x/` is completely replaced by `next` on every release.  
-* `1.x` or other archived versions. They must be created on each major release. 
+  because `/versioned_docs/version-4.x/` is replaced by `next` on every release.
+* `3.x` or other archived versions. They must be created on each major release.
   You need to edit those only when you want to clarify docs for older published reveal versions
   that are not actively maintained anymore.
 
 We typically don't version minor versions. Instead, mark every new feature with comment like:
 
 ```
-> **New in 2.1.0**
+> **New in 4.1.0**
 ```
 
 For API reference use `@version` tag in jsdoc. For example:
@@ -73,7 +73,7 @@ For API reference use `@version` tag in jsdoc. For example:
 /**
   * Sets transformation matrix of the model.
   * @param transformationMatrix
-  * @version Added in 2.1.0
+  * @version Added in 4.1.0
   */
 ```
 
@@ -81,57 +81,50 @@ Notice that `documentation/static` is not versioned, so if you remove something 
 
 #### How to create new docs version?
 
-Let's say you want to roll out new reveal@2.0.0, that what needs to be done:
+Let's say you want to roll out new reveal@5.0.0, that's what needs to be done:
 
-* create new 2.x section and make it default for docs website 
-* tweak copying of next version to replace your 2.x with updates on every release
-* introduce a new versioned dependency on reveal in your archived version
+* create new 5.x section and make it default for docs website
+* pin the reveal version used by the archived 4.x docs
 * configure search
 
-##### Create new 2.x section
+##### Create new 5.x section
 
-[[Docusaurus versioning guide](https://docusaurus.io/docs/2.0.0-beta.0/versioning)] 
+[[Docusaurus versioning guide](https://docusaurus.io/docs/versioning)]
 for the version of docusaurus you currently use, but basic usage is covered below.
 
 Basically you need to copy the whole content of your `next` version under `versioned_docs` and version sidebars as well.
 Run this command to do it:
 
 ```bash
-yarn docusaurus docs:version 2.x
+yarn docusaurus docs:version 5.x
 ```
 
 That will become default version for the docs website.
 
-##### Introduce a new versioned dependency on reveal in your archived version
+##### Pin the reveal version for the archived version
 
-That step is needed because we are actually using reveal in docs, so docs not just docs, but they have a dependency on reveal to show live demos.
+That step is needed because we are actually using reveal in docs, so docs are not just docs, but they have a dependency on reveal to show live demos.
 
-So when you archive a version you must fix the version of reveal for that part of the documentation website.
+Each folder under `versioned_docs/` is a yarn workspace with its own `package.json` (see `versioned_docs/version-4.x/package.json`).
+Make sure the new version's `package.json` pins `@cognite/reveal` and `@cognite/sdk` to the versions it documents.
 
-Below is an example of archiving `1.x` version.
-
-1. Go to `documentation/package.json`
-2. Add aliased fixed dependency, e.g. `"@cognite/reveal-2.x": "npm:@cognite/reveal@^2.1.0",` and `"@cognite/sdk-2.x": "npm:@cognite/sdk@^5.1.3",`
-3. At `remark-runnable-reveal-demo.js` add a new record to the `versionedImportNode`:
-  ```js
-      'runnable-1x': {
-        type: 'import',
-          value:
-        "import { LiveCodeSnippet } from '@site/versioned_docs/version-1.x/components/LiveCodeSnippet';",
-      },
-  ```
-4. Inside `documentation/`, run e.g. `yarn replace-2.x` to replace 2.x docs with the current docs. This will:
--- Copy current documentation (available as "Next" in the hosted site) to 2.x versioned docs
--- Update references to `@cognite/reveal` to `@cognite/reveal-2.x` and `@cognite/sdk` to `@cognite/sdk-2.x`
--- Update runnable examples to use Reveal 2
-##### Configure search
-
-[[Docusaurus guide on search](https://docusaurus.io/docs/2.0.0-beta.0/search)]
-
-Find `algolia` at `docusaurus.config.js` and adjust `facetFilters` param by adding your new version. E.g. 
+Also, at `src/plugins/remark-runnable-reveal-demo.js` add a new case to `getDocsPath` for the archived version, e.g.:
 
 ```js
-    facetFilters: [['version:1.x', 'version:2.x']]
+case 'runnable-4x': return 'versioned_docs/version-4.x';
 ```
 
+Then use the matching `runnable-4x` meta string in code blocks of that version's docs.
+
+##### Configure search
+
+[[Docusaurus guide on search](https://docusaurus.io/docs/search)]
+
+If `algolia` is configured in `docusaurus.config.js`, adjust the `facetFilters` param by adding your new version.
+
 That's pretty much all you need to do to create a new version of your docs.
+
+##### Removing an old version
+
+Delete `versioned_docs/version-X.x/` and `versioned_sidebars/version-X.x-sidebars.json`, remove the version from `versions.json`,
+remove its case from `getDocsPath` in `src/plugins/remark-runnable-reveal-demo.js`, and run `yarn install` to refresh `yarn.lock`.

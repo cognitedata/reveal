@@ -42,8 +42,6 @@ function getImportNodes(metaString) {
   function getDocsPath(metaString) {
     switch(metaString) {
     case 'runnable': return 'docs';
-    case 'runnable-1x': return 'versioned_docs/version-1.x';
-    case 'runnable-2x': return 'versioned_docs/version-2.x';
     case 'runnable-3x': return 'versioned_docs/version-3.x';
     case 'runnable-4x': return 'versioned_docs/version-4.x';
     default: return undefined;
