@@ -154,7 +154,7 @@ export class Image360LoadingCache<T extends DataSourceType> {
     });
 
     // Clean up textures
-    revision.dispose();
+    revision.disposeGpuResources();
     if (!entity.image360Visualization.visible) entity.unloadImage();
   }
 
