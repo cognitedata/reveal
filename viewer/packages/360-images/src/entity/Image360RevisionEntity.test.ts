@@ -244,7 +244,7 @@ describe(Image360RevisionEntity.name, () => {
         label: 'label',
         polygon: { vertices: [] },
         text: 'annotation-text',
-        textRegion: [],
+        textRegion: { xMax: 1, yMax: 1, xMin: 0, yMin: 0 },
         assetRef: { id: 345 }
       }
     };
