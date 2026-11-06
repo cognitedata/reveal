@@ -75,25 +75,25 @@ __metadata:
   languageName: node
   linkType: soft
 
-"@cognite/sdk-core@npm:^5.3.1":
-  version: 5.3.1
-  resolution: "@cognite/sdk-core@npm:5.3.1"
+"@cognite/sdk-core@npm:^5.4.0":
+  version: 5.4.0
+  resolution: "@cognite/sdk-core@npm:5.4.0"
   dependencies:
     cross-fetch: "npm:^3.1.8"
     lodash: "npm:^4.17.21"
-  checksum: 10/b02815cf5596010868c3fc3529ce37f7bdfc20026ea0b70ca57eb65453d52d2036f22f8b21b6927fff8c8aa7aa6c8695b7906e4ece54779349dbbc74e78afd51
+  checksum: 10/c0d3b271b7cd0ebcf3d73816d3a5f20f0a073b405dfe248873d05fe0a7d841ca364e630fa9d08267051d1b80dd819dca0ff5f26b830ccc572ceab5f136e71fbc
   languageName: node
   linkType: hard
 
 "@cognite/sdk@npm:^10.1.3":
-  version: 10.17.1
-  resolution: "@cognite/sdk@npm:10.17.1"
+  version: 10.18.0
+  resolution: "@cognite/sdk@npm:10.18.0"
   dependencies:
-    "@cognite/sdk-core": "npm:^5.3.1"
+    "@cognite/sdk-core": "npm:^5.4.0"
     "@types/geojson": "npm:^7946.0.14"
     geojson: "npm:^0.5.0"
     lodash: "npm:^4.17.21"
-  checksum: 10/8ce73d76becd474483b30a5204d639d2c980659e0f02fe52413a2123626ba89dc1a7cdfa117086473cab21e9c55a18628ba1b09af1f8b5f80e35a97a8eb5ddd8
+  checksum: 10/58dbd4f162dcf62bde58f55d61298d24f0fdf19190d90dd42aa3549a9a0da1a14356d6762434282e12a90f188ab0e59aef2e00d302d161fbec2a122bed5aaf62
   languageName: node
   linkType: hard
 
