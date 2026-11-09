@@ -103,68 +103,57 @@ describe(Image360FaceTextureLoader.name, () => {
   });
 
   describe('load — buffer path (no downloadUrl)', () => {
-    test('returns Image360Texture with correct face label', async () => {
-      vi.spyOn(TextureLoader.prototype, 'loadAsync').mockResolvedValue(new Texture());
+    let loadAsyncSpy: ViMock<TextureLoader['loadAsync']>;
 
+    beforeEach(() => {
+      loadAsyncSpy = vi.spyOn(TextureLoader.prototype, 'loadAsync').mockResolvedValue(new Texture());
+    });
+
+    test('returns Image360Texture with correct face label', async () => {
       const result = await loader.load(createImage360BufferFace('back'));
 
       expect(result.face).toBe('back');
     });
 
     test('revokes blob URL after loading', async () => {
-      vi.spyOn(TextureLoader.prototype, 'loadAsync').mockResolvedValue(new Texture());
-
       await loader.load(createImage360BufferFace());
 
       expect(URL.revokeObjectURL).toHaveBeenCalled();
     });
 
     test('calls onFirstFaceReady after buffer is decoded', async () => {
-      vi.spyOn(TextureLoader.prototype, 'loadAsync').mockResolvedValue(new Texture());
-
       const onFirstFaceReady = vi.fn();
       await loader.load(createImage360BufferFace(), onFirstFaceReady);
 
       expect(onFirstFaceReady).toHaveBeenCalledTimes(1);
     });
+
+    test('downscales textures larger than the mobile limit on mobile devices', async () => {
+      loadAsyncSpy.mockResolvedValue(new Texture(new Image(1024, 2048)));
+      const mobileLoader = new Image360FaceTextureLoader(
+        { deviceType: 'mobile' as const },
+        new TextureLoader(),
+        vi.fn(),
+        vi.fn(),
+        vi.fn(() => true)
+      );
+
+      const result = await mobileLoader.load(createImage360BufferFace());
+
+      expect(result.texture.image).toMatchObject({ width: 512, height: 1024 });
+    });
   });
 
   describe('load — streaming path (with downloadUrl)', () => {
-    test('calls onJpegTypeDetected with progressive for progressive JPEG bytes', async () => {
-      fetchSpy.mockReturnValueOnce(Promise.resolve(createStreamingResponse(PROGRESSIVE_JPEG_BYTES)));
-
-      const onJpegTypeDetected = vi.fn();
-      await loader.load(createImage360StreamingFace(), undefined, onJpegTypeDetected).catch(() => {});
-
-      expect(onJpegTypeDetected).toHaveBeenCalledWith('progressive');
-    });
-
-    test('calls onJpegTypeDetected with baseline for baseline JPEG bytes', async () => {
-      fetchSpy.mockReturnValueOnce(Promise.resolve(createStreamingResponse(BASELINE_JPEG_BYTES)));
-
-      const onJpegTypeDetected = vi.fn();
-      await loader.load(createImage360StreamingFace(), undefined, onJpegTypeDetected).catch(() => {});
-
-      expect(onJpegTypeDetected).toHaveBeenCalledWith('baseline');
-    });
-
-    test('rejects when fetch response is not ok', async () => {
-      fetchSpy.mockReturnValueOnce(Promise.resolve(new Response(null, { status: 404, statusText: 'Not Found' })));
-
-      await expect(loader.load(createImage360StreamingFace())).rejects.toThrow('404');
-    });
-  });
-
-  describe('load — progressive streaming textures', () => {
     let updateFaceTexture: ViMock<(face: Image360Face['face'], texture: Texture) => void>;
     let isMeshAlive: ViMock<() => boolean>;
     let loadAsyncSpy: ViMock<TextureLoader['loadAsync']>;
-    let finalTexture: Texture;
+    let finalTexture: Texture<HTMLImageElement>;
 
     beforeEach(() => {
       updateFaceTexture = vi.fn();
       isMeshAlive = vi.fn(() => true);
-      finalTexture = new Texture();
+      finalTexture = new Texture(new Image());
       loader = new Image360FaceTextureLoader(device, new TextureLoader(), vi.fn(), updateFaceTexture, isMeshAlive);
 
       fetchSpy.mockResolvedValue(createStreamingResponse(PROGRESSIVE_JPEG_BYTES));
@@ -180,10 +169,45 @@ describe(Image360FaceTextureLoader.name, () => {
       return updateFaceTexture.mock.calls[0][1];
     }
 
-    test('shows the first scan without mipmaps and frees its canvas once the final texture is applied', async () => {
+    function streamTwoScans(msBetweenScans: number): void {
+      let now = 0;
+      vi.spyOn(performance, 'now').mockImplementation(() => (now += msBetweenScans));
+      fetchSpy.mockResolvedValue(createStreamingResponse(...PROGRESSIVE_TWO_SCAN_CHUNKS));
+    }
+
+    test('calls onJpegTypeDetected with progressive for progressive JPEG bytes', async () => {
+      const onJpegTypeDetected = vi.fn();
+      await loader.load(createImage360StreamingFace(), undefined, onJpegTypeDetected);
+
+      expect(onJpegTypeDetected).toHaveBeenCalledWith('progressive');
+    });
+
+    test('calls onJpegTypeDetected with baseline and onFirstFaceReady once the final texture is applied', async () => {
+      fetchSpy.mockResolvedValue(createStreamingResponse(BASELINE_JPEG_BYTES));
+
+      const onFirstFaceReady = vi.fn();
+      const onJpegTypeDetected = vi.fn();
+      await loader.load(createImage360StreamingFace(), onFirstFaceReady, onJpegTypeDetected);
+
+      expect(onJpegTypeDetected).toHaveBeenCalledWith('baseline');
+      expect(onFirstFaceReady).toHaveBeenCalledOnce();
+      expect(updateFaceTexture).toHaveBeenCalledExactlyOnceWith('front', finalTexture);
+    });
+
+    test('rejects when fetch response is not ok', async () => {
+      fetchSpy.mockResolvedValue(new Response(null, { status: 404, statusText: 'Not Found' }));
+
+      await expect(loader.load(createImage360StreamingFace())).rejects.toThrow('404');
+    });
+
+    test('draws scans on one intermediate texture without mipmaps and frees its canvas for the final texture', async () => {
+      streamTwoScans(250);
+
       const result = await loader.load(createImage360StreamingFace());
 
       const intermediateTexture = getIntermediateTexture();
+      expect(createImageBitmapSpy).toHaveBeenCalledTimes(2);
+      expect(updateFaceTexture).toHaveBeenCalledTimes(2);
       expect(intermediateTexture.generateMipmaps).toBe(false);
       expect(intermediateTexture.image).toMatchObject({ width: 0, height: 0 });
       expect(updateFaceTexture).toHaveBeenLastCalledWith('front', finalTexture);
@@ -191,21 +215,33 @@ describe(Image360FaceTextureLoader.name, () => {
     });
 
     test('applies at most one progressive scan per throttle interval', async () => {
-      vi.spyOn(performance, 'now').mockReturnValue(1000);
-      fetchSpy.mockResolvedValue(createStreamingResponse(...PROGRESSIVE_TWO_SCAN_CHUNKS));
+      streamTwoScans(0);
 
       await loader.load(createImage360StreamingFace());
 
       expect(createImageBitmapSpy).toHaveBeenCalledOnce();
     });
 
-    test('frees the intermediate canvas and skips the final decode when the mesh is unloaded mid-stream', async () => {
+    test('uses the final texture as the first image when progressive scans cannot be decoded', async () => {
+      createImageBitmapSpy.mockRejectedValue(new Error('invalid image'));
+
+      const onFirstFaceReady = vi.fn();
+      await loader.load(createImage360StreamingFace(), onFirstFaceReady);
+
+      expect(onFirstFaceReady).toHaveBeenCalledOnce();
+      expect(updateFaceTexture).toHaveBeenCalledExactlyOnceWith('front', finalTexture);
+    });
+
+    test('frees the intermediate canvas and ignores later scans when the mesh is unloaded mid-stream', async () => {
+      streamTwoScans(250);
       updateFaceTexture.mockImplementationOnce(() => {
         isMeshAlive.mockReturnValue(false);
       });
 
       await expect(loader.load(createImage360StreamingFace())).rejects.toThrow('no longer needed');
 
+      expect(createImageBitmapSpy).toHaveBeenCalledTimes(2);
+      expect(updateFaceTexture).toHaveBeenCalledOnce();
       expect(getIntermediateTexture().image).toMatchObject({ width: 0, height: 0 });
       expect(loadAsyncSpy).not.toHaveBeenCalled();
     });
