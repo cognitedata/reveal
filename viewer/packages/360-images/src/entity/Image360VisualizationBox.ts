@@ -14,7 +14,6 @@ import {
   Image360FaceTextureLoader,
   disposeFaceTexture,
   hasDownloadUrl,
-  logFaceTextureMemory,
   type FaceTextureLoader
 } from './Image360FaceTextureLoader';
 
@@ -208,9 +207,7 @@ export class Image360VisualizationBox implements Image360Visualization {
         onFirstFaceTypeDetected?.(type);
       }
     };
-    return Promise.all(faces.map(face => this._loader.load(face, notifyFirstFace, notifyType, abortSignal))).finally(
-      () => logFaceTextureMemory('360 image faces loaded')
-    );
+    return Promise.all(faces.map(face => this._loader.load(face, notifyFirstFace, notifyType, abortSignal)));
   }
 
   private createPlaceholderMesh(): void {
@@ -259,7 +256,6 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._visualizationMesh.geometry.dispose();
     this._visualizationMesh = undefined;
     this._faceMaterials = [];
-    logFaceTextureMemory('360 image unloaded');
   }
 
   public setAnnotationsVisibility(visibility: boolean): void {

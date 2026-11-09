@@ -199,7 +199,6 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
       this._image360Descriptor.faceDescriptors,
       abortSignal
     );
-    // Starting to load faces creates a placeholder mesh, so do not start once the request has been aborted.
     if (isAborted(abortSignal)) {
       throw createAbortError();
     }
@@ -210,8 +209,6 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
       onFirstFaceTypeDetected,
       abortSignal
     );
-    // An aborted request may already have been purged from the cache; applying its textures
-    // would rebuild a mesh that nothing releases.
     if (isAborted(abortSignal)) {
       textures.forEach(t => t.texture.dispose());
       throw createAbortError();
@@ -340,7 +337,6 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
   }
 }
 
-// A function call keeps TypeScript from narrowing `aborted` across awaits, where it can change.
 function isAborted(abortSignal: AbortSignal | undefined): boolean {
   return abortSignal?.aborted === true;
 }
