@@ -49,6 +49,8 @@ export interface ICustomObject {
   /**
    * Whether CAD shadows fall on this object.
    * Optional. When omitted, the object does not receive shadows.
+   * @deprecated No longer read. Request the shadow on the material instead with
+   * `CustomObjectEffectMaterial.setReceivesShadow`.
    * @beta
    */
   readonly receiveShadow?: boolean;

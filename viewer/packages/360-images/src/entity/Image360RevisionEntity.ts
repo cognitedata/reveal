@@ -288,16 +288,19 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
    * Clear the cached textures used by this revision.
    */
   public dispose(): void {
-    this._previewTextures.forEach(t => t.texture.dispose());
-    this._fullResolutionTextures.forEach(t => t.texture.dispose());
-    this._previewTextures = [];
-    this._fullResolutionTextures = [];
-
+    this.disposeGpuResources();
     if (this._allAnnotations !== undefined) {
       this._allAnnotations.forEach(annotation => annotation.dispose());
       this._allAnnotations = undefined;
     }
     this._annotationKeyToAnnotationObject.clear();
+  }
+
+  public disposeGpuResources(): void {
+    this._previewTextures.forEach(t => t.texture.dispose());
+    this._fullResolutionTextures.forEach(t => t.texture.dispose());
+    this._previewTextures = [];
+    this._fullResolutionTextures = [];
   }
 
   /**

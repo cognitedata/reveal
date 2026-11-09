@@ -8,6 +8,7 @@ import viewerPackageJson from '../../../../../package.json' with { type: 'json' 
 import TWEEN from '@tweenjs/tween.js';
 import { pick } from 'lodash-es';
 
+import type { CustomObjectEffectMaterial } from '@reveal/rendering';
 import { defaultRenderOptions } from '@reveal/rendering';
 
 import type {
@@ -1174,6 +1175,8 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
 
   /**
    * Add a CustomObject to the viewer.
+   * Meshes in the custom object can use {@link CustomObjectEffectMaterial}, which supports
+   * effects specific to custom objects.
    * @param customObject
    * @example
    * ```js
@@ -1184,6 +1187,13 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * const customObject = CustomObject(sphere);
    * customObject.isPartOfBoundingBox = false;
    * viewer.addCustomObject(customObject);
+   *
+   * // Ground plane that receives CAD shadows and texture variation
+   * const groundMaterial = new CustomObjectEffectMaterial('#ffffff', texture);
+   * groundMaterial.setReceivesShadow(true);
+   * groundMaterial.setTextureVariation('hexTiling');
+   * const plane = new Mesh(new PlaneGeometry(100, 100), groundMaterial);
+   * viewer.addCustomObject(CustomObject(plane));
    * ```
    * @beta
    */

@@ -14,6 +14,7 @@ import type { ClassicDataSourceType } from '@reveal/data-providers';
 import type { Image360Descriptor, Image360Texture } from '@reveal/data-providers';
 import type { Image360Provider } from '../providers/Image360Provider';
 import { createImage360StreamingFaces, createImage360Textures } from '../../../../test-utilities';
+import type { AnnotationModel } from '@cognite/sdk';
 
 describe(Image360RevisionEntity.name, () => {
   let providerMock: Mock<Image360Provider<ClassicDataSourceType>>;
@@ -287,5 +288,49 @@ describe(Image360RevisionEntity.name, () => {
 
       expect(url).toBeUndefined();
     });
+  });
+
+  test('disposeGpuResources does not dispose annotation cache', async () => {
+    providerMock
+      .setup(p => p.resolveFileIdToExternalIdMapping)
+      .returns(() => Promise.resolve(new Map<number, string>([[123, 'some-file']])));
+
+    const entity = new Image360RevisionEntity(providerMock.object(), descriptor, vizBox, annotationFilterer);
+
+    const classicAnnotation: AnnotationModel = {
+      id: 345,
+      annotatedResourceId: 123,
+      annotatedResourceType: 'file',
+      annotationType: 'Images.assetLink',
+      createdTime: new Date(),
+      lastUpdatedTime: new Date(),
+      status: 'approved',
+      creatingUser: 'me',
+      creatingAppVersion: '1.0',
+      creatingApp: 'some-app',
+      data: {
+        label: 'label',
+        polygon: { vertices: [] },
+        text: 'annotation-text',
+        textRegion: { xMax: 1, yMax: 1, xMin: 0, yMin: 0 },
+        assetRef: { id: 345 }
+      }
+    };
+
+    const annotation0 = (await entity.createAndAddAnnotationObjects([classicAnnotation]))[0];
+    const annotation1 = (await entity.createAndAddAnnotationObjects([classicAnnotation]))[0];
+
+    expect(annotation0).toBe(annotation1);
+
+    entity.disposeGpuResources();
+
+    const annotation2 = (await entity.createAndAddAnnotationObjects([classicAnnotation]))[0];
+    expect(annotation0).toBe(annotation2);
+
+    entity.dispose();
+
+    const annotation3 = (await entity.createAndAddAnnotationObjects([classicAnnotation]))[0];
+
+    expect(annotation0).not.toBe(annotation3);
   });
 });

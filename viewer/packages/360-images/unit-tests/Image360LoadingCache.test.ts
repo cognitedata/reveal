@@ -51,7 +51,7 @@ describe(Image360LoadingCache.name, () => {
     const revisionMock1 = new Mock<Image360RevisionEntity<DataSourceType>>()
       .setup(p => p.loadTextures(It.IsAny()))
       .returns(deferredPromise1)
-      .setup(p => p.dispose())
+      .setup(p => p.disposeGpuResources())
       .returns()
       .object();
 
@@ -133,7 +133,7 @@ describe(Image360LoadingCache.name, () => {
     const revisionMock2 = new Mock<Image360RevisionEntity<DataSourceType>>()
       .setup(p => p.loadTextures(It.IsAny()))
       .returns(deferredPromise2)
-      .setup(p => p.dispose())
+      .setup(p => p.disposeGpuResources())
       .returns()
       .object();
 
@@ -245,7 +245,7 @@ describe(Image360LoadingCache.name, () => {
       return new Mock<Image360RevisionEntity<DataSourceType>>()
         .setup(p => p.loadTextures(It.IsAny()))
         .returns(deferredPromise)
-        .setup(p => p.dispose())
+        .setup(p => p.disposeGpuResources())
         .returns()
         .object();
     };
