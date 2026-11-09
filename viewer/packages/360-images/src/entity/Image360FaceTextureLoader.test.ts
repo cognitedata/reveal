@@ -4,7 +4,6 @@
 
 import type { Mock as ViMock } from 'vitest';
 import { vi } from 'vitest';
-import { Mock, It } from 'moq.ts';
 import { Image360FaceTextureLoader, disposeFaceTexture, hasDownloadUrl } from './Image360FaceTextureLoader';
 import type { Image360Face } from '@reveal/data-providers';
 import { CanvasTexture, Texture, TextureLoader } from 'three';
@@ -60,9 +59,10 @@ describe(Image360FaceTextureLoader.name, () => {
     );
 
     fetchSpy = vi.spyOn(global, 'fetch');
-    createImageBitmapSpy = vi
-      .spyOn(globalThis, 'createImageBitmap')
-      .mockResolvedValue({ width: 100, height: 100, close: () => {} });
+    createImageBitmapSpy = vi.fn<typeof createImageBitmap>(async () =>
+      Object.assign(document.createElement('canvas'), { width: 100, height: 100, close: () => {} })
+    );
+    vi.stubGlobal('createImageBitmap', createImageBitmapSpy);
 
     vi.stubGlobal('URL', {
       ...URL,
@@ -158,11 +158,6 @@ describe(Image360FaceTextureLoader.name, () => {
 
       fetchSpy.mockResolvedValue(createStreamingResponse(PROGRESSIVE_JPEG_BYTES));
       loadAsyncSpy = vi.spyOn(TextureLoader.prototype, 'loadAsync').mockResolvedValue(finalTexture);
-      const context = new Mock<CanvasRenderingContext2D>()
-        .setup(c => c.drawImage(It.IsAny(), It.IsAny(), It.IsAny()))
-        .returns(undefined)
-        .object();
-      vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(context);
     });
 
     function getIntermediateTexture(): Texture {
