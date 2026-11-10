@@ -2,7 +2,7 @@
  * Copyright 2026 Cognite AS
  */
 
-import type { Mock as ViMock } from 'vitest';
+import type { Mock } from 'vitest';
 import { vi } from 'vitest';
 import { Image360FaceTextureLoader, hasDownloadUrl } from './Image360FaceTextureLoader';
 import type { Image360Face } from '@reveal/data-providers';
@@ -45,8 +45,8 @@ function createStreamingResponse(...chunks: Uint8Array<ArrayBuffer>[]): Response
 
 describe(Image360FaceTextureLoader.name, () => {
   let loader: Image360FaceTextureLoader;
-  let fetchSpy: ViMock<typeof fetch>;
-  let createImageBitmapSpy: ViMock<typeof createImageBitmap>;
+  let fetchSpy: Mock<typeof fetch>;
+  let createImageBitmapSpy: Mock<typeof createImageBitmap>;
 
   const device = { deviceType: 'desktop' as const };
 
@@ -104,7 +104,7 @@ describe(Image360FaceTextureLoader.name, () => {
   });
 
   describe('load — buffer path (no downloadUrl)', () => {
-    let loadAsyncSpy: ViMock<TextureLoader['loadAsync']>;
+    let loadAsyncSpy: Mock<TextureLoader['loadAsync']>;
 
     beforeEach(() => {
       loadAsyncSpy = vi.spyOn(TextureLoader.prototype, 'loadAsync').mockResolvedValue(new Texture());
@@ -146,9 +146,9 @@ describe(Image360FaceTextureLoader.name, () => {
   });
 
   describe('load — streaming path (with downloadUrl)', () => {
-    let updateFaceTexture: ViMock<(face: Image360Face['face'], texture: Texture) => void>;
-    let isMeshAlive: ViMock<() => boolean>;
-    let loadAsyncSpy: ViMock<TextureLoader['loadAsync']>;
+    let updateFaceTexture: Mock<(face: Image360Face['face'], texture: Texture) => void>;
+    let isMeshAlive: Mock<() => boolean>;
+    let loadAsyncSpy: Mock<TextureLoader['loadAsync']>;
     let finalTexture: Texture<HTMLImageElement>;
 
     beforeEach(() => {
