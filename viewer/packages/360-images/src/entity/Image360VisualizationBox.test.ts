@@ -21,7 +21,10 @@ import {
 describe(Image360VisualizationBox.name, () => {
   let sceneHandlerMock: IMock<SceneHandler>;
   let box: Image360VisualizationBox;
-  let loaderMock: { load: ViMock<FaceTextureLoader['load']> };
+  let loaderMock: {
+    load: ViMock<FaceTextureLoader['load']>;
+    disposeTexture: ViMock<FaceTextureLoader['disposeTexture']>;
+  };
   let requestRedraw: ViMock<() => void>;
 
   const device = { deviceType: 'desktop' as const };
@@ -38,7 +41,8 @@ describe(Image360VisualizationBox.name, () => {
       load: vi.fn<FaceTextureLoader['load']>().mockImplementation(async (face, onFirstFaceReady) => {
         onFirstFaceReady?.();
         return { face: face.face, texture: new Texture() };
-      })
+      }),
+      disposeTexture: vi.fn<FaceTextureLoader['disposeTexture']>()
     };
     box = new Image360VisualizationBox(new Matrix4(), sceneHandlerMock.object(), device, requestRedraw, loaderMock);
   });
@@ -84,14 +88,14 @@ describe(Image360VisualizationBox.name, () => {
       sceneHandlerMock.verify(s => s.removeObject3D(It.IsAny()), Times.Once());
     });
 
-    test('disposes the texture of every face', () => {
+    test('disposes the texture of every face through the loader', () => {
       const textures = createImage360Textures();
-      const disposeSpies = textures.map(({ texture }) => vi.spyOn(texture, 'dispose'));
       box.setImages(textures);
 
       box.unloadImages();
 
-      disposeSpies.forEach(disposeSpy => expect(disposeSpy).toHaveBeenCalledOnce());
+      expect(loaderMock.disposeTexture).toHaveBeenCalledTimes(textures.length);
+      textures.forEach(({ texture }) => expect(loaderMock.disposeTexture).toHaveBeenCalledWith(texture));
     });
 
     test('is a no-op when no mesh exists', () => {

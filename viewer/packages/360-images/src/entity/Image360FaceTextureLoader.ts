@@ -22,17 +22,6 @@ export function hasDownloadUrl(face: Image360Face): face is Image360FaceWithUrl 
 // Minimum time between two progressive scans being drawn and re-uploaded for the same face.
 const MIN_PROGRESSIVE_SCAN_INTERVAL_MS = 250;
 
-// Canvas-backed textures that only live while a face is streaming.
-const intermediateTextures = new WeakSet<Texture>();
-
-export function disposeFaceTexture(texture: Texture): void {
-  texture.dispose();
-  if (intermediateTextures.delete(texture) && texture.image instanceof HTMLCanvasElement) {
-    texture.image.width = 0;
-    texture.image.height = 0;
-  }
-}
-
 type ProgressiveTextureState = {
   ctx: CanvasRenderingContext2D | undefined;
   texture: CanvasTexture | undefined;
@@ -52,6 +41,7 @@ export interface FaceTextureLoader {
     onJpegTypeDetected?: (type: JpegType) => void,
     abortSignal?: AbortSignal
   ): Promise<Image360Texture>;
+  disposeTexture(texture: Texture): void;
 }
 
 /**
@@ -62,6 +52,9 @@ export interface FaceTextureLoader {
 export class Image360FaceTextureLoader implements FaceTextureLoader {
   private readonly MAX_MOBILE_IMAGE_SIZE = 1024;
 
+  // Canvas-backed textures that only live while a face is streaming.
+  private readonly _intermediateTextures = new WeakSet<Texture>();
+
   constructor(
     private readonly _device: DeviceDescriptor,
     private readonly _textureLoader: TextureLoader,
@@ -69,6 +62,14 @@ export class Image360FaceTextureLoader implements FaceTextureLoader {
     private readonly _updateFaceTexture: (face: Image360Face['face'], texture: Texture) => void,
     private readonly _isMeshAlive: () => boolean
   ) {}
+
+  disposeTexture(texture: Texture): void {
+    texture.dispose();
+    if (this._intermediateTextures.delete(texture) && texture.image instanceof HTMLCanvasElement) {
+      texture.image.width = 0;
+      texture.image.height = 0;
+    }
+  }
 
   /**
    * Loads a texture for a single cube face. Automatically selects the streaming path when
@@ -159,7 +160,7 @@ export class Image360FaceTextureLoader implements FaceTextureLoader {
       return { face: face.face, texture: finalTexture };
     } finally {
       if (progressiveState.texture !== undefined && (finalTexture !== undefined || !this._isMeshAlive())) {
-        disposeFaceTexture(progressiveState.texture);
+        this.disposeTexture(progressiveState.texture);
       }
     }
   }
@@ -185,6 +186,7 @@ export class Image360FaceTextureLoader implements FaceTextureLoader {
       ctx.drawImage(bitmap, 0, 0);
       state.ctx = ctx;
       state.texture = createIntermediateTexture(canvas);
+      this._intermediateTextures.add(state.texture);
       this._updateFaceTexture(face.face, state.texture);
       onFirstFaceReady?.();
     } else {
@@ -211,7 +213,6 @@ function createIntermediateTexture(canvas: HTMLCanvasElement): CanvasTexture {
   texture.minFilter = LinearFilter;
   texture.center.set(0.5, 0.5);
   texture.repeat.set(-1, 1);
-  intermediateTextures.add(texture);
   return texture;
 }
 async function getScaledImageTexture(

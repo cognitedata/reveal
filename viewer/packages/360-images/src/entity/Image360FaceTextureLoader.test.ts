@@ -4,7 +4,7 @@
 
 import type { Mock as ViMock } from 'vitest';
 import { vi } from 'vitest';
-import { Image360FaceTextureLoader, disposeFaceTexture, hasDownloadUrl } from './Image360FaceTextureLoader';
+import { Image360FaceTextureLoader, hasDownloadUrl } from './Image360FaceTextureLoader';
 import type { Image360Face } from '@reveal/data-providers';
 import { CanvasTexture, Texture, TextureLoader } from 'three';
 import { createImage360BufferFace, createImage360StreamingFace } from '../../../../test-utilities';
@@ -87,7 +87,7 @@ describe(Image360FaceTextureLoader.name, () => {
     });
   });
 
-  describe('disposeFaceTexture', () => {
+  describe('disposeTexture', () => {
     test('disposes the texture without resizing a canvas that was not created for streaming', () => {
       const canvas = document.createElement('canvas');
       canvas.width = 8;
@@ -95,7 +95,7 @@ describe(Image360FaceTextureLoader.name, () => {
       const texture = new CanvasTexture(canvas);
       const disposeSpy = vi.spyOn(texture, 'dispose');
 
-      disposeFaceTexture(texture);
+      loader.disposeTexture(texture);
 
       expect(disposeSpy).toHaveBeenCalledOnce();
       expect(canvas).toMatchObject({ width: 8, height: 8 });
@@ -257,14 +257,14 @@ describe(Image360FaceTextureLoader.name, () => {
       expect(updateFaceTexture).not.toHaveBeenCalledWith('front', finalTexture);
     });
 
-    test('keeps the intermediate texture when the final decode fails until disposeFaceTexture frees it', async () => {
+    test('keeps the intermediate texture when the final decode fails until disposeTexture frees it', async () => {
       loadAsyncSpy.mockRejectedValue(new Error('decode failed'));
 
       await expect(loader.load(createImage360StreamingFace())).rejects.toThrow('decode failed');
 
       const intermediateTexture = getIntermediateTexture();
       expect(intermediateTexture.image).toMatchObject({ width: 100, height: 100 });
-      disposeFaceTexture(intermediateTexture);
+      loader.disposeTexture(intermediateTexture);
       expect(intermediateTexture.image).toMatchObject({ width: 0, height: 0 });
     });
   });

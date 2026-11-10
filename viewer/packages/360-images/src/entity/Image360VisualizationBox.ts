@@ -10,12 +10,7 @@ import type { DataSourceType, Image360Face, Image360Texture } from '@reveal/data
 import type { Image360Visualization } from './Image360Visualization';
 import type { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 import type { JpegType } from '../utils/JpegDataStreamParser';
-import {
-  Image360FaceTextureLoader,
-  disposeFaceTexture,
-  hasDownloadUrl,
-  type FaceTextureLoader
-} from './Image360FaceTextureLoader';
+import { Image360FaceTextureLoader, hasDownloadUrl, type FaceTextureLoader } from './Image360FaceTextureLoader';
 
 type VisualizationState = {
   opacity: number;
@@ -249,7 +244,7 @@ export class Image360VisualizationBox implements Image360Visualization {
     materials
       .map(material => material as MeshBasicMaterial)
       .forEach(material => {
-        if (material.map) disposeFaceTexture(material.map);
+        if (material.map) this._loader.disposeTexture(material.map);
         material.dispose();
       });
 
