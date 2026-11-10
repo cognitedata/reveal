@@ -8,6 +8,7 @@ import { Image360FaceTextureLoader, hasDownloadUrl } from './Image360FaceTexture
 import type { Image360Face } from '@reveal/data-providers';
 import { CanvasTexture, Texture, TextureLoader } from 'three';
 import { createImage360BufferFace, createImage360StreamingFace } from '../../../../test-utilities';
+import { JpegType } from '../utils/JpegDataStreamParser';
 
 // Minimal JPEG bytes with SOF marker in the header: SOI + APP0(len=4) + SOF marker + abbreviated end
 const PROGRESSIVE_JPEG_BYTES: Uint8Array<ArrayBuffer> = new Uint8Array([
@@ -180,8 +181,8 @@ describe(Image360FaceTextureLoader.name, () => {
     test('calls onJpegTypeDetected with baseline and onFirstFaceReady once the final texture is applied', async () => {
       fetchSpy.mockResolvedValue(createStreamingResponse(BASELINE_JPEG_BYTES));
 
-      const onFirstFaceReady = vi.fn();
-      const onJpegTypeDetected = vi.fn();
+      const onFirstFaceReady = vi.fn<() => void>();
+      const onJpegTypeDetected = vi.fn<(type: JpegType) => void>();
       await loader.load(createImage360StreamingFace(), onFirstFaceReady, onJpegTypeDetected);
 
       expect(onJpegTypeDetected).toHaveBeenCalledWith('baseline');
@@ -233,7 +234,7 @@ describe(Image360FaceTextureLoader.name, () => {
         isMeshAlive.mockReturnValue(false);
       });
 
-      await expect(loader.load(createImage360StreamingFace())).rejects.toThrow('no longer needed');
+      await expect(loader.load(createImage360StreamingFace())).rejects.toMatchObject({ name: 'AbortError' });
 
       expect(createImageBitmapSpy).toHaveBeenCalledTimes(2);
       expect(updateFaceTexture).toHaveBeenCalledOnce();
@@ -251,7 +252,7 @@ describe(Image360FaceTextureLoader.name, () => {
 
       await expect(
         loader.load(createImage360StreamingFace(), undefined, undefined, abortController.signal)
-      ).rejects.toThrow('no longer needed');
+      ).rejects.toMatchObject({ name: 'AbortError' });
 
       expect(disposeSpy).toHaveBeenCalledOnce();
       expect(updateFaceTexture).not.toHaveBeenCalledWith('front', finalTexture);

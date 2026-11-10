@@ -167,7 +167,7 @@ export class Image360FaceTextureLoader implements FaceTextureLoader {
 
   private throwIfNoLongerNeeded(face: Image360FaceWithUrl, abortSignal: AbortSignal | undefined): void {
     if (abortSignal?.aborted === true || !this._isMeshAlive()) {
-      throw new Error(`360 image face ${face.face} is no longer needed`);
+      throw new DOMException(`360 image face ${face.face} is no longer needed`, 'AbortError');
     }
   }
 
