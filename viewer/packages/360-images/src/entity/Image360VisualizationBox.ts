@@ -244,7 +244,7 @@ export class Image360VisualizationBox implements Image360Visualization {
     materials
       .map(material => material as MeshBasicMaterial)
       .forEach(material => {
-        material.map?.dispose();
+        if (material.map) this._loader.disposeTexture(material.map);
         material.dispose();
       });
 

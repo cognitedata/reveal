@@ -183,6 +183,10 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
       return;
     }
     const previewTextures = await this._image360VisualizationBox.loadFaceTextures(previewImageFiles);
+    if (isAborted(abortSignal)) {
+      previewTextures.forEach(t => t.texture.dispose());
+      throw createAbortError();
+    }
     this._previewTextures = previewTextures;
   }
 
@@ -195,6 +199,9 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
       this._image360Descriptor.faceDescriptors,
       abortSignal
     );
+    if (isAborted(abortSignal)) {
+      throw createAbortError();
+    }
 
     const textures = await this._image360VisualizationBox.loadFaceTextures(
       fullImageFiles,
@@ -202,6 +209,10 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
       onFirstFaceTypeDetected,
       abortSignal
     );
+    if (isAborted(abortSignal)) {
+      textures.forEach(t => t.texture.dispose());
+      throw createAbortError();
+    }
     this._fullResolutionTextures = textures;
     this._image360VisualizationBox.setImages(textures);
   }
@@ -327,6 +338,14 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
   public getDescriptors(): Image360Descriptor<T> {
     return this._image360Descriptor;
   }
+}
+
+function isAborted(abortSignal: AbortSignal | undefined): boolean {
+  return abortSignal?.aborted === true;
+}
+
+function createAbortError(): DOMException {
+  return new DOMException('360 image texture load was aborted', 'AbortError');
 }
 
 function isDefined<T extends DataSourceType>(

@@ -10,26 +10,21 @@ import { Mock, It, Times } from 'moq.ts';
 import type { SceneHandler } from '@reveal/utilities';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
 import type { FaceTextureLoader } from './Image360FaceTextureLoader';
-import type { Image360Face, Image360Texture } from '@reveal/data-providers';
+import type { Image360Face } from '@reveal/data-providers';
 import type { JpegType } from '../utils/JpegDataStreamParser';
-
-function makeSixTextures(): Image360Texture[] {
-  const faceNames: Image360Face['face'][] = ['left', 'right', 'top', 'bottom', 'front', 'back'];
-  return faceNames.map(face => ({ face, texture: new Texture() }));
-}
-
-function makeStreamingFace(face: Image360Face['face'] = 'front'): Image360Face {
-  return { face, mimeType: 'image/jpeg', data: new ArrayBuffer(0), downloadUrl: `https://example.com/${face}.jpg` };
-}
-
-function makeBufferFace(face: Image360Face['face'] = 'front'): Image360Face {
-  return { face, mimeType: 'image/jpeg', data: new ArrayBuffer(100) };
-}
+import {
+  createImage360BufferFace,
+  createImage360StreamingFace,
+  createImage360Textures
+} from '../../../../test-utilities';
 
 describe(Image360VisualizationBox.name, () => {
   let sceneHandlerMock: IMock<SceneHandler>;
   let box: Image360VisualizationBox;
-  let loaderMock: { load: ViMock<FaceTextureLoader['load']> };
+  let loaderMock: {
+    load: ViMock<FaceTextureLoader['load']>;
+    disposeTexture: ViMock<FaceTextureLoader['disposeTexture']>;
+  };
   let requestRedraw: ViMock<() => void>;
 
   const device = { deviceType: 'desktop' as const };
@@ -46,7 +41,8 @@ describe(Image360VisualizationBox.name, () => {
       load: vi.fn<FaceTextureLoader['load']>().mockImplementation(async (face, onFirstFaceReady) => {
         onFirstFaceReady?.();
         return { face: face.face, texture: new Texture() };
-      })
+      }),
+      disposeTexture: vi.fn<FaceTextureLoader['disposeTexture']>()
     };
     box = new Image360VisualizationBox(new Matrix4(), sceneHandlerMock.object(), device, requestRedraw, loaderMock);
   });
@@ -57,14 +53,14 @@ describe(Image360VisualizationBox.name, () => {
 
   describe('setImages', () => {
     test('creates mesh and adds it to sceneHandler on first call', () => {
-      box.setImages(makeSixTextures());
+      box.setImages(createImage360Textures());
 
       sceneHandlerMock.verify(s => s.addObject3D(It.IsAny()), Times.Once());
     });
 
     test('does not add a second mesh when called again — updates materials instead', () => {
-      const textures1 = makeSixTextures();
-      const textures2 = makeSixTextures();
+      const textures1 = createImage360Textures();
+      const textures2 = createImage360Textures();
       box.setImages(textures1);
       box.setImages(textures2);
 
@@ -75,7 +71,7 @@ describe(Image360VisualizationBox.name, () => {
     });
 
     test('calls requestRedraw when updating an existing mesh', () => {
-      const textures = makeSixTextures();
+      const textures = createImage360Textures();
       box.setImages(textures);
       requestRedraw.mockClear();
       box.setImages(textures);
@@ -86,10 +82,20 @@ describe(Image360VisualizationBox.name, () => {
 
   describe('unloadImages', () => {
     test('removes mesh from sceneHandler after setImages', () => {
-      box.setImages(makeSixTextures());
+      box.setImages(createImage360Textures());
       box.unloadImages();
 
       sceneHandlerMock.verify(s => s.removeObject3D(It.IsAny()), Times.Once());
+    });
+
+    test('disposes the texture of every face through the loader', () => {
+      const textures = createImage360Textures();
+      box.setImages(textures);
+
+      box.unloadImages();
+
+      expect(loaderMock.disposeTexture).toHaveBeenCalledTimes(textures.length);
+      textures.forEach(({ texture }) => expect(loaderMock.disposeTexture).toHaveBeenCalledWith(texture));
     });
 
     test('is a no-op when no mesh exists', () => {
@@ -113,7 +119,7 @@ describe(Image360VisualizationBox.name, () => {
     });
 
     test('getter reflects the value set and updates material opacities', () => {
-      box.setImages(makeSixTextures());
+      box.setImages(createImage360Textures());
       box.opacity = 0.5;
       expect(box.opacity).toBe(0.5);
       box['_faceMaterials'].forEach(material => {
@@ -124,7 +130,7 @@ describe(Image360VisualizationBox.name, () => {
 
   describe('opacity', () => {
     test('getter reflects the value set', () => {
-      box.setImages(makeSixTextures());
+      box.setImages(createImage360Textures());
       box.opacity = 0.5;
       expect(box.opacity).toBe(0.5);
     });
@@ -153,26 +159,30 @@ describe(Image360VisualizationBox.name, () => {
 
   describe('loadFaceTextures', () => {
     test('creates placeholder mesh when any face has downloadUrl', async () => {
-      await box.loadFaceTextures([makeStreamingFace()]);
+      await box.loadFaceTextures([createImage360StreamingFace()]);
 
       sceneHandlerMock.verify(s => s.addObject3D(It.IsAny()), Times.Once());
     });
 
     test('does not create placeholder mesh when all faces have only data buffers', async () => {
-      await box.loadFaceTextures([makeBufferFace()]);
+      await box.loadFaceTextures([createImage360BufferFace()]);
 
       sceneHandlerMock.verify(s => s.addObject3D(It.IsAny()), Times.Never());
     });
 
     test('calls onFirstFaceReady after all faces resolve', async () => {
       const onFirstFaceReady = vi.fn();
-      await box.loadFaceTextures([makeBufferFace()], onFirstFaceReady);
+      await box.loadFaceTextures([createImage360BufferFace()], onFirstFaceReady);
 
       expect(onFirstFaceReady).toHaveBeenCalledTimes(1);
     });
 
     test('calls onFirstFaceReady only once when multiple faces resolve', async () => {
-      const faces = [makeBufferFace('front'), makeBufferFace('back'), makeBufferFace('left')];
+      const faces = [
+        createImage360BufferFace('front'),
+        createImage360BufferFace('back'),
+        createImage360BufferFace('left')
+      ];
       const onFirstFaceReady = vi.fn();
       await box.loadFaceTextures(faces, onFirstFaceReady);
 
@@ -188,7 +198,7 @@ describe(Image360VisualizationBox.name, () => {
       );
 
       const onJpegTypeDetected = vi.fn();
-      const faces = [makeStreamingFace('front'), makeStreamingFace('back')];
+      const faces = [createImage360StreamingFace('front'), createImage360StreamingFace('back')];
       await box.loadFaceTextures(faces, undefined, onJpegTypeDetected);
 
       expect(onJpegTypeDetected).toHaveBeenCalledTimes(1);
@@ -198,7 +208,7 @@ describe(Image360VisualizationBox.name, () => {
     test('rejects when loader rejects', async () => {
       loaderMock.load.mockRejectedValue(new Error('fetch failed'));
 
-      await expect(box.loadFaceTextures([makeStreamingFace()])).rejects.toThrow('fetch failed');
+      await expect(box.loadFaceTextures([createImage360StreamingFace()])).rejects.toThrow('fetch failed');
     });
   });
 });

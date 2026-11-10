@@ -13,6 +13,12 @@ export { createCadNode } from './src/createCadNode';
 export { createPointCloudModel, createPointCloudNode } from './src/createPointCloudModel';
 export { createAnnotationModel } from './src/createAnnotationModel';
 export { createFileInfo } from './src/createFileInfo';
+export {
+  createImage360StreamingFace,
+  createImage360BufferFace,
+  createImage360StreamingFaces,
+  createImage360Textures
+} from './src/createImage360Faces';
 export { createCursorAndAsyncIterator } from './src/createCursorAndAsyncIterator';
 
 export { mockClientAuthentication } from './src/cogniteClientAuth';
