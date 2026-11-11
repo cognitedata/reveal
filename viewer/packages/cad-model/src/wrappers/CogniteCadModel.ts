@@ -75,6 +75,53 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   }
 
   /**
+   * When enabled, batched geometry where at most half of the nodes are visible is rendered
+   * through a compact copy that only contains the visible nodes, so hidden nodes are not
+   * processed by the GPU. This greatly improves performance when most of a large model is
+   * hidden (e.g. isolating a few nodes), at the cost of some extra CPU work when styling or
+   * loaded geometry changes. Disabled by default.
+   * @example
+   * ```js
+   * model.renderOnlyVisibleInstances = true;
+   * ```
+   */
+  set renderOnlyVisibleInstances(enabled: boolean) {
+    this.cadNode.renderOnlyVisibleInstances = enabled;
+  }
+
+  /**
+   * Returns whether only visible instances are rendered. See the setter for details.
+   */
+  get renderOnlyVisibleInstances(): boolean {
+    return this.cadNode.renderOnlyVisibleInstances;
+  }
+
+  /**
+   * When enabled and the CAD budget is unlimited (`maximumRenderCost: Infinity`), sectors that
+   * have been loaded are kept loaded when they leave the view instead of being unloaded. This
+   * avoids unloading and rebuilding geometry every time the camera stops, at the cost of memory
+   * growing with the parts of the model that have been viewed. Kept sectors are still rendered,
+   * so the frame rate can drop as more of the model is loaded unless most of it is hidden (see
+   * {@link CogniteCadModel.renderOnlyVisibleInstances}). Has no effect with a limited budget.
+   * Disabled by default.
+   * @example
+   * ```js
+   * viewer.cadBudget = { ...viewer.cadBudget, maximumRenderCost: Infinity };
+   * model.keepLoadedSectors = true;
+   * ```
+   */
+  set keepLoadedSectors(enabled: boolean) {
+    this.cadNode.keepLoadedSectors = enabled;
+  }
+
+  /**
+   * Returns whether loaded sectors are kept loaded. See the setter for details.
+   */
+  get keepLoadedSectors(): boolean {
+    return this.cadNode.keepLoadedSectors;
+  }
+
+  /**
    * The CDF model ID of the model.
    */
   readonly modelId: number;
