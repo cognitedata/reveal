@@ -55,6 +55,9 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
   private readonly _lockedTreeIndices = new Set<number>();
   private readonly _lockedSectorIds = new Set<number>();
 
+  private _renderOnlyVisibleInstances = false;
+  private _keepLoadedSectors = false;
+
   public readonly type = 'CadNode';
 
   constructor(model: CadModelMetadata, sectorRepository: SectorRepository, pickCacheInvalidator: PickCacheInvalidator) {
@@ -99,7 +102,16 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
       this._batchedGeometryMeshGroup,
       materials,
       this._styledTreeIndexSets,
-      this.treeIndexToSectorsMap
+      this.treeIndexToSectorsMap,
+      undefined,
+      undefined,
+      {
+        // Compact proxies are rebuilt outside the render loop, so the result must be drawn explicitly
+        onDeferredRebuild: () => {
+          this._needsRedraw = true;
+        },
+        getStyledSetsVersion: () => this._cadMaterial.nodeAppearanceTextureBuilder.nodeSetsVersion
+      }
     );
     this._rootSector = new RootSectorNode(model);
 
@@ -214,6 +226,31 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
 
   public setModelRenderLayers(root: Object3D = this): void {
     setModelRenderLayers(root, this._styledTreeIndexSets);
+    if (root === this) {
+      // The traversal above has just recomputed the layers of every batch mesh
+      this._geometryBatchingManager?.updateCompactProxies({ batchLayersAreCurrent: true });
+    }
+  }
+
+  get renderOnlyVisibleInstances(): boolean {
+    return this._renderOnlyVisibleInstances;
+  }
+
+  set renderOnlyVisibleInstances(enabled: boolean) {
+    if (this._renderOnlyVisibleInstances === enabled) {
+      return;
+    }
+    this._renderOnlyVisibleInstances = enabled;
+    this._geometryBatchingManager?.setCompactProxiesEnabled(enabled);
+    this._needsRedraw = true;
+  }
+
+  get keepLoadedSectors(): boolean {
+    return this._keepLoadedSectors;
+  }
+
+  set keepLoadedSectors(enabled: boolean) {
+    this._keepLoadedSectors = enabled;
   }
 
   get prioritizedAreas(): PrioritizedArea[] {
