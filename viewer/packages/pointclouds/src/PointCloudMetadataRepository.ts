@@ -5,7 +5,7 @@
 import type { PointCloudMetadata } from './PointCloudMetadata';
 import type { MetadataRepository } from '@reveal/model-base';
 
-import { transformCameraConfiguration } from '@reveal/utilities';
+import { ConcurrencyLimiter, transformCameraConfiguration } from '@reveal/utilities';
 
 import type {
   ModelDataProvider,
@@ -19,22 +19,36 @@ import { File3dFormat, DMModelIdentifier } from '@reveal/data-providers';
 import type { EptJson } from './potree-three-loader/loading/EptJson';
 
 const ROOT_NODE_KEY = '0-0-0-0';
+
+// Caps how many models' metadata (outputs/uri/matrix/camera/ept.json/signed-files) can be
+// loading at the same time. Without this, calling addModel for many models in quick
+// succession (e.g. a loop adding 100 point cloud models) fires one unthrottled fetch
+// chain per model with no bound on how many run concurrently.
+const DEFAULT_MAX_CONCURRENT_METADATA_LOADS = 8;
+
 export class PointCloudMetadataRepository implements MetadataRepository<Promise<PointCloudMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider;
   private readonly _modelDataProvider: ModelDataProvider;
   private readonly _blobFileName: string;
+  private readonly _loadLimiter: ConcurrencyLimiter;
 
   constructor(
     modelMetadataProvider: ModelMetadataProvider,
     modelDataProvider: ModelDataProvider,
-    blobFileName: string = 'ept.json'
+    blobFileName: string = 'ept.json',
+    maxConcurrentLoads: number = DEFAULT_MAX_CONCURRENT_METADATA_LOADS
   ) {
     this._modelMetadataProvider = modelMetadataProvider;
     this._modelDataProvider = modelDataProvider;
     this._blobFileName = blobFileName;
+    this._loadLimiter = new ConcurrencyLimiter(maxConcurrentLoads);
   }
 
   async loadData(modelIdentifier: ModelIdentifier): Promise<PointCloudMetadata> {
+    return this._loadLimiter.run(() => this.loadDataInternal(modelIdentifier));
+  }
+
+  private async loadDataInternal(modelIdentifier: ModelIdentifier): Promise<PointCloudMetadata> {
     const output = await this.getSupportedOutput(modelIdentifier);
     const baseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier, output);
 

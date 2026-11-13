@@ -27,6 +27,30 @@ export function generateDataTexture(width: number, height: number, color: Color,
   return texture;
 }
 
+// Every PointCloudMaterial that hasn't been given a custom gradient points at the same
+// SpectralGradient constant, so this cache lets them share one GPU texture instead of each
+// model generating and uploading an identical 64x64 canvas texture of its own. Keyed by the
+// gradient array's identity, so a distinct custom gradient still gets (and shares) its own
+// cached texture.
+const sharedGradientTextures = new WeakMap<IGradient, Texture>();
+
+/**
+ * Returns a gradient texture for `gradient`, generating it once and reusing it for every
+ * subsequent call with the same `gradient` reference. Callers must not dispose the returned
+ * texture themselves - it is shared by every material using that gradient and is 64x64, so
+ * it is intentionally kept alive for the lifetime of the page rather than reference-counted.
+ */
+export function getSharedGradientTexture(gradient: IGradient): Texture {
+  const cached = sharedGradientTextures.get(gradient);
+  if (cached !== undefined) {
+    return cached;
+  }
+
+  const texture = generateGradientTexture(gradient);
+  sharedGradientTextures.set(gradient, texture);
+  return texture;
+}
+
 export function generateGradientTexture(gradient: IGradient): Texture {
   const size = 64;
 

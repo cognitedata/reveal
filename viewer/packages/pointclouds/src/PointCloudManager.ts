@@ -122,6 +122,7 @@ export class PointCloudManager {
   updatePointClouds(camera: PerspectiveCamera): void {
     const octrees = this._pointCloudNodes.filter(node => node.visible).map(node => node.octree);
     this._potreeInstance.updatePointClouds(octrees, camera, this._renderer);
+    this._loadingStateHandler.refreshPointBuffersHash(this._pointCloudNodes);
   }
 
   updateCamera(camera: PerspectiveCamera): void {
@@ -146,6 +147,7 @@ export class PointCloudManager {
 
     const pointCloudNode = await this._pointCloudFactory.createModel<T>(identifier, modelIdentifier, metadata);
     this._pointCloudNodes.push(pointCloudNode);
+    this._loadingStateHandler.refreshPointBuffersHash(this._pointCloudNodes);
 
     this.requestRedraw();
     this._pickCacheInvalidator.request();
@@ -167,6 +169,7 @@ export class PointCloudManager {
     }
     node.dispose();
     this._pointCloudNodes.splice(index, 1);
+    this._loadingStateHandler.refreshPointBuffersHash(this._pointCloudNodes);
     this._pickCacheInvalidator.request();
     this._potreeInstance.reset();
 

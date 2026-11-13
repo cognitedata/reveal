@@ -29,7 +29,7 @@ import type {
 } from '@reveal/data-providers';
 import type { Image360Provider } from '../providers/Image360Provider';
 import type { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
-import type { Matrix4, Ray } from 'three';
+import type { Matrix4, Ray, Sphere } from 'three';
 import { DEFAULT_IMAGE_360_OPACITY } from '../entity/Image360VisualizationBox';
 import type { Image360AnnotationProvider } from '../providers/Image360AnnotationProvider';
 import { createCollectionIdString } from './createCollectionIdString';
@@ -359,6 +359,14 @@ export class DefaultImage360Collection<T extends DataSourceType>
   public updateIcons(params: Parameters<BeforeSceneRenderedDelegate>[0]): void {
     this._icons.updateIcons(params);
     this._icons.updateCulling(params);
+  }
+
+  /**
+   * Conservative world-space bounding sphere enclosing every icon in this collection. Used
+   * to skip per-frame icon updates for collections that aren't near the camera.
+   */
+  public getWorldBoundingSphere(out?: Sphere): Sphere {
+    return this._icons.getWorldBoundingSphere(out);
   }
 
   public remove(entity: Image360Entity<T>): void {

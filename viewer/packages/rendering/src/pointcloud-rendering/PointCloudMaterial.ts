@@ -24,7 +24,7 @@ import {
 } from './constants';
 import { DEFAULT_CLASSIFICATION } from './classification';
 import { PointColorType, PointShape, PointSizeType } from './enums';
-import { generateClassificationTexture, generateDataTexture, generateGradientTexture } from './texture-generation';
+import { generateClassificationTexture, generateDataTexture, getSharedGradientTexture } from './texture-generation';
 import type { PointClassification, IUniform, OctreeMaterialParams } from './types';
 import { SpectralGradient } from './gradients/SpectralGradient';
 import { PointCloudObjectAppearanceTexture } from './PointCloudObjectAppearanceTexture';
@@ -100,7 +100,9 @@ export class PointCloudMaterial extends RawShaderMaterial {
   visibleNodeTextureOffsets: Map<string, number> = new Map<string, number>();
 
   private readonly _gradient = SpectralGradient;
-  private gradientTexture: Texture | undefined = generateGradientTexture(this._gradient);
+  // Shared across every material using this gradient - see getSharedGradientTexture(). Not
+  // disposed in dispose() below since other materials may still be using the same instance.
+  private gradientTexture: Texture | undefined = getSharedGradientTexture(this._gradient);
 
   private _objectAppearanceTexture = new PointCloudObjectAppearanceTexture(
     OBJECT_STYLING_TEXTURE_WIDTH,
@@ -376,10 +378,9 @@ export class PointCloudMaterial extends RawShaderMaterial {
   dispose(): void {
     super.dispose();
 
-    if (this.gradientTexture) {
-      this.gradientTexture.dispose();
-      this.gradientTexture = undefined;
-    }
+    // gradientTexture is shared across materials (see getSharedGradientTexture) and must not
+    // be disposed here - just drop this material's reference to it.
+    this.gradientTexture = undefined;
 
     if (this.visibleNodesTexture) {
       this.visibleNodesTexture.dispose();

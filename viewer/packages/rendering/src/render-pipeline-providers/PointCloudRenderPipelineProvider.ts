@@ -128,7 +128,13 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
     this.updateRenderTargetSizes(renderer);
 
     // Needs to be updated manually since automatic update is disabled because of CAD pipeline.
-    this._sceneHandler.pointCloudModels.forEach(model => model.pointCloudNode.updateMatrixWorld(true));
+    // Pass force=false rather than true: PointCloudNode already forces a matrix-world update
+    // itself exactly when the transform actually changes (on construction and in
+    // setModelTransformation()), so matrixWorldNeedsUpdate correctly reflects whether this
+    // model's matrix is stale. Forcing it unconditionally here made every point cloud octree
+    // re-run its (traverseVisible-based) descendant matrix update on every single render,
+    // regardless of whether anything moved.
+    this._sceneHandler.pointCloudModels.forEach(model => model.pointCloudNode.updateMatrixWorld(false));
 
     try {
       if (this._renderParameters.pointBlending) {

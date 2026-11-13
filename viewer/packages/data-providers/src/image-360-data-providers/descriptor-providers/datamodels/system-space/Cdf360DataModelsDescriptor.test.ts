@@ -239,4 +239,38 @@ describe(Cdf360DataModelsDescriptorProvider.name, () => {
 
     expect(filesRetrieveMock).not.toHaveBeenCalled();
   });
+
+  test('limits number of concurrent collection queries', async () => {
+    const maxConcurrentQueries = 2;
+    const pendingResponses: Array<() => void> = [];
+
+    const sdkMock = new Mock<CogniteClient>()
+      .setup(instance => instance.post(It.IsAny(), It.IsAny()))
+      .callback(() => new Promise(resolve => pendingResponses.push(() => resolve(mock))))
+      .setup(instance => instance.getBaseUrl())
+      .returns('https://example.com');
+
+    const provider = new Cdf360DataModelsDescriptorProvider(sdkMock.object(), maxConcurrentQueries);
+
+    const collectionCount = 5;
+    const descriptorPromises = Array.from({ length: collectionCount }, (_, i) =>
+      provider.get360ImageDescriptors(
+        { source: 'dm', space: 'test_space', image360CollectionExternalId: `collection_${i}` },
+        true
+      )
+    );
+
+    await vi.waitFor(() => expect(pendingResponses.length).toBe(maxConcurrentQueries));
+
+    let resolvedCount = 0;
+    while (resolvedCount < collectionCount) {
+      await vi.waitFor(() => expect(pendingResponses.length).toBeGreaterThan(0));
+      expect(pendingResponses.length).toBeLessThanOrEqual(maxConcurrentQueries);
+      pendingResponses.shift()!();
+      resolvedCount++;
+    }
+
+    const results = await Promise.all(descriptorPromises);
+    results.forEach(descriptors => expect(descriptors.length).toBe(3));
+  });
 });

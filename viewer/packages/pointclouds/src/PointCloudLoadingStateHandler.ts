@@ -20,6 +20,11 @@ import type { DataSourceType } from '@reveal/data-providers';
  */
 export class PointCloudLoadingStateHandler {
   private _lastDrawPointBuffersHash = 0;
+  // Cache of getPointBuffersHash(), refreshed only when the (throttled) Potree
+  // visibility/loading update actually runs - see refreshPointBuffersHash().
+  // This lets needsRedraw() do an O(1) comparison instead of a full octree
+  // traversal on every single animation frame.
+  private _currentPointBuffersHash = 0;
   private readonly _forceLoadingSubject = new Subject<void>();
   private readonly _loadingObservable: Observable<LoadingState>;
 
@@ -32,13 +37,24 @@ export class PointCloudLoadingStateHandler {
   constructor(pollLoadingStatusInterval: number = 200) {
     this._loadingObservable = this.createLoadingStateObservable(pollLoadingStatusInterval);
     this._lastDrawPointBuffersHash = this.getPointBuffersHash([]);
+    this._currentPointBuffersHash = this._lastDrawPointBuffersHash;
   }
 
-  needsRedraw(pointCloudNodes: PointCloudNode[]): boolean {
+  needsRedraw(_pointCloudNodes: PointCloudNode[]): boolean {
     return (
-      this._lastDrawPointBuffersHash !== this.getPointBuffersHash(pointCloudNodes) ||
+      this._lastDrawPointBuffersHash !== this._currentPointBuffersHash ||
       numPointCloudNodesLoading !== this._numNodesLoadingAfterLastRedraw
     );
+  }
+
+  /**
+   * Recomputes the point-buffers hash used by needsRedraw(). The visible node set for a
+   * point cloud octree only changes as a result of Potree's own visibility/LOD update, so
+   * this only needs to be called after that update runs (i.e. from the same throttled path
+   * that calls Potree.updatePointClouds()) rather than on every rendered frame.
+   */
+  refreshPointBuffersHash(pointCloudNodes: PointCloudNode<DataSourceType>[]): void {
+    this._currentPointBuffersHash = this.getPointBuffersHash(pointCloudNodes);
   }
 
   getLoadingStateObserver(): Observable<LoadingState> {

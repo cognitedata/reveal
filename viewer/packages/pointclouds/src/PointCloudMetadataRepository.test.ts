@@ -193,4 +193,40 @@ describe(PointCloudMetadataRepository.name, () => {
 
     warnSpy.mockRestore();
   });
+
+  test('limits number of concurrent metadata loads', async () => {
+    const maxConcurrentLoads = 2;
+    const modelCount = 5;
+    const pendingOutputs: Array<() => void> = [];
+    const metadataProvider: ModelMetadataProvider = {
+      ...createMockedMetadataProvider(),
+      getModelOutputs: vi.fn<ModelMetadataProvider['getModelOutputs']>(
+        () => new Promise(resolve => pendingOutputs.push(() => resolve([eptOutput])))
+      )
+    };
+    const repo = new PointCloudMetadataRepository(
+      metadataProvider,
+      createDMDataProvider({}),
+      'ept.json',
+      maxConcurrentLoads
+    );
+
+    const loads = Array.from({ length: modelCount }, (_, i) => repo.loadData(new CdfModelIdentifier(i, i)));
+
+    await vi.waitFor(() => expect(pendingOutputs.length).toBe(maxConcurrentLoads));
+
+    let completedCount = 0;
+    while (completedCount < modelCount) {
+      await vi.waitFor(() => expect(pendingOutputs.length).toBeGreaterThan(0));
+      expect(pendingOutputs.length).toBeLessThanOrEqual(maxConcurrentLoads);
+      pendingOutputs.shift()!();
+      completedCount++;
+      // Let the finished load release its slot and the next queued one start
+      await new Promise(resolve => setImmediate(resolve));
+    }
+
+    const results = await Promise.all(loads);
+    expect(results).toHaveLength(modelCount);
+    expect(metadataProvider.getModelOutputs).toHaveBeenCalledTimes(modelCount);
+  });
 });

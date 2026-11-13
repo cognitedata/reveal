@@ -4,7 +4,7 @@
 
 import { Mock, It } from 'moq.ts';
 import type { CircleGeometry, MeshBasicMaterial, Object3D, WebGLRenderer } from 'three';
-import { InstancedMesh, Matrix4, PerspectiveCamera, Ray, Vector3 } from 'three';
+import { InstancedMesh, Matrix4, PerspectiveCamera, Quaternion, Ray, Sphere, Sprite, Vector3 } from 'three';
 import type { SceneHandler } from '@reveal/utilities';
 import { vi } from 'vitest';
 import type { ClusteredIcon } from './IconCollection';
@@ -531,5 +531,83 @@ describe(IconCollection.name, () => {
     expect(collection.intersectCluster(hitRay)).toBeUndefined();
 
     collection.dispose();
+  });
+
+  describe('getWorldBoundingSphere', () => {
+    const positions = [new Vector3(-5, 2, 3), new Vector3(10, 0, 0), new Vector3(0, -7, 4)];
+
+    test('encloses every icon position with an identity transform', () => {
+      const collection = createCollection(positions);
+
+      const sphere = collection.getWorldBoundingSphere();
+
+      positions.forEach(position => expect(sphere.containsPoint(position)).toBe(true));
+      collection.dispose();
+    });
+
+    test('follows translation and non-uniform scale of the collection transform', () => {
+      const collection = createCollection(positions);
+      const transform = new Matrix4().compose(
+        new Vector3(100, -50, 20),
+        new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), Math.PI / 3),
+        new Vector3(2, 3, 0.5)
+      );
+      collection.setTransform(transform);
+
+      const sphere = collection.getWorldBoundingSphere();
+
+      positions.forEach(position => {
+        expect(sphere.containsPoint(position.clone().applyMatrix4(transform))).toBe(true);
+      });
+      collection.dispose();
+    });
+
+    test('writes into and returns the provided output sphere', () => {
+      const collection = createCollection(positions);
+      const out = new Sphere();
+
+      const result = collection.getWorldBoundingSphere(out);
+
+      expect(result).toBe(out);
+      expect(out.radius).toBeGreaterThan(0);
+      collection.dispose();
+    });
+  });
+
+  describe('shared textures', () => {
+    const findHoverSprite = (): Sprite => {
+      const sprite = addedObjects.find((o): o is Sprite => o instanceof Sprite);
+      assert(sprite !== undefined);
+      return sprite;
+    };
+
+    test('collections share the same hover icon texture', () => {
+      const first = createCollection([origin]);
+      const firstTexture = findHoverSprite().material.map;
+      addedObjects = [];
+      const second = createCollection([origin]);
+      const secondTexture = findHoverSprite().material.map;
+
+      expect(firstTexture).not.toBeNull();
+      expect(secondTexture).toBe(firstTexture);
+
+      first.dispose();
+      second.dispose();
+    });
+
+    test('disposing one collection does not dispose the shared hover texture used by another', () => {
+      const first = createCollection([origin]);
+      const second = createCollection([origin]);
+      const texture = findHoverSprite().material.map;
+      assert(texture !== null);
+      const onDispose = vi.fn();
+      texture.addEventListener('dispose', onDispose);
+
+      first.dispose();
+
+      expect(onDispose).not.toHaveBeenCalled();
+      second.dispose();
+      expect(onDispose).not.toHaveBeenCalled();
+    });
   });
 });
