@@ -17,4 +17,9 @@ export interface SectorRepository {
    * If this was the last reference, the sector will be disposed.
    */
   dereferenceSector(modelIdentifier: ModelIdentifier, sectorId: number): void;
+  /**
+   * Releases the reference taken by `loadSector` for a sector that was loaded but never used,
+   * e.g. because the load that requested it was superseded before the sector could be shown.
+   */
+  releaseUnusedSector(sector: ConsumedSector): void;
 }

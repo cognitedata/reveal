@@ -319,6 +319,20 @@ describe(CadNode.name, () => {
 
     expect(mockLoadSectorFn).toHaveBeenCalledWith(wantedSector.object(), undefined);
   });
+
+  test('releaseUnusedSector method delegates to sector repository', () => {
+    const consumedSector = createMockedConsumedSector().object();
+    const mockReleaseUnusedSectorFn = vi.fn<SectorRepository['releaseUnusedSector']>();
+    const sectorRepositoryMock = new Mock<SectorRepository>()
+      .setup(p => p.releaseUnusedSector)
+      .returns(mockReleaseUnusedSectorFn)
+      .object();
+    const cadNode = createCadNode(3, 3, { sectorRepository: sectorRepositoryMock });
+
+    cadNode.releaseUnusedSector(consumedSector);
+
+    expect(mockReleaseUnusedSectorFn).toHaveBeenCalledExactlyOnceWith(consumedSector);
+  });
 });
 
 describe('tree index locking', () => {

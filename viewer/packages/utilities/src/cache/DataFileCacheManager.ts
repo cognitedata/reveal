@@ -3,7 +3,7 @@
  */
 import { BINARY_FILES_CACHE_HEADER_DATE, BINARY_FILES_CACHE_HEADER_SIZE, BINARY_FILES_CACHE_NAME } from './constants';
 import type { CacheConfig } from './types';
-import { safeParseInt } from './utils';
+import { getCacheSize, safeParseInt } from './utils';
 
 /**
  * Data File Cache Manager using the Browser Cache API for storing various data files
@@ -59,7 +59,7 @@ export class DataFileCacheManager {
 
     if (!response) return false;
 
-    if (isExpired(response, this._config.maxAge)) {
+    if (isExpired(response, this._config.maxAge) || isEmpty(response)) {
       await cache.delete(url);
       return false;
     }
@@ -89,7 +89,7 @@ export class DataFileCacheManager {
       return undefined;
     }
 
-    if (isExpired(response, this._config.maxAge)) {
+    if (isExpired(response, this._config.maxAge) || isEmpty(response)) {
       await cache.delete(url);
       this._lastAccessed.delete(url);
       return undefined;
@@ -180,6 +180,10 @@ function isExpired(response: Response, maxAge: number): boolean {
   const cachedAt = safeParseInt(response.headers.get(BINARY_FILES_CACHE_HEADER_DATE));
   if (cachedAt === undefined) return true;
   return Date.now() - cachedAt > maxAge;
+}
+
+function isEmpty(response: Response): boolean {
+  return getCacheSize(response) === 0;
 }
 
 function isQuotaError(error: unknown): boolean {

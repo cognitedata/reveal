@@ -187,6 +187,13 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
   }
 
   /**
+   * Releases a sector returned by {@link loadSector} that will not be shown, so the sector cache can evict it.
+   */
+  public releaseUnusedSector(sector: ConsumedSector): void {
+    this._sectorRepository.releaseUnusedSector(sector);
+  }
+
+  /**
    * Sets transformation matrix of the model. This overrides the current transformation.
    * @param matrix Transformation matrix.
    */
