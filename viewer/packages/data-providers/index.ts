@@ -79,7 +79,7 @@ export type {
 } from './src/types';
 export { File3dFormat } from './src/types';
 
-export { fetchDMModelIdFromRevisionId } from './src/requests/fetchDMModelIdFromRevisionId';
+export { extractNumericId, fetchDMModelIdFromRevisionId } from './src/requests/fetchDMModelIdFromRevisionId';
 export {
   isDMPointCloudVolumeObject,
   isClassicPointCloudVolumeObject,

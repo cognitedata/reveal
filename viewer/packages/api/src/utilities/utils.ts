@@ -6,6 +6,7 @@ import type { CogniteClient } from '@cognite/sdk';
 import type { AddModelOptions } from '../public/migration/types';
 import type { DataSourceType } from '@reveal/data-providers';
 import {
+  extractNumericId,
   fetchDMModelIdFromRevisionId,
   isDMIdentifier,
   isClassicIdentifier,
@@ -19,6 +20,12 @@ export async function getModelAndRevisionId(
   sdk: CogniteClient | undefined
 ): Promise<{ modelId: number; revisionId: number }> {
   if (isDMIdentifier(options)) {
+    // A caller that already resolved the classic ids passes them along with the data modeling ids, so the
+    // lookup is skipped. The revision id is checked against the revision external id. The model id cannot be
+    // checked without the lookup and is trusted, as it is for classic options.
+    if (isClassicIdentifier(options) && extractNumericId(options.revisionExternalId) === options.revisionId) {
+      return { modelId: options.modelId, revisionId: options.revisionId };
+    }
     return fetchDMModelIdFromRevisionId(options.revisionExternalId, options.revisionSpace, sdk);
   } else if (isClassicIdentifier(options)) {
     return { modelId: options.modelId, revisionId: options.revisionId };

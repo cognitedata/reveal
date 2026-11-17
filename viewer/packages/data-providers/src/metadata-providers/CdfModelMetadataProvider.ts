@@ -8,7 +8,7 @@ import type { ModelMetadataProvider } from '../ModelMetadataProvider';
 
 import { applyDefaultModelTransformation } from '../utilities/applyDefaultModelTransformation';
 
-import type { CogniteClient, ItemsResponse } from '@cognite/sdk';
+import type { CogniteClient, ItemsResponse, Revision3D } from '@cognite/sdk';
 import type { ModelIdentifier } from '../ModelIdentifier';
 import { CdfModelIdentifier } from '../model-identifiers/CdfModelIdentifier';
 
@@ -16,6 +16,7 @@ import { CdfModelIdentifier } from '../model-identifiers/CdfModelIdentifier';
 // using URLs directly. Also add support for listing outputs in the SDK.
 export class CdfModelMetadataProvider implements ModelMetadataProvider {
   private readonly _client: CogniteClient;
+  private readonly _pendingRevisionRequests = new Map<string, Promise<Revision3D>>();
 
   constructor(client: CogniteClient) {
     this._client = client;
@@ -27,7 +28,7 @@ export class CdfModelMetadataProvider implements ModelMetadataProvider {
     }
 
     const { modelId, revisionId } = modelIdentifier;
-    const model = await this._client.revisions3D.retrieve(modelId, revisionId);
+    const model = await this.retrieveRevision(modelId, revisionId);
 
     const modelMatrix = new Matrix4();
 
@@ -57,7 +58,7 @@ export class CdfModelMetadataProvider implements ModelMetadataProvider {
     }
 
     const { modelId, revisionId } = modelIdentifier;
-    const model = await this._client.revisions3D.retrieve(modelId, revisionId);
+    const model = await this.retrieveRevision(modelId, revisionId);
     if (model.camera && model.camera.position && model.camera.target) {
       const { position, target } = model.camera;
       return {
@@ -99,6 +100,25 @@ export class CdfModelMetadataProvider implements ModelMetadataProvider {
   public getModelUriForSignedFiles(): string {
     const path = this.getRequestPathForSignedFiles();
     return `${this._client.getBaseUrl()}${path}`;
+  }
+
+  /**
+   * Retrieves a revision, sharing the request between concurrent callers.
+   * @param modelId Id of the model.
+   * @param revisionId Id of the revision.
+   * @returns The revision.
+   */
+  private retrieveRevision(modelId: number, revisionId: number): Promise<Revision3D> {
+    const key = `${modelId}/${revisionId}`;
+    const pendingRequest = this._pendingRevisionRequests.get(key);
+    if (pendingRequest !== undefined) {
+      return pendingRequest;
+    }
+    const request = this._client.revisions3D.retrieve(modelId, revisionId).finally(() => {
+      this._pendingRevisionRequests.delete(key);
+    });
+    this._pendingRevisionRequests.set(key, request);
+    return request;
   }
 
   private getRequestPath(directoryId: number): string {
