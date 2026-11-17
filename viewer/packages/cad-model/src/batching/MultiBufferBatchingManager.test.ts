@@ -66,7 +66,7 @@ describe(MultiBufferBatchingManager.name, () => {
     manager.batchGeometries(geometries3, 3);
 
     expect(geometryGroup.children.length).toBe(numberOfInstanceBuffers);
-    expect(sum(geometryGroup.children.map(mesh => (mesh as InstancedMesh).count))).toBe(60);
+    expect(sum(getMeshes().map(mesh => mesh.count))).toBe(60);
   });
 
   test('batchGeometries() adds new geometry to group for new geometry type', () => {
@@ -100,7 +100,7 @@ describe(MultiBufferBatchingManager.name, () => {
     manager.removeSectorBatches(1);
 
     expect(geometryGroup.children.filter(mesh => mesh.visible).length).toBe(1);
-    expect(sum(geometryGroup.children.map(mesh => mesh as InstancedMesh).map(mesh => mesh.count))).toBe(20);
+    expect(sum(getMeshes().map(mesh => mesh.count))).toBe(20);
   });
 
   test('removeSectorBatches() removes only relevant treeIndices', () => {
