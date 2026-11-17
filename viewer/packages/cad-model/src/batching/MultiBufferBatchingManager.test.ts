@@ -3,14 +3,14 @@
  */
 import type { ParsedGeometry } from '@reveal/sector-parser';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
-import type { InstancedMesh } from 'three';
-import { BufferGeometry, Group, InterleavedBuffer, InterleavedBufferAttribute } from 'three';
+import { BufferGeometry, Group, InstancedMesh, InterleavedBuffer, InterleavedBufferAttribute } from 'three';
 import { Mock } from 'moq.ts';
 import type { Materials, StyledTreeIndexSets } from '@reveal/rendering';
 import { MultiBufferBatchingManager } from './MultiBufferBatchingManager';
 import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
 import { sum } from 'lodash-es';
 import { IndexSet } from '@reveal/utilities';
+import { assert } from '@reveal/utilities/assert';
 
 describe(MultiBufferBatchingManager.name, () => {
   let geometryGroup: Group;
@@ -38,7 +38,10 @@ describe(MultiBufferBatchingManager.name, () => {
   }
 
   function getMeshes(): InstancedMesh[] {
-    return geometryGroup.children.map(mesh => mesh as InstancedMesh);
+    return geometryGroup.children.map(child => {
+      assert(child instanceof InstancedMesh);
+      return child;
+    });
   }
 
   beforeEach(() => {
