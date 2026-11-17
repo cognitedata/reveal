@@ -255,4 +255,71 @@ describe('DynamicDefragmentedBuffer', () => {
     expect(removeResultTwo.byteOffset).toBe(2);
     expect(removeResultTwo.byteCount).toBe(4);
   });
+
+  test('removing shrinks the buffer when a quarter or less of it is filled', () => {
+    const result = new DynamicDefragmentedBuffer(4, Float32Array);
+    const kept = new Float32Array([1, 2, 3, 4]);
+    result.add(kept);
+    const large = result.add(new Float32Array(60));
+    const bufferBeforeRemoval = result.bufferView;
+    expect(bufferBeforeRemoval.length).toBe(64);
+
+    const removeResult = result.remove(large.batchId);
+
+    expect(removeResult.bufferIsReallocated).toBe(true);
+    expect(result.bufferView).not.toBe(bufferBeforeRemoval);
+    expect(result.bufferView.length).toBe(8);
+    expect(result.length).toBe(kept.length);
+    expect([...result.bufferView.subarray(0, result.length)]).toEqual([...kept]);
+  });
+
+  test('removing keeps the buffer when more than a quarter of it is filled', () => {
+    const result = new DynamicDefragmentedBuffer(4, Float32Array);
+    result.add(new Float32Array(17));
+    const removed = result.add(new Float32Array(15));
+    const bufferBeforeRemoval = result.bufferView;
+
+    const removeResult = result.remove(removed.batchId);
+
+    expect(removeResult.bufferIsReallocated).toBe(false);
+    expect(result.bufferView).toBe(bufferBeforeRemoval);
+    expect(result.bufferView.length).toBe(32);
+  });
+
+  test('removing never shrinks the buffer below its initial size', () => {
+    const result = new DynamicDefragmentedBuffer(16, Float32Array);
+    const first = result.add(new Float32Array(40));
+    expect(result.bufferView.length).toBe(64);
+
+    const removeResult = result.remove(first.batchId);
+
+    expect(removeResult.bufferIsReallocated).toBe(true);
+    expect(result.bufferView.length).toBe(16);
+    expect(result.length).toBe(0);
+  });
+
+  test('batches stay addressable after the buffer has shrunk', () => {
+    const result = new DynamicDefragmentedBuffer(4, Float32Array);
+    const first = result.add(new Float32Array([1, 2]));
+    const large = result.add(new Float32Array(60));
+    const last = result.add(new Float32Array([3, 4]));
+
+    result.remove(large.batchId);
+
+    expect(result.getRangeForBatchId(first.batchId)).toEqual({ byteOffset: 0, byteCount: 2 });
+    expect(result.getRangeForBatchId(last.batchId)).toEqual({ byteOffset: 2, byteCount: 2 });
+    expect([...result.bufferView.subarray(0, result.length)]).toEqual([1, 2, 3, 4]);
+  });
+
+  test('batchCount follows the batches that are added and removed', () => {
+    const result = new DynamicDefragmentedBuffer(4, Float32Array);
+    expect(result.batchCount).toBe(0);
+
+    const first = result.add(new Float32Array([1, 2]));
+    result.add(new Float32Array(0));
+    expect(result.batchCount).toBe(2);
+
+    result.remove(first.batchId);
+    expect(result.batchCount).toBe(1);
+  });
 });

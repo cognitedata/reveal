@@ -120,12 +120,13 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
       const batchUpdateRange = buffer.getRangeForBatchId(batchId);
       this.removeTreeIndicesFromMeshUserData(mesh, batchUpdateRange, instanceAttributes);
 
-      const defragBufferUpdateRange = buffer.remove(batchId);
+      const { byteOffset, byteCount, bufferIsReallocated } = buffer.remove(batchId);
 
-      this.updateInstanceAttributes(instanceAttributes, {
-        byteOffset: defragBufferUpdateRange.byteOffset,
-        byteCount: defragBufferUpdateRange.byteCount
-      });
+      if (bufferIsReallocated) {
+        this.reallocateBufferGeometry(batchBuffer);
+      } else {
+        this.updateInstanceAttributes(instanceAttributes, { byteOffset, byteCount });
+      }
 
       mesh.count -= instanceCount;
 
@@ -135,6 +136,21 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     });
 
     this._sectorBatches.delete(sectorId);
+
+    sectorBatch.instanceBatches.forEach((_, instanceId) => this.disposeInstanceBatchIfEmpty(instanceId));
+  }
+
+  private disposeInstanceBatchIfEmpty(instanceId: string): void {
+    const instanceBatch = this._instanceBatches.get(instanceId);
+    if (instanceBatch === undefined || instanceBatch.buffers.some(({ buffer }) => buffer.batchCount > 0)) {
+      return;
+    }
+
+    instanceBatch.buffers.forEach(({ mesh }) => {
+      this._batchGroup.remove(mesh);
+      mesh.geometry.dispose();
+    });
+    this._instanceBatches.delete(instanceId);
   }
 
   public dispose(): void {
@@ -211,7 +227,11 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     if (bufferIsReallocated) {
       this.reallocateBufferGeometry(batchBuffer);
     } else {
-      this.updateInstanceAttributes(sourceInstanceAttributes, updateRange);
+      const batchInstanceAttributes = GeometryBufferUtils.getAttributes(
+        batchBuffer.mesh.geometry,
+        InterleavedBufferAttribute
+      );
+      this.updateInstanceAttributes(batchInstanceAttributes, updateRange);
     }
 
     const instanceCount = sourceInstanceAttributes[0].attribute.count;

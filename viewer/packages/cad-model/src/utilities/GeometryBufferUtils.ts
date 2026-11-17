@@ -49,15 +49,26 @@ export class GeometryBufferUtils {
     bufferGeometry: BufferGeometry,
     backingBuffer: ArrayBuffer
   ): void {
+    const interleavedBuffersByComponentSize = new Map<number, InstancedInterleavedBuffer>();
+
     instanceAttributes.forEach(instanceAttribute => {
       const { name, attribute } = instanceAttribute;
 
       const stride = attribute.data.stride;
       const componentSize = (attribute.array as TypedArray).BYTES_PER_ELEMENT;
 
-      const ComponentType = GeometryBufferUtils.TypedArrayViews.get(componentSize)!;
-      const interleavedAttributesBuffer = new InstancedInterleavedBuffer(new ComponentType(backingBuffer), stride);
-      interleavedAttributesBuffer.setUsage(DynamicDrawUsage);
+      let interleavedAttributesBuffer = interleavedBuffersByComponentSize.get(componentSize);
+      if (interleavedAttributesBuffer === undefined) {
+        const ComponentType = GeometryBufferUtils.TypedArrayViews.get(componentSize);
+        assert(ComponentType !== undefined, `Unsupported component size: ${componentSize}`);
+        interleavedAttributesBuffer = new InstancedInterleavedBuffer(new ComponentType(backingBuffer), stride);
+        interleavedAttributesBuffer.setUsage(DynamicDrawUsage);
+        interleavedBuffersByComponentSize.set(componentSize, interleavedAttributesBuffer);
+      }
+      assert(
+        interleavedAttributesBuffer.stride === stride,
+        'Instance attributes with the same component type must share the same stride'
+      );
 
       bufferGeometry.setAttribute(
         name,

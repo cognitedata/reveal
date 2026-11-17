@@ -5,6 +5,7 @@ import type { ParsedGeometry } from '@reveal/sector-parser';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { BufferGeometry, Group, InstancedMesh, InterleavedBuffer, InterleavedBufferAttribute } from 'three';
 import { Mock } from 'moq.ts';
+import { vi } from 'vitest';
 import type { Materials, StyledTreeIndexSets } from '@reveal/rendering';
 import { MultiBufferBatchingManager } from './MultiBufferBatchingManager';
 import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
@@ -157,6 +158,95 @@ describe(MultiBufferBatchingManager.name, () => {
 
   test('removeSectorBatches() ignores invalid sectorId', () => {
     expect(() => manager.removeSectorBatches(2)).not.toThrow();
+  });
+
+  describe('batch buffer memory', () => {
+    const initialBufferSize = 1024;
+
+    function getTreeIndexAttribute(mesh: InstancedMesh): InterleavedBufferAttribute {
+      const attribute = mesh.geometry.getAttribute('a_treeIndex');
+      assert(attribute instanceof InterleavedBufferAttribute);
+      return attribute;
+    }
+
+    function batchBoxSector(sectorId: number, treeIndices: number[]): ParsedGeometry {
+      const geometry = createParsedGeometryWithTreeIndices(RevealGeometryCollectionType.BoxCollection, treeIndices, 0);
+      manager.batchGeometries([geometry], sectorId);
+      return geometry;
+    }
+
+    beforeEach(() => {
+      manager = createManager();
+    });
+
+    test('batchGeometries() lets the instance attributes of a mesh share one interleaved buffer', () => {
+      batchBoxSector(1, [1, 2, 3]);
+
+      const [mesh] = getMeshes();
+      const interleavedBuffers = ['attribute1', 'attribute2', 'a_treeIndex'].map(name => {
+        const attribute = mesh.geometry.getAttribute(name);
+        assert(attribute instanceof InterleavedBufferAttribute);
+        return attribute.data;
+      });
+      expect(new Set(interleavedBuffers).size).toBe(1);
+    });
+
+    test('batchGeometries() marks only the added range of the mesh buffer for upload', () => {
+      const treeIndices = [1, 2, 3];
+      const geometry = batchBoxSector(1, treeIndices);
+
+      const [mesh] = getMeshes();
+      const meshBuffer = getTreeIndexAttribute(mesh).data;
+      expect(meshBuffer.array.byteLength).toBe(initialBufferSize);
+      expect(meshBuffer.updateRanges).toEqual([{ start: 0, count: treeIndices.length * FLOATS_PER_ELEMENT }]);
+
+      const sourceAttribute = geometry.geometryBuffer.getAttribute('a_treeIndex');
+      assert(sourceAttribute instanceof InterleavedBufferAttribute);
+      expect(sourceAttribute.data.updateRanges).toHaveLength(0);
+    });
+
+    test('removeSectorBatches() shrinks the mesh buffer and keeps the remaining instances', () => {
+      const keptTreeIndices = [10, 20, 30];
+      batchBoxSector(1, keptTreeIndices);
+      batchBoxSector(2, Array<number>(400).fill(5));
+      const [mesh] = getMeshes();
+      const grownGeometry = mesh.geometry;
+      expect(getTreeIndexAttribute(mesh).data.array.byteLength).toBeGreaterThan(initialBufferSize);
+
+      manager.removeSectorBatches(2);
+
+      const treeIndexAttribute = getTreeIndexAttribute(mesh);
+      expect(mesh.geometry).not.toBe(grownGeometry);
+      expect(treeIndexAttribute.data.array.byteLength).toBe(initialBufferSize);
+      expect(mesh.count).toBe(keptTreeIndices.length);
+      expect(keptTreeIndices.map((_, i) => treeIndexAttribute.getX(i))).toEqual(keptTreeIndices);
+      expect([...mesh.userData.treeIndices.keys()]).toEqual(keptTreeIndices);
+    });
+
+    test('removeSectorBatches() removes the meshes of a geometry type that no sector uses anymore', () => {
+      batchBoxSector(1, [1, 2, 3]);
+      manager.batchGeometries([createParsedGeometry(RevealGeometryCollectionType.CircleCollection, 20, 1)], 2);
+      const [boxMesh, circleMesh] = getMeshes();
+      const disposeBoxGeometry = vi.spyOn(boxMesh.geometry, 'dispose');
+
+      manager.removeSectorBatches(1);
+
+      expect(getMeshes()).toEqual([circleMesh]);
+      expect(disposeBoxGeometry).toHaveBeenCalledTimes(1);
+    });
+
+    test('batchGeometries() creates a new mesh for a geometry type whose meshes were removed', () => {
+      const treeIndices = [4, 5, 6];
+      batchBoxSector(1, [1, 2, 3]);
+      manager.removeSectorBatches(1);
+      expect(geometryGroup.children).toHaveLength(0);
+
+      batchBoxSector(2, treeIndices);
+
+      const [mesh] = getMeshes();
+      expect(mesh.count).toBe(treeIndices.length);
+      expect([...mesh.userData.treeIndices.keys()]).toEqual(treeIndices);
+    });
   });
 
   describe('with additional buffers allocated on demand', () => {
