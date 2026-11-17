@@ -2015,17 +2015,21 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       }
     }
     {
-      // Do not refresh renderer when CAD picking is active as it would create a bleed through during TreeIndex computing.
-      this._forceStopRendering = true;
-
       const cadModels = this.getModels('cad');
       const cadNodes = cadModels.map(x => x.cadNode);
-      const cadResults = await this._pickingHandler.intersectCadNodes(
-        cadNodes,
-        input,
-        options?.asyncCADIntersection ?? true
-      );
-      this._forceStopRendering = false;
+      // Do not refresh the renderer while a CAD pick hides models, as the frame would show them missing.
+      // A pick that renders all the models together does not hide any, so the viewer keeps rendering.
+      const pauseRendering = this._pickingHandler.hidesModelsWhilePicking(cadNodes);
+      if (pauseRendering) {
+        this._forceStopRendering = true;
+      }
+      const cadResults = await this._pickingHandler
+        .intersectCadNodes(cadNodes, input, options?.asyncCADIntersection ?? true)
+        .finally(() => {
+          if (pauseRendering) {
+            this._forceStopRendering = false;
+          }
+        });
 
       if (cadResults.length > 0) {
         const result = cadResults[0]; // Nearest intersection

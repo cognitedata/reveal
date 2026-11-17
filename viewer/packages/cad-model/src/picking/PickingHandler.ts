@@ -6,7 +6,12 @@ import type { Box3, PerspectiveCamera, Ray, WebGLRenderer } from 'three';
 import { Color, Raycaster, Scene, Vector3, WebGLRenderTarget } from 'three';
 import type { IntersectInput } from '@reveal/model-base';
 import type { CadMaterialManager, RenderPipelineProvider } from '@reveal/rendering';
-import { BasicPipelineExecutor, CadGeometryRenderModePipelineProvider, RenderMode } from '@reveal/rendering';
+import {
+  BasicPipelineExecutor,
+  CadGeometryRenderModePipelineProvider,
+  forEachMaterial,
+  RenderMode
+} from '@reveal/rendering';
 import type { SceneHandler } from '@reveal/utilities';
 import { WebGLRendererStateHelper } from '@reveal/utilities';
 import type { CadNode } from '../wrappers/CadNode';
@@ -32,6 +37,10 @@ type TreeIndexPickingInput = PickingInput & {
 };
 
 export class PickingHandler {
+  // The model a hit belongs to is encoded as `modelIndex + 1` in the alpha byte of the tree index pass
+  // (0 = no hit), so at most 255 models can be picked in one combined pass.
+  private static readonly MaxCombinedPickModels = 255;
+
   private readonly _clearColor: Color;
   private readonly _clearAlpha: number;
   private readonly _raycaster: Raycaster;
@@ -40,6 +49,7 @@ export class PickingHandler {
     renderTarget: WebGLRenderTarget;
     pixelBuffer: Uint8Array;
   };
+  private readonly _depthPixelBuffer = new Uint8Array(4);
 
   private readonly _pipelineExecutor: BasicPipelineExecutor;
   private readonly _depthRenderPipeline: CadGeometryRenderModePipelineProvider;
@@ -94,6 +104,16 @@ export class PickingHandler {
     this._pickPixelColorStorage.renderTarget.dispose();
   }
 
+  /**
+   * Whether a pick among the given models hides models while it runs. A frame rendered during such a pick would
+   * show the models missing, so the caller must not render until the pick has finished.
+   * @param cadNodes The models that will be picked among.
+   * @returns True if rendering must be paused during the pick.
+   */
+  public hidesModelsWhilePicking(cadNodes: CadNode[]): boolean {
+    return cadNodes.filter(node => node.visible).length > PickingHandler.MaxCombinedPickModels;
+  }
+
   public async intersectCadNodes(
     cadNodes: CadNode[],
     input: IntersectInput,
@@ -119,6 +139,14 @@ export class PickingHandler {
       }
 
       const filteredCadNodes = this.filterOutOfBoundCadNodes(visibleCadNodes, input);
+
+      if (visibleCadNodes.length <= PickingHandler.MaxCombinedPickModels) {
+        if (filteredCadNodes.length === 0) {
+          return results;
+        }
+        const hit = await this.intersectVisibleCadNodes(visibleCadNodes, input, shouldRunAsync);
+        return hit === undefined ? results : [hit];
+      }
 
       for (const cadNodeData of filteredCadNodes) {
         // Skip cad node when its bounds is further away than any already hit position.
@@ -152,6 +180,69 @@ export class PickingHandler {
       visibleCadNodes.forEach(p => (p.visible = true));
       release();
     }
+  }
+
+  /**
+   * Picks among all the visible models with one tree index pass and one depth pass of the picked pixel, so the
+   * cost does not depend on the number of models. No model is hidden, and both passes are rendered before
+   * waiting for the pixels, so they describe the same frame.
+   */
+  private async intersectVisibleCadNodes(
+    visibleCadNodes: CadNode[],
+    input: IntersectInput,
+    shouldRunAsync: boolean
+  ): Promise<IntersectCadNodesResult | undefined> {
+    visibleCadNodes.forEach((cadNode, index) => {
+      forEachMaterial(cadNode.cadMaterial.materials, material => {
+        if (material.uniforms.modelIndex === undefined) {
+          throw new Error('CAD material has no modelIndex uniform, cannot pick the models in one pass');
+        }
+        material.uniforms.modelIndex.value = index;
+      });
+    });
+
+    // The camera can move while waiting for the pixels, so keep the one the passes are rendered with
+    const camera = input.camera.clone();
+    const pickInput: PickingInput = {
+      normalizedCoords: input.normalizedCoords,
+      camera,
+      renderer: input.renderer,
+      domElement: input.domElement,
+      cadNodes: visibleCadNodes
+    };
+    const treeIndexPixels = this._pickPixelColorStorage.pixelBuffer;
+    const depthPixels = this._depthPixelBuffer;
+
+    const treeIndexRead = this.pickPixel(
+      pickInput,
+      this._treeIndexRenderPipeline,
+      this._clearColor,
+      this._clearAlpha,
+      shouldRunAsync,
+      treeIndexPixels
+    );
+    const depthRead = this.pickPixel(
+      pickInput,
+      this._depthRenderPipeline,
+      this._clearColor,
+      this._clearAlpha,
+      shouldRunAsync,
+      depthPixels
+    );
+    await Promise.all([treeIndexRead, depthRead]);
+
+    const modelIndex = CadPickBuffer.decodeModelIndex(treeIndexPixels, 0);
+    if (modelIndex === undefined) {
+      return undefined;
+    }
+    const cadNode = visibleCadNodes[modelIndex];
+    if (cadNode === undefined) {
+      return undefined;
+    }
+    const treeIndex = CadPickBuffer.decodeTreeIndex(treeIndexPixels, 0);
+    const depth = CadPickBuffer.unpackDepth(depthPixels, 0);
+    const { distance, point } = depthToIntersection(depth, camera, input.normalizedCoords);
+    return { distance, point, treeIndex, object: cadNode, cadNode };
   }
 
   private filterOutOfBoundCadNodes(cadNodes: CadNode[], input: IntersectInput) {
@@ -260,9 +351,10 @@ export class PickingHandler {
     renderPipeline: RenderPipelineProvider,
     clearColor: Color,
     clearAlpha: number,
-    shouldRunAsync: boolean
+    shouldRunAsync: boolean,
+    pixelBuffer: Uint8Array = this._pickPixelColorStorage.pixelBuffer
   ) {
-    const { renderTarget, pixelBuffer } = this._pickPixelColorStorage;
+    const { renderTarget } = this._pickPixelColorStorage;
     const { camera, normalizedCoords, renderer, domElement } = input;
 
     // Prepare camera that only renders the single pixel we are interested in
