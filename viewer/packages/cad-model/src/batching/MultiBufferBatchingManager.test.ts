@@ -16,8 +16,9 @@ describe(MultiBufferBatchingManager.name, () => {
   let geometryGroup: Group;
   let manager: MultiBufferBatchingManager;
   const numberOfInstanceBuffers = 2;
-  beforeEach(() => {
-    geometryGroup = new Group();
+  const allBuffersUpFrontThreshold = 0;
+
+  function createManager(additionalBufferThresholdBytes?: number): MultiBufferBatchingManager {
     const materials = new Mock<Materials>().object();
     const styledIndexSets: StyledTreeIndexSets = {
       back: new IndexSet(),
@@ -25,14 +26,24 @@ describe(MultiBufferBatchingManager.name, () => {
       inFront: new IndexSet(),
       visible: new IndexSet()
     };
-    manager = new MultiBufferBatchingManager(
+    return new MultiBufferBatchingManager(
       geometryGroup,
       materials,
       styledIndexSets,
       new TreeIndexToSectorsMap(10),
       1024,
-      numberOfInstanceBuffers
+      numberOfInstanceBuffers,
+      additionalBufferThresholdBytes
     );
+  }
+
+  function getMeshes(): InstancedMesh[] {
+    return geometryGroup.children.map(mesh => mesh as InstancedMesh);
+  }
+
+  beforeEach(() => {
+    geometryGroup = new Group();
+    manager = createManager(allBuffersUpFrontThreshold);
   });
 
   test('batchGeometries() first time adds new geometry to group', () => {
@@ -144,7 +155,104 @@ describe(MultiBufferBatchingManager.name, () => {
   test('removeSectorBatches() ignores invalid sectorId', () => {
     expect(() => manager.removeSectorBatches(2)).not.toThrow();
   });
+
+  describe('with additional buffers allocated on demand', () => {
+    const elementsPerSector = 10;
+    const bytesPerSector = elementsPerSector * BYTES_PER_ELEMENT;
+
+    function batchBoxSector(sectorId: number, treeIndices: number[] = Array<number>(elementsPerSector)): void {
+      const geometries = [
+        createParsedGeometryWithTreeIndices(RevealGeometryCollectionType.BoxCollection, treeIndices, 0)
+      ];
+      manager.batchGeometries(geometries, sectorId);
+    }
+
+    test('batchGeometries() first time adds a single mesh per geometry type by default', () => {
+      manager = createManager();
+
+      manager.batchGeometries([createParsedGeometry(RevealGeometryCollectionType.BoxCollection, 10, 0)], 1);
+      manager.batchGeometries([createParsedGeometry(RevealGeometryCollectionType.CircleCollection, 20, 1)], 2);
+
+      expect(geometryGroup.children.length).toBe(2);
+    });
+
+    test('batchGeometries() keeps a single mesh while the buffer is smaller than the threshold', () => {
+      manager = createManager(3 * bytesPerSector + 1);
+
+      batchBoxSector(1);
+      batchBoxSector(2);
+      batchBoxSector(3);
+
+      expect(geometryGroup.children.length).toBe(1);
+      expect(getMeshes()[0].count).toBe(3 * elementsPerSector);
+    });
+
+    test('batchGeometries() adds a mesh and fills it once the buffer has reached the threshold', () => {
+      manager = createManager(bytesPerSector);
+
+      batchBoxSector(1);
+      expect(geometryGroup.children.length).toBe(1);
+
+      batchBoxSector(2);
+
+      expect(geometryGroup.children.length).toBe(2);
+      expect(getMeshes().map(mesh => mesh.count)).toEqual([elementsPerSector, elementsPerSector]);
+      expect(getMeshes().every(mesh => mesh.visible)).toBe(true);
+    });
+
+    test('batchGeometries() gives the added mesh the same attributes as the first one', () => {
+      manager = createManager(bytesPerSector);
+
+      batchBoxSector(1);
+      batchBoxSector(2);
+
+      const [firstMesh, addedMesh] = getMeshes();
+      expect(Object.keys(addedMesh.geometry.attributes)).toEqual(Object.keys(firstMesh.geometry.attributes));
+    });
+
+    test('batchGeometries() never adds more meshes than the number of instance buffers', () => {
+      manager = createManager(bytesPerSector);
+
+      for (let sectorId = 1; sectorId <= 6; sectorId++) {
+        batchBoxSector(sectorId);
+      }
+
+      expect(geometryGroup.children.length).toBe(numberOfInstanceBuffers);
+      expect(sum(getMeshes().map(mesh => mesh.count))).toBe(6 * elementsPerSector);
+    });
+
+    test('batchGeometries() adds tree indices to the added mesh only', () => {
+      manager = createManager(3 * BYTES_PER_ELEMENT);
+      const treeIndices1 = [10, 20, 30];
+      const treeIndices2 = [40, 50, 60];
+
+      batchBoxSector(1, treeIndices1);
+      batchBoxSector(2, treeIndices2);
+
+      const [firstMesh, addedMesh] = getMeshes();
+      expect([...firstMesh.userData.treeIndices.keys()]).toEqual(treeIndices1);
+      expect([...addedMesh.userData.treeIndices.keys()]).toEqual(treeIndices2);
+    });
+
+    test('removeSectorBatches() removes a sector from the added mesh', () => {
+      manager = createManager(bytesPerSector);
+      batchBoxSector(1);
+      batchBoxSector(2);
+
+      manager.removeSectorBatches(2);
+
+      const [firstMesh, addedMesh] = getMeshes();
+      expect(firstMesh.count).toBe(elementsPerSector);
+      expect(firstMesh.visible).toBe(true);
+      expect(addedMesh.count).toBe(0);
+      expect(addedMesh.visible).toBe(false);
+      expect(addedMesh.userData.treeIndices.size).toBe(0);
+    });
+  });
 });
+
+const FLOATS_PER_ELEMENT = 3;
+const BYTES_PER_ELEMENT = FLOATS_PER_ELEMENT * Float32Array.BYTES_PER_ELEMENT;
 
 function createParsedGeometry(type: RevealGeometryCollectionType, elementCount: number, instanceId: number) {
   return createParsedGeometryWithTreeIndices(type, Array<number>(elementCount), instanceId);

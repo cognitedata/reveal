@@ -46,6 +46,7 @@ type SectorInstanceData = {
  */
 type InstanceBatch = {
   buffers: BatchBuffer[];
+  type: RevealGeometryCollectionType;
 };
 
 /**
@@ -61,8 +62,10 @@ type BatchBuffer = {
  * The objective of this class is to batch together instances
  * of the same type from different sectors.
  * This is done to reduce the number of draw calls that have to be issued during rendering.
- * Essentially this works by allocating n (numberOfInstanceBatches) buffers for each unique instanced type
+ * Essentially this works by allocating up to n (numberOfInstanceBatches) buffers for each unique instanced type
  * and continually filling / ejecting data from those buffers when new sectors are added / removed.
+ * Each buffer is a draw call, so a type starts with one buffer and gets another one only when its buffers hold
+ * at least additionalBufferThresholdBytes each. With a threshold of 0, all n buffers are allocated up front.
  */
 export class MultiBufferBatchingManager implements DrawCallBatchingManager {
   private readonly _sectorBatches: Map<number, SectorBatch>;
@@ -77,7 +80,8 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     styleTreeIndexSets: StyledTreeIndexSets,
     private readonly treeIndexToSectorsMap: TreeIndexToSectorsMap,
     private readonly initialBufferSize = 1024,
-    private readonly numberOfInstanceBatches = 2
+    private readonly numberOfInstanceBatches = 2,
+    private readonly additionalBufferThresholdBytes = 256 * 1024
   ) {
     this._sectorBatches = new Map();
     this._instanceBatches = new Map();
@@ -300,6 +304,13 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
   private getBatchBufferToFill(instanceBatch: InstanceBatch): BatchBuffer {
     const smallestBuffer = minBy(instanceBatch.buffers, batchBuffer => batchBuffer.buffer.length);
     assert(smallestBuffer !== undefined);
+
+    const canAddBuffer = instanceBatch.buffers.length < this.numberOfInstanceBatches;
+    if (canAddBuffer && smallestBuffer.buffer.length >= this.additionalBufferThresholdBytes) {
+      const additionalBuffer = this.createBatchBuffer(instanceBatch.buffers[0].mesh.geometry, instanceBatch.type);
+      instanceBatch.buffers.push(additionalBuffer);
+      return additionalBuffer;
+    }
     return smallestBuffer;
   }
 
@@ -310,11 +321,12 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
       return instanceBatch;
     }
 
-    const batchBuffers: BatchBuffer[] = Array.from(Array(this.numberOfInstanceBatches)).map(() =>
+    const initialBufferCount = this.additionalBufferThresholdBytes === 0 ? this.numberOfInstanceBatches : 1;
+    const batchBuffers: BatchBuffer[] = Array.from({ length: initialBufferCount }, () =>
       this.createBatchBuffer(parsedGeometry.geometryBuffer, parsedGeometry.type)
     );
 
-    const newInstanceBatch: InstanceBatch = { buffers: batchBuffers };
+    const newInstanceBatch: InstanceBatch = { buffers: batchBuffers, type: parsedGeometry.type };
     this._instanceBatches.set(parsedGeometry.instanceId, newInstanceBatch);
     return newInstanceBatch;
   }
