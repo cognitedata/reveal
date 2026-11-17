@@ -66,6 +66,8 @@ describe('SectorLoader', () => {
       .returns(true)
       .setup(p => p.loadSector)
       .returns(value => repository.loadSector(value))
+      .setup(p => p.releaseUnusedSector)
+      .returns(sector => repository.releaseUnusedSector(sector))
       .setup(p => p.clippingPlanes)
       .returns([]);
 
@@ -214,6 +216,96 @@ describe('SectorLoader', () => {
     expect(loaded).toBe(scheduled);
   });
 
+  test('loadSectors releases sectors that finish downloading after their load is superseded', async () => {
+    // Arrange
+    const downloads = createControlledDownloads();
+    const firstLoading = asyncIteratorToArray(loader.loadSectors({ ...input, models: [downloads.cadNode] }));
+    await downloads.settle();
+    const inFlightSectorIds = [...downloads.requestedSectorIds];
+
+    // Act
+    const secondLoading = asyncIteratorToArray(loader.loadSectors(input));
+    await downloads.completeAll();
+    await Promise.all([firstLoading, secondLoading]);
+    await downloads.settle();
+
+    // Assert
+    expect(new Set(downloads.releasedSectorIds)).toEqual(new Set(inFlightSectorIds));
+    expect(downloads.releasedSectorIds).toHaveLength(inFlightSectorIds.length);
+  });
+
+  test('loadSectors does not release downloads that the superseding load yields', async () => {
+    // Arrange
+    const downloads = createControlledDownloads();
+    const loadInput = { ...input, models: [downloads.cadNode] };
+    const firstLoading = asyncIteratorToArray(loader.loadSectors(loadInput));
+    await downloads.settle();
+
+    // Act: the new load wants the same sectors, so it reuses the downloads in flight
+    const secondLoading = asyncIteratorToArray(loader.loadSectors(loadInput));
+    await downloads.completeAll();
+    const [, secondResult] = await Promise.all([firstLoading, secondLoading]);
+    await downloads.settle();
+
+    // Assert
+    expect(secondResult).toHaveLength(downloads.sectorCount);
+    expect(downloads.releasedSectorIds).toHaveLength(0);
+  });
+
+  test('loadSectors does not release a download that a later load claims while it is in flight', async () => {
+    // Arrange: the first load is superseded and stops while its slowest download is still in flight
+    const downloads = createControlledDownloads();
+    const loadInput = { ...input, models: [downloads.cadNode] };
+    const firstLoading = asyncIteratorToArray(loader.loadSectors(loadInput));
+    await downloads.settle();
+    const [slowestSectorId] = downloads.requestedSectorIds;
+    const supersedingLoading = asyncIteratorToArray(loader.loadSectors(input));
+    downloads.completeAllExcept(slowestSectorId);
+    await downloads.settle();
+    await Promise.all([firstLoading, supersedingLoading]);
+
+    // Act: a later load wants the slowest sector again and reuses its download
+    const laterLoading = asyncIteratorToArray(loader.loadSectors(loadInput));
+    await downloads.completeAll();
+    const laterResult = await laterLoading;
+    await downloads.settle();
+
+    // Assert
+    expect(laterResult.map(sector => sector.metadata.id)).toContain(slowestSectorId);
+    expect(downloads.releasedSectorIds).not.toContain(slowestSectorId);
+  });
+
+  test('loadSectors stops a batch that is still being culled when the consumer stops iterating', async () => {
+    // Arrange
+    const downloads = createControlledDownloads();
+    const secondBatchCulling = new DeferredPromise<WantedSector[]>();
+    vi.spyOn(culler, 'filterSectorsToLoad')
+      .mockImplementationOnce(async (_, batch) => batch)
+      .mockImplementationOnce(() => secondBatchCulling);
+    const takeFirstSector = async () => {
+      for await (const sector of loader.loadSectors({ ...input, models: [downloads.cadNode] })) {
+        return sector.metadata.id;
+      }
+    };
+
+    // Act
+    const firstSectorId = takeFirstSector();
+    await downloads.settle();
+    const firstBatchSectorIds = [...downloads.requestedSectorIds];
+    await downloads.completeAll();
+    const yieldedSectorId = await firstSectorId;
+    secondBatchCulling.resolve(
+      downloads.wantedSectors.filter(sector => !firstBatchSectorIds.includes(sector.metadata.id))
+    );
+    await downloads.settle();
+
+    // Assert
+    const expectedReleasedIds = firstBatchSectorIds.filter(id => id !== yieldedSectorId);
+    expect(downloads.requestedSectorIds).toEqual(firstBatchSectorIds);
+    expect(new Set(downloads.releasedSectorIds)).toEqual(new Set(expectedReleasedIds));
+    expect(downloads.releasedSectorIds).toHaveLength(expectedReleasedIds.length);
+  });
+
   test('loadSectors marks sectors with errors as discarded', async () => {
     // Arrange
     let first = true;
@@ -230,6 +322,8 @@ describe('SectorLoader', () => {
           return Promise.reject('Could not load sector');
         } else return repository.loadSector(value);
       })
+      .setup(p => p.releaseUnusedSector)
+      .returns(sector => repository.releaseUnusedSector(sector))
       .setup(p => p.clippingPlanes)
       .returns([]);
 
@@ -259,6 +353,8 @@ class ControlledDownloads {
   readonly cadNode: CadNode;
   private readonly _downloads = new Map<number, { sector: WantedSector; download: DeferredPromise<ConsumedSector> }>();
   private readonly _completed = new Set<number>();
+  /** Sectors whose cache reference the loader released because no load yielded them */
+  readonly releasedSectorIds: number[] = [];
 
   constructor() {
     this.cadNode = new Mock<CadNode>()
@@ -270,7 +366,15 @@ class ControlledDownloads {
       .returns(sector => {
         const download = new DeferredPromise<ConsumedSector>();
         this._downloads.set(sector.metadata.id, { sector, download });
+        this._completed.delete(sector.metadata.id);
         return download;
+      })
+      .setup(p => p.releaseUnusedSector)
+      .returns(sector => {
+        // Discarded sectors (e.g. dropped from the download queue) hold no cache reference
+        if (sector.levelOfDetail === LevelOfDetail.Detailed) {
+          this.releasedSectorIds.push(sector.metadata.id);
+        }
       })
       .setup(p => p.clippingPlanes)
       .returns([])
@@ -330,6 +434,7 @@ class StubRepository implements SectorRepository {
   clearCache(): void {}
   setCacheSize(_sectorCount: number): void {}
   dereferenceSector(_modelIdentifier: ModelIdentifier, _sectorId: number): void {}
+  releaseUnusedSector(_sector: ConsumedSector): void {}
 }
 
 class StubSectorCuller implements SectorCuller {

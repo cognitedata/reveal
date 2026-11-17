@@ -91,6 +91,17 @@ describe(CdfModelDataProvider.name, () => {
     expect(authenticationSpy).toHaveBeenCalledTimes(1);
   });
 
+  test('getBinaryFile() throws with status on non-ok response', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>()
+        .mockResolvedValueOnce(new Response('Too many requests', { status: 429 }))
+    );
+
+    await expect(clientExt.getBinaryFile(baseUrl, 'sector_5.i3d')).rejects.toMatchObject({ status: 429 });
+  });
+
   test('getJsonFile() returns raw response data', async () => {
     const mockData = { version: 9, sectors: [] };
     const mockResponse: HttpResponse<typeof mockData> = { data: mockData, headers: {}, status: 200 };

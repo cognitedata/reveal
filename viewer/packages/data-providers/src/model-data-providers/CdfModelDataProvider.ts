@@ -39,10 +39,12 @@ export class CdfModelDataProvider implements ModelDataProvider {
       }
       throw new Error('Could not download binary file');
     });
+    // Never hand an error body (429, 5xx, ...) to the caller as file content: it would be parsed as
+    // geometry and persisted by CachedModelDataProvider.
+    if (!response.ok) {
+      throw createHttpErrorFromResponse(response);
+    }
     if (isBaseUrlEmpty) {
-      if (!response.ok) {
-        throw createHttpErrorFromResponse(response);
-      }
       return decompressBinaryResponseBody(response);
     }
     return response.arrayBuffer();
