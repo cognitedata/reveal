@@ -205,6 +205,20 @@ describe(MultiBufferBatchingManager.name, () => {
       expect(sourceAttribute.data.updateRanges).toHaveLength(0);
     });
 
+    test('removeSectorBatches() uploads nothing when the removed sector is last in the buffer', () => {
+      batchBoxSector(1, [1, 2, 3]);
+      batchBoxSector(2, [4, 5, 6]);
+      const [mesh] = getMeshes();
+      const meshBuffer = getTreeIndexAttribute(mesh).data;
+      meshBuffer.clearUpdateRanges();
+      const versionBeforeRemoval = meshBuffer.version;
+
+      manager.removeSectorBatches(2);
+
+      expect(meshBuffer.updateRanges).toHaveLength(0);
+      expect(meshBuffer.version).toBe(versionBeforeRemoval);
+    });
+
     test('removeSectorBatches() shrinks the mesh buffer and keeps the remaining instances', () => {
       const keptTreeIndices = [10, 20, 30];
       batchBoxSector(1, keptTreeIndices);

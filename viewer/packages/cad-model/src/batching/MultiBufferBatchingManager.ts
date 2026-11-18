@@ -140,33 +140,34 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     sectorBatch.instanceBatches.forEach((_, instanceId) => this.disposeInstanceBatchIfEmpty(instanceId));
   }
 
-  private disposeInstanceBatchIfEmpty(instanceId: string): void {
-    const instanceBatch = this._instanceBatches.get(instanceId);
-    if (instanceBatch === undefined || instanceBatch.buffers.some(({ buffer }) => buffer.batchCount > 0)) {
-      return;
-    }
-
-    instanceBatch.buffers.forEach(({ mesh }) => {
-      this._batchGroup.remove(mesh);
-      mesh.geometry.dispose();
-    });
-    this._instanceBatches.delete(instanceId);
-  }
-
   public dispose(): void {
     for (const sectorId of this._sectorBatches.keys()) {
       this.removeSectorBatches(sectorId);
     }
 
     for (const { buffers } of this._instanceBatches.values()) {
-      buffers.forEach(batchBuffer => {
-        this._batchGroup.remove(batchBuffer.mesh);
-        batchBuffer.mesh.geometry.dispose();
-      });
+      this.disposeBatchBuffers(buffers);
     }
 
     this._sectorBatches.clear();
     this._instanceBatches.clear();
+  }
+
+  private disposeInstanceBatchIfEmpty(instanceId: string): void {
+    const instanceBatch = this._instanceBatches.get(instanceId);
+    if (instanceBatch === undefined || instanceBatch.buffers.some(({ buffer }) => buffer.batchCount > 0)) {
+      return;
+    }
+
+    this.disposeBatchBuffers(instanceBatch.buffers);
+    this._instanceBatches.delete(instanceId);
+  }
+
+  private disposeBatchBuffers(buffers: BatchBuffer[]): void {
+    buffers.forEach(({ mesh }) => {
+      this._batchGroup.remove(mesh);
+      mesh.geometry.dispose();
+    });
   }
 
   private removeTreeIndicesFromMeshUserData(
@@ -213,12 +214,6 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     const sectorInstanceData: SectorInstanceData = { batchBuffer, batchId, instanceCount: 0 };
 
     sectorBatch.instanceBatches.set(instanceId, sectorInstanceData);
-
-    GeometryBufferUtils.getAttributes(batchBuffer.mesh.geometry, InterleavedBufferAttribute).forEach(
-      ({ attribute }) => {
-        attribute.data.needsUpdate = true;
-      }
-    );
 
     const sourceInstanceAttributes = GeometryBufferUtils.getAttributes(bufferGeometry, InterleavedBufferAttribute);
 
@@ -289,6 +284,9 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
       byteCount: number;
     }
   ) {
+    if (updateRange.byteCount === 0) {
+      return;
+    }
     instanceAttributes.forEach(namedAttribute => {
       const attribute = namedAttribute.attribute;
       this.extendUpdateRange(attribute, updateRange);

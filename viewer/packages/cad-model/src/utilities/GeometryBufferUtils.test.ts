@@ -82,7 +82,7 @@ describe(GeometryBufferUtils.name, () => {
           new BufferGeometry(),
           backingBuffer
         )
-      ).toThrow();
+      ).toThrow('Unsupported component size: 2');
     });
 
     test('throws when attributes of the same component type have different strides', () => {
@@ -98,7 +98,7 @@ describe(GeometryBufferUtils.name, () => {
           new BufferGeometry(),
           backingBuffer
         )
-      ).toThrow();
+      ).toThrow('Instance attributes with the same component type must share the same stride');
     });
   });
 });

@@ -56,7 +56,7 @@ export class DynamicDefragmentedBuffer<T extends TypedArray> {
   } {
     let isReallocated = false;
     if (this._numFilled + array.length > this._bufferView.length) {
-      const newSize = Math.pow(2, Math.ceil(Math.log2(this._numFilled + array.length)));
+      const newSize = nextPowerOfTwo(this._numFilled + array.length);
       this.allocateNewBuffer(newSize);
       isReallocated = true;
     }
@@ -157,13 +157,8 @@ export class DynamicDefragmentedBuffer<T extends TypedArray> {
     if (capacity <= this._minimumCapacity || this._numFilled > capacity / 4) {
       return false;
     }
-    const newSize = Math.max(
-      this._minimumCapacity,
-      Math.pow(2, Math.ceil(Math.log2(Math.max(1, this._numFilled * 2))))
-    );
-    if (newSize >= capacity) {
-      return false;
-    }
+    // At most a quarter is filled, so the new size is at most half of the capacity
+    const newSize = Math.max(this._minimumCapacity, nextPowerOfTwo(this._numFilled * 2));
     this.allocateNewBuffer(newSize);
     return true;
   }
@@ -174,4 +169,8 @@ export class DynamicDefragmentedBuffer<T extends TypedArray> {
 
     this._bufferView = newBuffer;
   }
+}
+
+function nextPowerOfTwo(value: number): number {
+  return Math.pow(2, Math.ceil(Math.log2(Math.max(1, value))));
 }

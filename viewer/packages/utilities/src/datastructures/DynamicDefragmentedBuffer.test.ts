@@ -273,16 +273,27 @@ describe('DynamicDefragmentedBuffer', () => {
     expect([...result.bufferView.subarray(0, result.length)]).toEqual([...kept]);
   });
 
-  test('removing keeps the buffer when more than a quarter of it is filled', () => {
+  test('removing keeps the buffer when just more than a quarter of it is filled', () => {
     const result = new DynamicDefragmentedBuffer(4, Float32Array);
     result.add(new Float32Array(17));
-    const removed = result.add(new Float32Array(15));
+    const removed = result.add(new Float32Array(47));
     const bufferBeforeRemoval = result.bufferView;
 
     const removeResult = result.remove(removed.batchId);
 
     expect(removeResult.bufferIsReallocated).toBe(false);
     expect(result.bufferView).toBe(bufferBeforeRemoval);
+    expect(result.bufferView.length).toBe(64);
+  });
+
+  test('removing halves the buffer when exactly a quarter of it is filled', () => {
+    const result = new DynamicDefragmentedBuffer(4, Float32Array);
+    result.add(new Float32Array(16));
+    const removed = result.add(new Float32Array(48));
+
+    const removeResult = result.remove(removed.batchId);
+
+    expect(removeResult.bufferIsReallocated).toBe(true);
     expect(result.bufferView.length).toBe(32);
   });
 
