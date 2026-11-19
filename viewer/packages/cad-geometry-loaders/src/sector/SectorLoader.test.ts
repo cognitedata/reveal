@@ -252,6 +252,26 @@ describe('SectorLoader', () => {
     expect(downloads.releasedSectorIds).toHaveLength(0);
   });
 
+  test('loadSectors releases a download shared by two models of the same load once', async () => {
+    // Arrange: the same model twice, so both entries share the downloads
+    const downloads = createControlledDownloads();
+    const firstLoading = asyncIteratorToArray(
+      loader.loadSectors({ ...input, models: [downloads.cadNode, downloads.cadNode] })
+    );
+    await downloads.settle();
+    const inFlightSectorIds = [...downloads.requestedSectorIds];
+
+    // Act
+    const secondLoading = asyncIteratorToArray(loader.loadSectors(input));
+    await downloads.completeAll();
+    await Promise.all([firstLoading, secondLoading]);
+    await downloads.settle();
+
+    // Assert
+    expect(new Set(downloads.releasedSectorIds)).toEqual(new Set(inFlightSectorIds));
+    expect(downloads.releasedSectorIds).toHaveLength(inFlightSectorIds.length);
+  });
+
   test('loadSectors does not release a download that a later load claims while it is in flight', async () => {
     // Arrange: the first load is superseded and stops while its slowest download is still in flight
     const downloads = createControlledDownloads();
