@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import fs from 'fs';
+import { readFileAsArrayBuffer } from '../../../test-utilities';
 
 import { GltfSectorParser } from '../src/GltfSectorParser';
 import { RevealGeometryCollectionType } from '../src/types';
@@ -22,9 +22,9 @@ describe(GltfSectorParser.name, () => {
       });
     });
     parser = new GltfSectorParser();
-    const primitivesByteBuffer = fs.readFileSync(import.meta.dirname + '/test-all-primitives.glb');
+    const primitivesByteBuffer = readFileAsArrayBuffer(import.meta.dirname + '/test-all-primitives.glb');
 
-    parsedPrimitivesResult = await parser.parseSector(primitivesByteBuffer.buffer);
+    parsedPrimitivesResult = await parser.parseSector(primitivesByteBuffer);
   });
 
   afterAll(() => {
@@ -208,9 +208,9 @@ describe(GltfSectorParser.name, () => {
   });
 
   test('Parsing texture.glb should return a textured mesh and an untextured mesh', async () => {
-    const primitivesByteBuffer = fs.readFileSync(import.meta.dirname + '/combined-texture.glb');
+    const primitivesByteBuffer = readFileAsArrayBuffer(import.meta.dirname + '/combined-texture.glb');
 
-    const parsedPrimitivesResult = await parser.parseSector(primitivesByteBuffer.buffer);
+    const parsedPrimitivesResult = await parser.parseSector(primitivesByteBuffer);
 
     const texturedMeshes = parsedPrimitivesResult.filter(
       m => m.type === RevealGeometryCollectionType.TexturedTriangleMesh
