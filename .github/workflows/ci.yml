@@ -149,6 +149,12 @@ jobs:
           sudo apt-get install xvfb mesa-utils libgl1-mesa-dri libosmesa6
           echo "DISPLAY=:99.0" >> $GITHUB_ENV
 
+      - name: Debug node buffer behavior (temporary)
+        working-directory: viewer
+        run: |
+          node -v
+          node -e "const b=require('fs').readFileSync('packages/sector-loader/tests/test.glb');console.log('length',b.length,'buffer.byteLength',b.buffer.byteLength,'byteOffset',b.byteOffset,'magic',b.subarray(0,4).toString())"
+
       - name: Run coverage tests
         working-directory: viewer
         run: |
