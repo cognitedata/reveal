@@ -6,16 +6,12 @@ import type { PerspectiveCamera, WebGLRenderer } from 'three';
 import { Color, WebGLRenderTarget } from 'three';
 import type { IntersectInput } from '@reveal/model-base';
 import type { CadMaterialManager, RenderPipelineProvider } from '@reveal/rendering';
-import {
-  BasicPipelineExecutor,
-  CadGeometryRenderModePipelineProvider,
-  forEachMaterial,
-  RenderMode
-} from '@reveal/rendering';
+import { BasicPipelineExecutor, CadGeometryRenderModePipelineProvider, RenderMode } from '@reveal/rendering';
 import type { SceneHandler } from '@reveal/utilities';
 import { WebGLRendererStateHelper } from '@reveal/utilities';
 import { assert } from '@reveal/utilities/assert';
 import type { CadNode } from '../wrappers/CadNode';
+import { assignModelIndices, MAX_COMBINED_PICK_MODELS } from './assignModelIndices';
 import { CadPickBuffer } from './CadPickBuffer';
 import { depthToIntersection } from './depthToIntersection';
 import type { IntersectCadNodesResult } from './types';
@@ -33,12 +29,8 @@ type PickCacheEntry = {
 export class CadPickCache {
   // If the cache was invalidated more recently than this, the scene is most likely rendering
   // continuously (camera movement). Rebuilding the full-frame cache then costs more
-  // than a single-pixel pick, so the per-model single-pixel path is used instead.
+  // than a single-pixel pick, so the single-pixel path is used instead.
   private static readonly REBUILD_HOLDOFF_MS = 64;
-
-  // The model a hit belongs to is encoded as `modelIndex + 1` in the tree index pass's alpha byte
-  // (0 = no hit), so at most 255 models can be picked in one combined pass.
-  private static readonly MAX_CACHED_MODELS = 255;
 
   private readonly _clearColor = new Color('black');
   private readonly _clearAlpha = 0;
@@ -89,7 +81,7 @@ export class CadPickCache {
 
   /**
    * Picks from the cache, rebuilding it first when it is stale and the frame is likely to stay
-   * unchanged. Returns undefined when the per-model path should be used instead.
+   * unchanged. Returns undefined when the single-pixel path should be used instead.
    */
   public async intersect(
     visibleCadNodes: CadNode[],
@@ -99,7 +91,7 @@ export class CadPickCache {
     if (
       input.forceWindowedPick === true ||
       visibleCadNodes.length === 0 ||
-      visibleCadNodes.length > CadPickCache.MAX_CACHED_MODELS
+      visibleCadNodes.length > MAX_COMBINED_PICK_MODELS
     ) {
       return undefined;
     }
@@ -157,15 +149,7 @@ export class CadPickCache {
     const { camera, renderer } = input;
     const invalidationCountAtStart = this._invalidationCount;
 
-    // Each model writes its index to the alpha byte of the tree index pass.
-    visibleCadNodes.forEach((cadNode, index) => {
-      forEachMaterial(cadNode.cadMaterial.materials, material => {
-        if (material.uniforms.modelIndex === undefined) {
-          throw new Error('CAD material has no modelIndex uniform, cannot build the pick cache');
-        }
-        material.uniforms.modelIndex.value = index;
-      });
-    });
+    assignModelIndices(visibleCadNodes);
 
     const previousBuffer = this._cache?.buffer;
     const buffer =

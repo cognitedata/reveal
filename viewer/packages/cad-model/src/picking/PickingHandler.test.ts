@@ -153,6 +153,19 @@ describe(PickingHandler.name, () => {
       expect(singlePixelReadCount()).toBe(2);
     });
 
+    test('returns no result when the combined pass reads a model index outside the picked models', async () => {
+      const { renderer: pickRenderer } = createPickRenderer({
+        singlePixel: (index, pixels) => writePickHit(pixels, index, { treeIndex: 9, modelIndex: 5, depthByte: 128 }, 0)
+      });
+
+      const results = await createCachedPickingHandler(pickRenderer).intersectCadNodes(
+        [cadNode],
+        createPickInput(pickRenderer, pickCamera)
+      );
+
+      expect(results).toHaveLength(0);
+    });
+
     test('does not render when no model can be under the picked pixel', async () => {
       const { renderer: pickRenderer, singlePixelReadCount } = createPickRenderer();
       pickCamera.position.z -= 1e6;

@@ -6,16 +6,12 @@ import type { Box3, PerspectiveCamera, Ray, WebGLRenderer } from 'three';
 import { Color, Raycaster, Scene, Vector3, WebGLRenderTarget } from 'three';
 import type { IntersectInput } from '@reveal/model-base';
 import type { CadMaterialManager, RenderPipelineProvider } from '@reveal/rendering';
-import {
-  BasicPipelineExecutor,
-  CadGeometryRenderModePipelineProvider,
-  forEachMaterial,
-  RenderMode
-} from '@reveal/rendering';
+import { BasicPipelineExecutor, CadGeometryRenderModePipelineProvider, RenderMode } from '@reveal/rendering';
 import type { SceneHandler } from '@reveal/utilities';
 import { WebGLRendererStateHelper } from '@reveal/utilities';
 import type { CadNode } from '../wrappers/CadNode';
 import { Mutex } from 'async-mutex';
+import { assignModelIndices, MAX_COMBINED_PICK_MODELS } from './assignModelIndices';
 import { CadPickBuffer } from './CadPickBuffer';
 import { CadPickCache } from './CadPickCache';
 import { depthToIntersection } from './depthToIntersection';
@@ -37,10 +33,6 @@ type TreeIndexPickingInput = PickingInput & {
 };
 
 export class PickingHandler {
-  // The model a hit belongs to is encoded as `modelIndex + 1` in the alpha byte of the tree index pass
-  // (0 = no hit), so at most 255 models can be picked in one combined pass.
-  private static readonly MaxCombinedPickModels = 255;
-
   private readonly _clearColor: Color;
   private readonly _clearAlpha: number;
   private readonly _raycaster: Raycaster;
@@ -111,7 +103,7 @@ export class PickingHandler {
    * @returns True if rendering must be paused during the pick.
    */
   public hidesModelsWhilePicking(cadNodes: CadNode[]): boolean {
-    return cadNodes.filter(node => node.visible).length > PickingHandler.MaxCombinedPickModels;
+    return cadNodes.filter(node => node.visible).length > MAX_COMBINED_PICK_MODELS;
   }
 
   public async intersectCadNodes(
@@ -140,7 +132,7 @@ export class PickingHandler {
 
       const filteredCadNodes = this.filterOutOfBoundCadNodes(visibleCadNodes, input);
 
-      if (visibleCadNodes.length <= PickingHandler.MaxCombinedPickModels) {
+      if (!this.hidesModelsWhilePicking(visibleCadNodes)) {
         if (filteredCadNodes.length === 0) {
           return results;
         }
@@ -192,14 +184,7 @@ export class PickingHandler {
     input: IntersectInput,
     shouldRunAsync: boolean
   ): Promise<IntersectCadNodesResult | undefined> {
-    visibleCadNodes.forEach((cadNode, index) => {
-      forEachMaterial(cadNode.cadMaterial.materials, material => {
-        if (material.uniforms.modelIndex === undefined) {
-          throw new Error('CAD material has no modelIndex uniform, cannot pick the models in one pass');
-        }
-        material.uniforms.modelIndex.value = index;
-      });
-    });
+    assignModelIndices(visibleCadNodes);
 
     // The camera can move while waiting for the pixels, so keep the one the passes are rendered with
     const camera = input.camera.clone();
