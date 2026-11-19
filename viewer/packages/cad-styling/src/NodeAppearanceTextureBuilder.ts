@@ -18,6 +18,7 @@ export class NodeAppearanceTextureBuilder {
   private readonly _handleStylesChangedListener = this.handleStylesChanged.bind(this);
 
   private _needsUpdate = true;
+  private _nodeSetsVersion = 0;
   private readonly _allTreeIndices: IndexSet;
   private readonly _overrideColorDefaultAppearanceRgba: Uint8ClampedArray;
   private readonly _overrideColorPerTreeIndexTexture: DataTexture;
@@ -91,6 +92,14 @@ export class NodeAppearanceTextureBuilder {
   }
 
   /**
+   * Incremented every time build() has repopulated the node sets (visible, ghosted, in front and
+   * regular). Lets consumers that cache data derived from the sets detect that it is outdated.
+   */
+  get nodeSetsVersion(): number {
+    return this._nodeSetsVersion;
+  }
+
+  /**
    * A texture holding at least one element per node with color override
    * and style information. RGB is used to store color, A is used to store
    * style toggles, with the following bit layout:
@@ -125,6 +134,7 @@ export class NodeAppearanceTextureBuilder {
     const pickableBefore = this.snapshotPickableSets();
     this.populateTexture(rgba);
     this.populateNodeSets(rgba);
+    this._nodeSetsVersion++;
     if (!areSnapshotsEqual(pickableBefore, this.snapshotPickableSets())) {
       this._pickCacheInvalidator.request();
     }

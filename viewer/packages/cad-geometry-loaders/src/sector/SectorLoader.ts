@@ -3,6 +3,7 @@
  */
 
 import type { ConsumedSector, WantedSector, CadModelMetadata } from '@reveal/cad-parsers';
+import { LevelOfDetail } from '@reveal/cad-parsers';
 
 import type { DetermineSectorsInput, DetermineSectorsPayload, SectorLoadingSpent } from './culling/types';
 import type { SectorCuller } from './culling/SectorCuller';
@@ -89,9 +90,23 @@ export class SectorLoader {
     this._collectStatisticsCallback(prioritizedResult.spentBudget);
 
     const hasSectorChanged = this._modelStateHandler.hasStateChanged.bind(this._modelStateHandler);
+    // With an unlimited budget nothing has to be evicted to make room, so models that opt in keep
+    // loaded sectors when they leave the view instead of unloading and later rebuilding them.
+    const modelsKeepingLoadedSectors =
+      input.budget.maximumRenderCost === Infinity
+        ? new Set(
+            visibleCadModels
+              .filter(model => model.keepLoadedSectors)
+              .map(model => model.cadModelMetadata.modelIdentifier.revealInternalId)
+          )
+        : new Set<symbol>();
 
-    const changedSectors = prioritizedResult.wantedSectors.filter(sector =>
-      hasSectorChanged(sector.modelIdentifier.revealInternalId, sector.metadata.id, sector.levelOfDetail)
+    const changedSectors = prioritizedResult.wantedSectors.filter(
+      sector =>
+        !(
+          sector.levelOfDetail === LevelOfDetail.Discarded &&
+          modelsKeepingLoadedSectors.has(sector.modelIdentifier.revealInternalId)
+        ) && hasSectorChanged(sector.modelIdentifier.revealInternalId, sector.metadata.id, sector.levelOfDetail)
     );
 
     this._progressHelper.reset(changedSectors.length);

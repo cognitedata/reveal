@@ -247,6 +247,25 @@ describe(CadNode.name, () => {
     expect(setModelRenderLayersSpy).toHaveBeenCalled();
   });
 
+  test('renderOnlyVisibleInstances is disabled by default and requests a redraw when changed', () => {
+    const cadNode = createCadNode();
+    expect(cadNode.renderOnlyVisibleInstances).toBe(false);
+
+    cadNode.renderOnlyVisibleInstances = true;
+
+    expect(cadNode.renderOnlyVisibleInstances).toBe(true);
+    expect(cadNode.needsRedraw).toBe(true);
+  });
+
+  test('keepLoadedSectors is disabled by default and can be enabled', () => {
+    const cadNode = createCadNode();
+    expect(cadNode.keepLoadedSectors).toBe(false);
+
+    cadNode.keepLoadedSectors = true;
+
+    expect(cadNode.keepLoadedSectors).toBe(true);
+  });
+
   test('clippingPlanes getter returns current clipping planes', () => {
     const cadNode = createCadNode();
 
