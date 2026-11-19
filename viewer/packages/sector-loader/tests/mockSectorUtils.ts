@@ -8,7 +8,7 @@ import { LocalModelIdentifier } from '@reveal/data-providers';
 import type { IMock } from 'moq.ts';
 import { Mock, It } from 'moq.ts';
 
-import { readFileAsArrayBuffer } from '../../../test-utilities';
+import { readFileAsArrayBuffer } from '../../../test-utilities/src/readFileAsArrayBuffer';
 
 export const defaultBaseUrl = 'https://some_baseurl.com';
 const modelIdentifier = new LocalModelIdentifier('some_model_identifier');
