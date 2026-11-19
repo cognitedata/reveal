@@ -41,7 +41,7 @@ export class DynamicDefragmentedBuffer<T extends TypedArray> {
 
     this._type = type;
 
-    const minimalPowerOfTwo = Math.pow(2, Math.ceil(Math.log2(initialSize)));
+    const minimalPowerOfTwo = nextPowerOfTwo(initialSize);
     this._minimumCapacity = minimalPowerOfTwo;
     this._bufferView = new type(minimalPowerOfTwo);
   }

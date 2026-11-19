@@ -160,6 +160,17 @@ describe(MultiBufferBatchingManager.name, () => {
     expect(() => manager.removeSectorBatches(2)).not.toThrow();
   });
 
+  test('dispose() removes all meshes and disposes their geometries', () => {
+    manager.batchGeometries([createParsedGeometry(RevealGeometryCollectionType.BoxCollection, 10, 0)], 1);
+    manager.batchGeometries([createParsedGeometry(RevealGeometryCollectionType.CircleCollection, 20, 1)], 2);
+    const disposeSpies = getMeshes().map(mesh => vi.spyOn(mesh.geometry, 'dispose'));
+
+    manager.dispose();
+
+    expect(geometryGroup.children).toHaveLength(0);
+    disposeSpies.forEach(disposeSpy => expect(disposeSpy).toHaveBeenCalledTimes(1));
+  });
+
   describe('batch buffer memory', () => {
     const initialBufferSize = 1024;
 
@@ -174,10 +185,6 @@ describe(MultiBufferBatchingManager.name, () => {
       manager.batchGeometries([geometry], sectorId);
       return geometry;
     }
-
-    beforeEach(() => {
-      manager = createManager();
-    });
 
     test('batchGeometries() lets the instance attributes of a mesh share one interleaved buffer', () => {
       batchBoxSector(1, [1, 2, 3]);
