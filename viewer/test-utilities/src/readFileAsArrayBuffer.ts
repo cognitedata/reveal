@@ -10,8 +10,14 @@ import * as fs from 'fs';
  * shared ArrayBuffer (e.g. a 64 KiB block in Node 24), so `.buffer` can contain unrelated bytes
  * and start at a different offset than the file. Consumers that read at absolute offsets
  * (such as the GLB parser) would then fail.
+ *
+ * @param filePath Path of the file to read.
+ * @param readFile Function used to read the file. Defaults to `fs.readFileSync`; only override in tests.
  */
-export function readFileAsArrayBuffer(filePath: string): ArrayBuffer {
-  const buffer = fs.readFileSync(filePath);
+export function readFileAsArrayBuffer(
+  filePath: string,
+  readFile: (filePath: string) => Buffer = fs.readFileSync
+): ArrayBuffer {
+  const buffer = readFile(filePath);
   return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) as ArrayBuffer;
 }
