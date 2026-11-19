@@ -65,7 +65,7 @@ type BatchBuffer = {
  * Essentially this works by allocating up to n (numberOfInstanceBatches) buffers for each unique instanced type
  * and continually filling / ejecting data from those buffers when new sectors are added / removed.
  * Each buffer is a draw call, so a type starts with one buffer and gets another one only when its buffers hold
- * at least additionalBufferThresholdBytes each. With a threshold of 0, all n buffers are allocated up front.
+ * at least additionalBufferThresholdBytes each.
  */
 export class MultiBufferBatchingManager implements DrawCallBatchingManager {
   private readonly _sectorBatches: Map<number, SectorBatch>;
@@ -83,6 +83,7 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     private readonly numberOfInstanceBatches = 2,
     private readonly additionalBufferThresholdBytes = 256 * 1024
   ) {
+    assert(additionalBufferThresholdBytes >= 0, 'additionalBufferThresholdBytes must be zero or greater');
     this._sectorBatches = new Map();
     this._instanceBatches = new Map();
     this._materials = materials;
@@ -321,10 +322,7 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
       return instanceBatch;
     }
 
-    const initialBufferCount = this.additionalBufferThresholdBytes === 0 ? this.numberOfInstanceBatches : 1;
-    const batchBuffers: BatchBuffer[] = Array.from({ length: initialBufferCount }, () =>
-      this.createBatchBuffer(parsedGeometry.geometryBuffer, parsedGeometry.type)
-    );
+    const batchBuffers: BatchBuffer[] = [this.createBatchBuffer(parsedGeometry.geometryBuffer, parsedGeometry.type)];
 
     const newInstanceBatch: InstanceBatch = { buffers: batchBuffers, type: parsedGeometry.type };
     this._instanceBatches.set(parsedGeometry.instanceId, newInstanceBatch);

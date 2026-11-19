@@ -16,7 +16,6 @@ describe(MultiBufferBatchingManager.name, () => {
   let geometryGroup: Group;
   let manager: MultiBufferBatchingManager;
   const numberOfInstanceBuffers = 2;
-  const allBuffersUpFrontThreshold = 0;
 
   function createManager(additionalBufferThresholdBytes?: number): MultiBufferBatchingManager {
     const materials = new Mock<Materials>().object();
@@ -46,14 +45,14 @@ describe(MultiBufferBatchingManager.name, () => {
 
   beforeEach(() => {
     geometryGroup = new Group();
-    manager = createManager(allBuffersUpFrontThreshold);
+    manager = createManager();
   });
 
   test('batchGeometries() first time adds new geometry to group', () => {
     const geometries = [createParsedGeometry(RevealGeometryCollectionType.BoxCollection, 10, 0)];
     manager.batchGeometries(geometries, 1);
 
-    expect(geometryGroup.children.length).toBe(numberOfInstanceBuffers);
+    expect(geometryGroup.children.length).toBe(1);
   });
 
   test('batchGeometries() second time with same geometry type doesnt add new geometry to group', () => {
@@ -65,7 +64,7 @@ describe(MultiBufferBatchingManager.name, () => {
     manager.batchGeometries(geometries2, 2);
     manager.batchGeometries(geometries3, 3);
 
-    expect(geometryGroup.children.length).toBe(numberOfInstanceBuffers);
+    expect(geometryGroup.children.length).toBe(1);
     expect(sum(getMeshes().map(mesh => mesh.count))).toBe(60);
   });
 
@@ -75,7 +74,7 @@ describe(MultiBufferBatchingManager.name, () => {
     manager.batchGeometries(geometries1, 1);
     manager.batchGeometries(geometries2, 2);
 
-    expect(geometryGroup.children.length).toBe(2 * numberOfInstanceBuffers);
+    expect(geometryGroup.children.length).toBe(2);
   });
 
   test('batchGeometries() adds relevant tree indices to mesh', () => {
@@ -119,14 +118,14 @@ describe(MultiBufferBatchingManager.name, () => {
 
     manager.removeSectorBatches(1);
 
-    expect(geometryGroup.children[0].userData.treeIndices.size).toBe(0);
+    expect(geometryGroup.children[0].userData.treeIndices.size).toBe(treeIndices2.length);
 
-    expect(geometryGroup.children[1].userData.treeIndices.keys()).not.toContain(treeIndices1[0]);
-    expect(geometryGroup.children[1].userData.treeIndices.keys()).not.toContain(treeIndices1[1]);
-    expect(geometryGroup.children[1].userData.treeIndices.keys()).not.toContain(treeIndices1[2]);
-    expect(geometryGroup.children[1].userData.treeIndices.keys()).toContain(treeIndices2[0]);
-    expect(geometryGroup.children[1].userData.treeIndices.keys()).toContain(treeIndices2[1]);
-    expect(geometryGroup.children[1].userData.treeIndices.keys()).toContain(treeIndices2[2]);
+    expect(geometryGroup.children[0].userData.treeIndices.keys()).not.toContain(treeIndices1[0]);
+    expect(geometryGroup.children[0].userData.treeIndices.keys()).not.toContain(treeIndices1[1]);
+    expect(geometryGroup.children[0].userData.treeIndices.keys()).not.toContain(treeIndices1[2]);
+    expect(geometryGroup.children[0].userData.treeIndices.keys()).toContain(treeIndices2[0]);
+    expect(geometryGroup.children[0].userData.treeIndices.keys()).toContain(treeIndices2[1]);
+    expect(geometryGroup.children[0].userData.treeIndices.keys()).toContain(treeIndices2[2]);
   });
 
   test('removeSectorBatches() preserves indices added more than once', () => {
@@ -150,9 +149,10 @@ describe(MultiBufferBatchingManager.name, () => {
 
     manager.removeSectorBatches(3);
 
-    expect(geometryGroup.children[0].userData.treeIndices.size).toBe(2);
+    expect(geometryGroup.children[0].userData.treeIndices.size).toBe(4);
     expect(geometryGroup.children[0].userData.treeIndices.keys()).toContain(treeIndices1[0]);
     expect(geometryGroup.children[0].userData.treeIndices.keys()).toContain(treeIndices1[1]);
+    expect(geometryGroup.children[0].userData.treeIndices.keys()).not.toContain(treeIndices3[1]);
   });
 
   test('removeSectorBatches() ignores invalid sectorId', () => {
@@ -170,13 +170,8 @@ describe(MultiBufferBatchingManager.name, () => {
       manager.batchGeometries(geometries, sectorId);
     }
 
-    test('batchGeometries() first time adds a single mesh per geometry type by default', () => {
-      manager = createManager();
-
-      manager.batchGeometries([createParsedGeometry(RevealGeometryCollectionType.BoxCollection, 10, 0)], 1);
-      manager.batchGeometries([createParsedGeometry(RevealGeometryCollectionType.CircleCollection, 20, 1)], 2);
-
-      expect(geometryGroup.children.length).toBe(2);
+    test.each([Number.NaN, -1])('constructor throws for an additional buffer threshold of %s', threshold => {
+      expect(() => createManager(threshold)).toThrow('additionalBufferThresholdBytes must be zero or greater');
     });
 
     test('batchGeometries() keeps a single mesh while the buffer is smaller than the threshold', () => {
