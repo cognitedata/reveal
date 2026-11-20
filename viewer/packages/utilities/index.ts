@@ -7,6 +7,7 @@ export { transformCameraConfiguration } from './src/transformCameraConfiguration
 
 export { RandomColors } from './src/RandomColors';
 export type { CameraConfiguration } from './src/CameraConfiguration';
+export { ConcurrencyLimiter } from './src/ConcurrencyLimiter';
 
 export type { EventListener } from './src/events/EventTrigger';
 export { EventTrigger } from './src/events/EventTrigger';
