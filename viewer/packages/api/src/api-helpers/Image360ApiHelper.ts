@@ -99,14 +99,13 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   // Reused across frames to avoid per-frame allocations in the per-collection visibility
   // check in onBeforeRender below.
   private readonly _iconUpdateFrustum = new Frustum();
-  private readonly _iconUpdateViewMatrix = new Matrix4();
   private readonly _iconUpdateProjScreenMatrix = new Matrix4();
   private readonly _iconUpdateBoundingSphere = new Sphere();
 
   private readonly onBeforeRender: BeforeSceneRenderedDelegate = params => {
     const { camera } = params;
-    this._iconUpdateViewMatrix.copy(camera.matrixWorld).invert();
-    this._iconUpdateProjScreenMatrix.multiplyMatrices(camera.projectionMatrix, this._iconUpdateViewMatrix);
+    camera.updateMatrixWorld();
+    this._iconUpdateProjScreenMatrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
     this._iconUpdateFrustum.setFromProjectionMatrix(this._iconUpdateProjScreenMatrix);
 
     for (const collection of this._image360Facade.collections) {
