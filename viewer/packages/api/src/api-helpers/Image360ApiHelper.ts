@@ -101,6 +101,11 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   private readonly _iconUpdateFrustum = new Frustum();
   private readonly _iconUpdateProjScreenMatrix = new Matrix4();
   private readonly _iconUpdateBoundingSphere = new Sphere();
+  // Collections that were updated while inside the frustum on the previous frame. A collection
+  // that has just left the frustum gets one last update so that state derived from the camera
+  // (visible clusters, HTML cluster elements, floor discs) is cleared rather than left stale.
+  // A WeakSet so removed collections need no explicit pruning.
+  private readonly _collectionsUpdatedLastFrame = new WeakSet<DefaultImage360Collection<DataSourceT>>();
 
   private readonly onBeforeRender: BeforeSceneRenderedDelegate = params => {
     const { camera } = params;
@@ -114,8 +119,12 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       // whether it's visible, which scales badly with the number of loaded collections.
       const bounds = collection.getWorldBoundingSphere(this._iconUpdateBoundingSphere);
       if (!this._iconUpdateFrustum.intersectsSphere(bounds)) {
+        if (this._collectionsUpdatedLastFrame.delete(collection)) {
+          collection.updateIcons(params);
+        }
         continue;
       }
+      this._collectionsUpdatedLastFrame.add(collection);
       collection.updateIcons(params);
     }
     this._htmlClusterCoordinator?.runCoordinator(this._image360Facade.collections);
@@ -135,6 +144,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   // updateHoverStateOnRenderHandler.
   private readonly _lastHoverCheckCameraPosition = new Vector3();
   private readonly _lastHoverCheckCameraQuaternion = new Quaternion();
+  private readonly _lastHoverCheckProjectionMatrix = new Matrix4();
   private _hoverCheckCameraStateInitialized = false;
 
   private readonly updateHoverStateOnRenderHandler = () => {
@@ -145,16 +155,19 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
 
     // setHoverIconOnIntersect (called from the pointermove handler, onHover) already
     // reacts immediately to actual pointer movement. This handler's job is only to keep
-    // the hover state correct when the camera moves while the pointer stays still - so
-    // skip the (raycast-based, per-collection) recheck entirely when the camera hasn't
-    // moved since we last checked.
+    // the hover state correct when something other than the pointer changes what is under
+    // it - so skip the (raycast-based, per-collection) recheck when the camera pose and
+    // projection (FOV, aspect ratio, zoom) are unchanged since we last checked, and no
+    // collection or icon state has requested a redraw (collection added/removed, icon
+    // visibility, opacity and so on).
     const camera = this._activeCameraManager.getCamera();
-    const cameraMoved =
+    const cameraChanged =
       !this._hoverCheckCameraStateInitialized ||
       !camera.position.equals(this._lastHoverCheckCameraPosition) ||
-      !camera.quaternion.equals(this._lastHoverCheckCameraQuaternion);
+      !camera.quaternion.equals(this._lastHoverCheckCameraQuaternion) ||
+      !camera.projectionMatrix.equals(this._lastHoverCheckProjectionMatrix);
 
-    if (!cameraMoved) {
+    if (!cameraChanged && !this.needsRedraw) {
       return;
     }
 
@@ -880,6 +893,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     // regardless of what triggered this check, so a pointermove doesn't leave it stale.
     this._lastHoverCheckCameraPosition.copy(camera.position);
     this._lastHoverCheckCameraQuaternion.copy(camera.quaternion);
+    this._lastHoverCheckProjectionMatrix.copy(camera.projectionMatrix);
     this._hoverCheckCameraStateInitialized = true;
 
     const clusterIntersection = this._image360Facade.intersectCluster(ndcVector, camera);

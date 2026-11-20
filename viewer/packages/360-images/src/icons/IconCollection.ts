@@ -43,29 +43,43 @@ export type ClusterIntersectionData = {
 // canvas texture. These caches let collections share one GPU texture per size instead of each
 // generating and uploading its own - the common case is every collection in an app sharing the
 // same platform-derived pixel size, so this typically collapses to a single texture of each
-// kind for the whole app. Not disposed: each texture is at most 256x256 and there are only ever
-// as many cache entries as distinct pixel sizes actually requested, so they're kept alive for
-// the page's lifetime rather than reference-counted.
-const sharedOuterRingsTextures = new Map<number, CanvasTexture>();
-const sharedHoverIconTextures = new Map<number, CanvasTexture>();
+// kind for the whole app.
+//
+// The textures are reference-counted and disposed when the last collection using them is
+// disposed. They must not outlive the collections: three.js registers a 'dispose' listener on a
+// texture for every renderer that uploads it, and that listener keeps the renderer's GL state
+// reachable until the texture is disposed. A page-lifetime cache would therefore pin every
+// renderer (and canvas) of every viewer that was ever created and disposed.
+class SharedCanvasTextureCache {
+  private readonly _entries = new Map<number, { texture: CanvasTexture; refCount: number }>();
 
-function getSharedOuterRingsTexture(pixelSize: number): CanvasTexture {
-  let texture = sharedOuterRingsTextures.get(pixelSize);
-  if (texture === undefined) {
-    texture = createOuterRingsTextureForSize(pixelSize);
-    sharedOuterRingsTextures.set(pixelSize, texture);
+  constructor(private readonly _createTexture: (pixelSize: number) => CanvasTexture) {}
+
+  public acquire(pixelSize: number): CanvasTexture {
+    let entry = this._entries.get(pixelSize);
+    if (entry === undefined) {
+      entry = { texture: this._createTexture(pixelSize), refCount: 0 };
+      this._entries.set(pixelSize, entry);
+    }
+    entry.refCount++;
+    return entry.texture;
   }
-  return texture;
+
+  public release(pixelSize: number): void {
+    const entry = this._entries.get(pixelSize);
+    if (entry === undefined) {
+      return;
+    }
+    entry.refCount--;
+    if (entry.refCount <= 0) {
+      entry.texture.dispose();
+      this._entries.delete(pixelSize);
+    }
+  }
 }
 
-function getSharedHoverIconTexture(pixelSize: number): CanvasTexture {
-  let texture = sharedHoverIconTextures.get(pixelSize);
-  if (texture === undefined) {
-    texture = createHoverIconTextureForSize(pixelSize);
-    sharedHoverIconTextures.set(pixelSize, texture);
-  }
-  return texture;
-}
+const sharedOuterRingsTextures = new SharedCanvasTextureCache(createOuterRingsTextureForSize);
+const sharedHoverIconTextures = new SharedCanvasTextureCache(createHoverIconTextureForSize);
 
 function createOuterRingsTextureForSize(textureSize: number): CanvasTexture {
   const canvas = document.createElement('canvas');
@@ -148,6 +162,7 @@ export class IconCollection {
   private readonly _localBoundingSphere: Sphere;
   private readonly _boundingSphereTransform = new Matrix4();
   private readonly _boundingSphereScale = new Vector3();
+  private _texturesReleased = false;
   private readonly _computeClustersEventHandler: BeforeSceneRenderedDelegate;
   private readonly _computeProximityPointsEventHandler: BeforeSceneRenderedDelegate;
   private readonly _adaptiveScaleRenderSize = new Vector2();
@@ -288,7 +303,7 @@ export class IconCollection {
       iconOptions?.htmlClusterOptions?.clusterDistanceThreshold ?? this._clusterDistanceThreshold;
     this._maxOctreeDepth = iconOptions?.htmlClusterOptions?.maxOctreeDepth ?? this._maxOctreeDepth;
 
-    const sharedTexture = getSharedOuterRingsTexture(this._maxPixelSize);
+    const sharedTexture = sharedOuterRingsTextures.acquire(this._maxPixelSize);
 
     // Create OverlayPointsObject with sprite texture (used for individual icons in both modes)
     const pointsObjects = new OverlayPointsObject(points.length, {
@@ -304,7 +319,7 @@ export class IconCollection {
       this._htmlRenderer = new HtmlClusterRenderer(iconOptions?.htmlClusterOptions);
     }
 
-    this._hoverIconTexture = getSharedHoverIconTexture(this._maxPixelSize);
+    this._hoverIconTexture = sharedHoverIconTextures.acquire(this._maxPixelSize);
     this._hoverSprite = this.createHoverSprite(this._hoverIconTexture);
 
     this._floorDiscs = new FlooredIconManager(
@@ -350,6 +365,10 @@ export class IconCollection {
    * collection, cheap enough to call every frame. Used to skip per-frame icon/LOD updates
    * for collections that aren't anywhere near the camera - see IconCollection.updateIcons
    * callers.
+   *
+   * The radius is padded by the icon radius and the floor disc height offset, since the sphere
+   * is built from icon centers only while icons and floor discs (drawn below the icons in floor
+   * mode) have a world-space extent of their own.
    */
   public getWorldBoundingSphere(out: Sphere = new Sphere()): Sphere {
     const transform = this.getTransform(this._boundingSphereTransform);
@@ -357,7 +376,8 @@ export class IconCollection {
 
     const scale = this._boundingSphereScale.setFromMatrixScale(transform);
     const maxScale = Math.max(scale.x, scale.y, scale.z);
-    out.radius = this._localBoundingSphere.radius * maxScale;
+    out.radius =
+      this._localBoundingSphere.radius * maxScale + this._iconRadius + FlooredIconManager.FloorDiscHeightOffset;
 
     return out;
   }
@@ -800,14 +820,20 @@ export class IconCollection {
     this._icons.forEach(icon => icon.dispose());
     this._icons.splice(0, this._icons.length);
     this._pointsObject.dispose();
-    // this._sharedTexture and this._hoverIconTexture are shared with other collections of the
-    // same pixel size (see getSharedOuterRingsTexture / getSharedHoverIconTexture) and must
-    // not be disposed here.
 
     this._floorDiscs.dispose();
 
     this._sceneHandler.removeObject3D(this._hoverSprite);
     this._hoverSprite.material.dispose();
+
+    // this._sharedTexture and this._hoverIconTexture are shared with other collections of the
+    // same pixel size, so only drop this collection's reference. The cache disposes a texture
+    // once the last collection using it is gone.
+    if (!this._texturesReleased) {
+      this._texturesReleased = true;
+      sharedOuterRingsTextures.release(this._maxPixelSize);
+      sharedHoverIconTextures.release(this._maxPixelSize);
+    }
 
     this._htmlRenderer?.dispose();
   }

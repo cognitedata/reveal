@@ -824,9 +824,130 @@ describe(Image360ApiHelper.name, () => {
       expect(updates).toHaveBeenCalledTimes(1);
       testHelper.dispose();
     });
+
+    test('does one final update when a collection leaves the frustum, then skips it until it is visible again', () => {
+      const updates = vi.fn();
+      // The test camera is at z=10 looking at the origin, so z=500 is behind it
+      const bounds = new Sphere(new Vector3(0, 0, 0), 1);
+      const collection = createCollectionWithBounds(bounds, updates);
+      const {
+        helper: testHelper,
+        onBeforeSceneRendered,
+        camera
+      } = createTestHelper(domElement, sdk, 'mock', undefined, false, createMockFacade({ collections: [collection] }));
+      const params = createRenderParams(camera);
+
+      onBeforeSceneRendered.fire(params);
+      expect(updates).toHaveBeenCalledTimes(1);
+
+      // Leaves the frustum: one last update clears camera-derived state (clusters, floor discs)
+      bounds.center.set(0, 0, 500);
+      onBeforeSceneRendered.fire(params);
+      expect(updates).toHaveBeenCalledTimes(2);
+
+      // Still outside: skipped
+      onBeforeSceneRendered.fire(params);
+      onBeforeSceneRendered.fire(params);
+      expect(updates).toHaveBeenCalledTimes(2);
+
+      // Back inside: updated again
+      bounds.center.set(0, 0, 0);
+      onBeforeSceneRendered.fire(params);
+      expect(updates).toHaveBeenCalledTimes(3);
+      testHelper.dispose();
+    });
+
+    test('never updates a collection that has not been inside the frustum', () => {
+      const updates = vi.fn();
+      const collection = createCollectionWithBounds(new Sphere(new Vector3(0, 0, 500), 1), updates);
+      const {
+        helper: testHelper,
+        onBeforeSceneRendered,
+        camera
+      } = createTestHelper(domElement, sdk, 'mock', undefined, false, createMockFacade({ collections: [collection] }));
+
+      onBeforeSceneRendered.fire(createRenderParams(camera));
+      onBeforeSceneRendered.fire(createRenderParams(camera));
+
+      expect(updates).not.toHaveBeenCalled();
+      testHelper.dispose();
+    });
   });
 
   describe('hover recheck on render', () => {
+    test('rechecks hover when the camera projection changed even though the pose did not', () => {
+      const intersectCluster = vi.fn();
+      const {
+        helper: testHelper,
+        onBeforeSceneRendered,
+        camera
+      } = createTestHelper(
+        domElement,
+        sdk,
+        'mock',
+        undefined,
+        false,
+        createMockFacade({ onIntersectCluster: intersectCluster })
+      );
+      const params = { frameNumber: 0, renderer: new Mock<WebGLRenderer>().object(), camera };
+
+      testHelper.onHover(createPointerEvent(320, 240));
+      expect(intersectCluster).toHaveBeenCalledTimes(1);
+
+      // E.g. a canvas resize or a FOV change
+      camera.aspect = 2;
+      camera.fov = 90;
+      camera.updateProjectionMatrix();
+      onBeforeSceneRendered.fire(params);
+      expect(intersectCluster).toHaveBeenCalledTimes(2);
+
+      onBeforeSceneRendered.fire(params);
+      expect(intersectCluster).toHaveBeenCalledTimes(2);
+      testHelper.dispose();
+    });
+
+    test('rechecks hover while a collection has requested a redraw, even if the camera is still', () => {
+      const intersectCluster = vi.fn();
+      let collectionNeedsRedraw = false;
+      const collection = new Mock<DefaultImage360Collection<DataSourceType>>()
+        .setup(c => c.getWorldBoundingSphere(It.IsAny()))
+        .returns(new Sphere(new Vector3(0, 0, 0), 1))
+        .setup(c => c.updateIcons(It.IsAny()))
+        .returns(undefined)
+        .setup(c => c.needsRedraw)
+        .callback(() => collectionNeedsRedraw)
+        .object();
+      const {
+        helper: testHelper,
+        onBeforeSceneRendered,
+        camera
+      } = createTestHelper(
+        domElement,
+        sdk,
+        'mock',
+        undefined,
+        false,
+        createMockFacade({ collections: [collection], onIntersectCluster: intersectCluster })
+      );
+      const params = { frameNumber: 0, renderer: new Mock<WebGLRenderer>().object(), camera };
+
+      testHelper.onHover(createPointerEvent(320, 240));
+      expect(intersectCluster).toHaveBeenCalledTimes(1);
+
+      onBeforeSceneRendered.fire(params);
+      expect(intersectCluster).toHaveBeenCalledTimes(1);
+
+      // E.g. icon visibility was toggled or a collection was added or removed
+      collectionNeedsRedraw = true;
+      onBeforeSceneRendered.fire(params);
+      expect(intersectCluster).toHaveBeenCalledTimes(2);
+
+      collectionNeedsRedraw = false;
+      onBeforeSceneRendered.fire(params);
+      expect(intersectCluster).toHaveBeenCalledTimes(2);
+      testHelper.dispose();
+    });
+
     test('rechecks hover only when the camera moved since the last check', () => {
       const intersectCluster = vi.fn();
       const {
