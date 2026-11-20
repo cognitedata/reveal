@@ -42,7 +42,7 @@ export async function fetchDMModelIdFromRevisionId(
   return { modelId, revisionId };
 }
 
-function extractNumericId(externalId: string): number | null {
+export function extractNumericId(externalId: string): number | null {
   const lastUnderscoreIndex = externalId.lastIndexOf('_');
   if (lastUnderscoreIndex === -1) {
     return null;
