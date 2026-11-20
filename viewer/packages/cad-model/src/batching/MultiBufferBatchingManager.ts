@@ -120,12 +120,13 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
       const batchUpdateRange = buffer.getRangeForBatchId(batchId);
       this.removeTreeIndicesFromMeshUserData(mesh, batchUpdateRange, instanceAttributes);
 
-      const defragBufferUpdateRange = buffer.remove(batchId);
+      const { byteOffset, byteCount, bufferIsReallocated } = buffer.remove(batchId);
 
-      this.updateInstanceAttributes(instanceAttributes, {
-        byteOffset: defragBufferUpdateRange.byteOffset,
-        byteCount: defragBufferUpdateRange.byteCount
-      });
+      if (bufferIsReallocated) {
+        this.reallocateBufferGeometry(batchBuffer);
+      } else {
+        this.updateInstanceAttributes(instanceAttributes, { byteOffset, byteCount });
+      }
 
       mesh.count -= instanceCount;
 
@@ -135,6 +136,8 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     });
 
     this._sectorBatches.delete(sectorId);
+
+    sectorBatch.instanceBatches.forEach((_, instanceId) => this.disposeInstanceBatchIfEmpty(instanceId));
   }
 
   public dispose(): void {
@@ -143,14 +146,28 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     }
 
     for (const { buffers } of this._instanceBatches.values()) {
-      buffers.forEach(batchBuffer => {
-        this._batchGroup.remove(batchBuffer.mesh);
-        batchBuffer.mesh.geometry.dispose();
-      });
+      this.disposeBatchBuffers(buffers);
     }
 
     this._sectorBatches.clear();
     this._instanceBatches.clear();
+  }
+
+  private disposeInstanceBatchIfEmpty(instanceId: string): void {
+    const instanceBatch = this._instanceBatches.get(instanceId);
+    if (instanceBatch === undefined || instanceBatch.buffers.some(({ buffer }) => buffer.batchCount > 0)) {
+      return;
+    }
+
+    this.disposeBatchBuffers(instanceBatch.buffers);
+    this._instanceBatches.delete(instanceId);
+  }
+
+  private disposeBatchBuffers(buffers: BatchBuffer[]): void {
+    buffers.forEach(({ mesh }) => {
+      this._batchGroup.remove(mesh);
+      mesh.geometry.dispose();
+    });
   }
 
   private removeTreeIndicesFromMeshUserData(
@@ -198,12 +215,6 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
 
     sectorBatch.instanceBatches.set(instanceId, sectorInstanceData);
 
-    GeometryBufferUtils.getAttributes(batchBuffer.mesh.geometry, InterleavedBufferAttribute).forEach(
-      ({ attribute }) => {
-        attribute.data.needsUpdate = true;
-      }
-    );
-
     const sourceInstanceAttributes = GeometryBufferUtils.getAttributes(bufferGeometry, InterleavedBufferAttribute);
 
     this.addTreeIndicesToMeshUserData(sourceInstanceAttributes, batchBuffer);
@@ -211,7 +222,11 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     if (bufferIsReallocated) {
       this.reallocateBufferGeometry(batchBuffer);
     } else {
-      this.updateInstanceAttributes(sourceInstanceAttributes, updateRange);
+      const batchInstanceAttributes = GeometryBufferUtils.getAttributes(
+        batchBuffer.mesh.geometry,
+        InterleavedBufferAttribute
+      );
+      this.updateInstanceAttributes(batchInstanceAttributes, updateRange);
     }
 
     const instanceCount = sourceInstanceAttributes[0].attribute.count;
@@ -269,6 +284,9 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
       byteCount: number;
     }
   ) {
+    if (updateRange.byteCount === 0) {
+      return;
+    }
     instanceAttributes.forEach(namedAttribute => {
       const attribute = namedAttribute.attribute;
       this.extendUpdateRange(attribute, updateRange);

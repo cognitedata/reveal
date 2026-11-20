@@ -20,9 +20,14 @@ export class DynamicDefragmentedBuffer<T extends TypedArray> {
     return this._bufferView;
   }
 
+  public get batchCount(): number {
+    return this._batchMap.size;
+  }
+
   private _bufferView: T;
   private _numFilled: number;
   private readonly _type: new (length: number) => T;
+  private readonly _minimumCapacity: number;
 
   private readonly _batchMap: Map<number, Batch>;
   private _currentTail: Batch | undefined;
@@ -36,7 +41,8 @@ export class DynamicDefragmentedBuffer<T extends TypedArray> {
 
     this._type = type;
 
-    const minimalPowerOfTwo = Math.pow(2, Math.ceil(Math.log2(initialSize)));
+    const minimalPowerOfTwo = nextPowerOfTwo(initialSize);
+    this._minimumCapacity = minimalPowerOfTwo;
     this._bufferView = new type(minimalPowerOfTwo);
   }
 
@@ -50,7 +56,7 @@ export class DynamicDefragmentedBuffer<T extends TypedArray> {
   } {
     let isReallocated = false;
     if (this._numFilled + array.length > this._bufferView.length) {
-      const newSize = Math.pow(2, Math.ceil(Math.log2(this._numFilled + array.length)));
+      const newSize = nextPowerOfTwo(this._numFilled + array.length);
       this.allocateNewBuffer(newSize);
       isReallocated = true;
     }
@@ -71,6 +77,7 @@ export class DynamicDefragmentedBuffer<T extends TypedArray> {
   public remove(batchId: number): {
     byteOffset: number;
     byteCount: number;
+    bufferIsReallocated: boolean;
   } {
     const batch = this._batchMap.get(batchId);
 
@@ -109,7 +116,9 @@ export class DynamicDefragmentedBuffer<T extends TypedArray> {
 
     this._batchMap.delete(batchId);
 
-    return { byteOffset, byteCount };
+    const bufferIsReallocated = this.shrinkIfMostlyEmpty();
+
+    return { byteOffset, byteCount, bufferIsReallocated };
   }
 
   public getRangeForBatchId(batchId: number): { byteOffset: number; byteCount: number } {
@@ -143,10 +152,25 @@ export class DynamicDefragmentedBuffer<T extends TypedArray> {
     return batchId;
   }
 
+  private shrinkIfMostlyEmpty(): boolean {
+    const capacity = this._bufferView.length;
+    if (capacity <= this._minimumCapacity || this._numFilled > capacity / 4) {
+      return false;
+    }
+    // At most a quarter is filled, so the new size is at most half of the capacity
+    const newSize = Math.max(this._minimumCapacity, nextPowerOfTwo(this._numFilled * 2));
+    this.allocateNewBuffer(newSize);
+    return true;
+  }
+
   private allocateNewBuffer(newSize: number): void {
     const newBuffer = new this._type(newSize);
-    newBuffer.set(this._bufferView);
+    newBuffer.set(this._bufferView.subarray(0, this._numFilled));
 
     this._bufferView = newBuffer;
   }
+}
+
+function nextPowerOfTwo(value: number): number {
+  return Math.pow(2, Math.ceil(Math.log2(Math.max(1, value))));
 }
