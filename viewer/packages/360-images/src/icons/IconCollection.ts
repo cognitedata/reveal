@@ -38,6 +38,93 @@ export type ClusterIntersectionData = {
   clusterIcons: Overlay3DIcon[];
   representativeIcon: Overlay3DIcon;
 };
+
+// Every IconCollection with the same pixel size draws a byte-identical outer-rings/hover-icon
+// canvas texture. These caches let collections share one GPU texture per size instead of each
+// generating and uploading its own - the common case is every collection in an app sharing the
+// same platform-derived pixel size, so this typically collapses to a single texture of each
+// kind for the whole app. Not disposed: each texture is at most 256x256 and there are only ever
+// as many cache entries as distinct pixel sizes actually requested, so they're kept alive for
+// the page's lifetime rather than reference-counted.
+const sharedOuterRingsTextures = new Map<number, CanvasTexture>();
+const sharedHoverIconTextures = new Map<number, CanvasTexture>();
+
+function getSharedOuterRingsTexture(pixelSize: number): CanvasTexture {
+  let texture = sharedOuterRingsTextures.get(pixelSize);
+  if (texture === undefined) {
+    texture = createOuterRingsTextureForSize(pixelSize);
+    sharedOuterRingsTextures.set(pixelSize, texture);
+  }
+  return texture;
+}
+
+function getSharedHoverIconTexture(pixelSize: number): CanvasTexture {
+  let texture = sharedHoverIconTextures.get(pixelSize);
+  if (texture === undefined) {
+    texture = createHoverIconTextureForSize(pixelSize);
+    sharedHoverIconTextures.set(pixelSize, texture);
+  }
+  return texture;
+}
+
+function createOuterRingsTextureForSize(textureSize: number): CanvasTexture {
+  const canvas = document.createElement('canvas');
+  canvas.width = textureSize;
+  canvas.height = textureSize;
+
+  const halfTextureSize = textureSize * 0.5;
+
+  const context = canvas.getContext('2d')!;
+  drawInnerCircle();
+  drawOuterCircle();
+
+  return new CanvasTexture(canvas);
+
+  function drawOuterCircle() {
+    context.beginPath();
+    context.lineWidth = textureSize / 16;
+    context.strokeStyle = '#FFFFFF';
+    context.arc(halfTextureSize, halfTextureSize, halfTextureSize - context.lineWidth / 2 - 2, 0, 2 * Math.PI);
+    context.stroke();
+  }
+
+  function drawInnerCircle() {
+    context.beginPath();
+    context.lineWidth = textureSize / 8;
+    context.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+    context.arc(halfTextureSize, halfTextureSize, halfTextureSize - context.lineWidth, 0, 2 * Math.PI);
+    context.shadowColor = 'red';
+    context.stroke();
+  }
+}
+
+function createHoverIconTextureForSize(textureSize: number): CanvasTexture {
+  const canvas = document.createElement('canvas');
+  canvas.width = textureSize;
+  canvas.height = textureSize;
+
+  const halfTextureSize = textureSize * 0.5;
+
+  const context = canvas.getContext('2d')!;
+  drawHoverSelector();
+
+  return new CanvasTexture(canvas);
+
+  function drawHoverSelector() {
+    const outerCircleLineWidth = textureSize / 16;
+    const innerCircleLineWidth = textureSize / 8;
+    context.beginPath();
+    context.fillStyle = '#FC2574';
+    context.arc(
+      halfTextureSize,
+      halfTextureSize,
+      halfTextureSize - outerCircleLineWidth - 2 * innerCircleLineWidth,
+      0,
+      2 * Math.PI
+    );
+    context.fill();
+  }
+}
 export class IconCollection {
   private static readonly MinPixelSize = 16;
   private static readonly DefaultMaxPixelSize = 256;
@@ -54,6 +141,13 @@ export class IconCollection {
   private readonly _hoverSprite: Sprite;
   private readonly _icons: Overlay3DIcon[];
   private readonly _pointsObject: OverlayPointsObject;
+  // Bounding sphere of all icon positions in local (pre-transform) space, computed once at
+  // construction time since icon positions don't move individually afterwards. Combined with
+  // the current transform in getWorldBoundingSphere() to support cheap per-collection
+  // visibility checks without needing to touch every icon.
+  private readonly _localBoundingSphere: Sphere;
+  private readonly _boundingSphereTransform = new Matrix4();
+  private readonly _boundingSphereScale = new Vector3();
   private readonly _computeClustersEventHandler: BeforeSceneRenderedDelegate;
   private readonly _computeProximityPointsEventHandler: BeforeSceneRenderedDelegate;
   private readonly _adaptiveScaleRenderSize = new Vector2();
@@ -194,7 +288,7 @@ export class IconCollection {
       iconOptions?.htmlClusterOptions?.clusterDistanceThreshold ?? this._clusterDistanceThreshold;
     this._maxOctreeDepth = iconOptions?.htmlClusterOptions?.maxOctreeDepth ?? this._maxOctreeDepth;
 
-    const sharedTexture = this.createOuterRingsTexture();
+    const sharedTexture = getSharedOuterRingsTexture(this._maxPixelSize);
 
     // Create OverlayPointsObject with sprite texture (used for individual icons in both modes)
     const pointsObjects = new OverlayPointsObject(points.length, {
@@ -210,7 +304,7 @@ export class IconCollection {
       this._htmlRenderer = new HtmlClusterRenderer(iconOptions?.htmlClusterOptions);
     }
 
-    this._hoverIconTexture = this.createHoverIconTexture();
+    this._hoverIconTexture = getSharedHoverIconTexture(this._maxPixelSize);
     this._hoverSprite = this.createHoverSprite(this._hoverIconTexture);
 
     this._floorDiscs = new FlooredIconManager(
@@ -226,6 +320,7 @@ export class IconCollection {
     this._icons = this.initializeImage360Icons(points, sceneHandler);
 
     const octreeBounds = IconOctree.getMinimalOctreeBoundsFromIcons(this._icons);
+    this._localBoundingSphere = octreeBounds.getBoundingSphere(new Sphere());
     const octree = new IconOctree(this._icons, octreeBounds, 2);
 
     this._iconCullingScheme = 'clustered';
@@ -248,6 +343,23 @@ export class IconCollection {
 
   public getTransform(out?: Matrix4): Matrix4 {
     return this._pointsObject.getTransform(out);
+  }
+
+  /**
+   * Returns a conservative world-space bounding sphere enclosing every icon in this
+   * collection, cheap enough to call every frame. Used to skip per-frame icon/LOD updates
+   * for collections that aren't anywhere near the camera - see IconCollection.updateIcons
+   * callers.
+   */
+  public getWorldBoundingSphere(out: Sphere = new Sphere()): Sphere {
+    const transform = this.getTransform(this._boundingSphereTransform);
+    out.center.copy(this._localBoundingSphere.center).applyMatrix4(transform);
+
+    const scale = this._boundingSphereScale.setFromMatrixScale(transform);
+    const maxScale = Math.max(scale.x, scale.y, scale.z);
+    out.radius = this._localBoundingSphere.radius * maxScale;
+
+    return out;
   }
 
   /**
@@ -688,13 +800,14 @@ export class IconCollection {
     this._icons.forEach(icon => icon.dispose());
     this._icons.splice(0, this._icons.length);
     this._pointsObject.dispose();
-    this._sharedTexture.dispose();
+    // this._sharedTexture and this._hoverIconTexture are shared with other collections of the
+    // same pixel size (see getSharedOuterRingsTexture / getSharedHoverIconTexture) and must
+    // not be disposed here.
 
     this._floorDiscs.dispose();
 
     this._sceneHandler.removeObject3D(this._hoverSprite);
     this._hoverSprite.material.dispose();
-    this._hoverIconTexture.dispose();
 
     this._htmlRenderer?.dispose();
   }
@@ -706,67 +819,6 @@ export class IconCollection {
     sprite.visible = false;
     sprite.renderOrder = 5;
     return sprite;
-  }
-
-  private createOuterRingsTexture(): CanvasTexture {
-    const canvas = document.createElement('canvas');
-    const textureSize = this._maxPixelSize;
-    canvas.width = textureSize;
-    canvas.height = textureSize;
-
-    const halfTextureSize = textureSize * 0.5;
-
-    const context = canvas.getContext('2d')!;
-    drawInnerCircle();
-    drawOuterCircle();
-
-    return new CanvasTexture(canvas);
-
-    function drawOuterCircle() {
-      context.beginPath();
-      context.lineWidth = textureSize / 16;
-      context.strokeStyle = '#FFFFFF';
-      context.arc(halfTextureSize, halfTextureSize, halfTextureSize - context.lineWidth / 2 - 2, 0, 2 * Math.PI);
-      context.stroke();
-    }
-
-    function drawInnerCircle() {
-      context.beginPath();
-      context.lineWidth = textureSize / 8;
-      context.strokeStyle = 'rgba(255, 255, 255, 0.75)';
-      context.arc(halfTextureSize, halfTextureSize, halfTextureSize - context.lineWidth, 0, 2 * Math.PI);
-      context.shadowColor = 'red';
-      context.stroke();
-    }
-  }
-
-  private createHoverIconTexture(): CanvasTexture {
-    const canvas = document.createElement('canvas');
-    const textureSize = this._maxPixelSize;
-    canvas.width = textureSize;
-    canvas.height = textureSize;
-
-    const halfTextureSize = textureSize * 0.5;
-
-    const context = canvas.getContext('2d')!;
-    drawHoverSelector();
-
-    return new CanvasTexture(canvas);
-
-    function drawHoverSelector() {
-      const outerCircleLineWidth = textureSize / 16;
-      const innerCircleLineWidth = textureSize / 8;
-      context.beginPath();
-      context.fillStyle = '#FC2574';
-      context.arc(
-        halfTextureSize,
-        halfTextureSize,
-        halfTextureSize - outerCircleLineWidth - 2 * innerCircleLineWidth,
-        0,
-        2 * Math.PI
-      );
-      context.fill();
-    }
   }
 
   //================================================

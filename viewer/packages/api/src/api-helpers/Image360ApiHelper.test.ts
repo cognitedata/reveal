@@ -2,9 +2,10 @@
  * Copyright 2025 Cognite AS
  */
 import { Mock, It } from 'moq.ts';
-import { Matrix4, PerspectiveCamera, Scene, Vector3 } from 'three';
+import { Matrix4, PerspectiveCamera, Scene, Sphere, Vector3 } from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import { CogniteClient } from '@cognite/sdk';
+import type { WebGLRenderer } from 'three';
 import { vi } from 'vitest';
 import { assert } from '@reveal/utilities/assert';
 
@@ -127,8 +128,14 @@ function createTestHelper(
   sdk: CogniteClient,
   cameraManagerType: CameraManagerType = 'mock',
   iconsOptions?: IconsOptions,
-  hasEventListeners = false
-): { helper: Image360ApiHelper<DataSourceType>; innerCameraManager: CameraManager } {
+  hasEventListeners = false,
+  image360Facade?: Image360Facade<DataSourceType>
+): {
+  helper: Image360ApiHelper<DataSourceType>;
+  innerCameraManager: CameraManager;
+  onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>;
+  camera: PerspectiveCamera;
+} {
   const mockCamera = new PerspectiveCamera();
   mockCamera.position.set(0, 0, 10);
   mockCamera.lookAt(new Vector3(0, 0, 0));
@@ -176,10 +183,11 @@ function createTestHelper(
     mockInputHandler,
     onBeforeSceneRendered,
     hasEventListeners,
-    iconsOptions
+    iconsOptions,
+    image360Facade
   );
 
-  return { helper, innerCameraManager };
+  return { helper, innerCameraManager, onBeforeSceneRendered, camera: mockCamera };
 }
 
 describe(Image360ApiHelper.name, () => {
@@ -718,6 +726,165 @@ describe(Image360ApiHelper.name, () => {
       helper.onHover(makeHoverEvent());
 
       expect(domElement.style.cursor).toBe('');
+    });
+  });
+
+  function createMockFacade(params: {
+    collections?: DefaultImage360Collection<DataSourceType>[];
+    onIntersectCluster?: () => void;
+  }): Image360Facade<DataSourceType> {
+    return new Mock<Image360Facade<DataSourceType>>()
+      .setup(f => f.collections)
+      .returns(params.collections ?? [])
+      .setup(f => (f.allIconsSelected = It.IsAny()))
+      .returns(true)
+      .setup(f => f.intersectCluster(It.IsAny(), It.IsAny()))
+      .callback(() => {
+        params.onIntersectCluster?.();
+        return undefined;
+      })
+      .setup(f => f.intersect(It.IsAny(), It.IsAny()))
+      .returns(undefined)
+      .setup(f => f.hideAllHoverIcons())
+      .returns(false)
+      .setup(f => f.dispose())
+      .returns(undefined)
+      .object();
+  }
+
+  function createPointerEvent(offsetX: number, offsetY: number): PointerEvent {
+    return new Mock<PointerEvent>()
+      .setup(e => e.offsetX)
+      .returns(offsetX)
+      .setup(e => e.offsetY)
+      .returns(offsetY)
+      .object();
+  }
+
+  describe('per-frame updates', () => {
+    function createCollectionWithBounds(
+      sphere: Sphere,
+      onUpdateIcons: () => void
+    ): DefaultImage360Collection<DataSourceType> {
+      return new Mock<DefaultImage360Collection<DataSourceType>>()
+        .setup(c => c.getWorldBoundingSphere(It.IsAny()))
+        .returns(sphere)
+        .setup(c => c.updateIcons(It.IsAny()))
+        .callback(() => {
+          onUpdateIcons();
+        })
+        .object();
+    }
+
+    function createRenderParams(camera: PerspectiveCamera): Parameters<BeforeSceneRenderedDelegate>[0] {
+      return { frameNumber: 0, renderer: new Mock<WebGLRenderer>().object(), camera };
+    }
+
+    test('only updates icons of collections whose bounds intersect the camera frustum', () => {
+      const visibleUpdates = vi.fn();
+      const behindCameraUpdates = vi.fn();
+      const farAwayUpdates = vi.fn();
+      // The test camera is at z=10 looking at the origin
+      const collections = [
+        createCollectionWithBounds(new Sphere(new Vector3(0, 0, 0), 1), visibleUpdates),
+        createCollectionWithBounds(new Sphere(new Vector3(0, 0, 500), 1), behindCameraUpdates),
+        createCollectionWithBounds(new Sphere(new Vector3(0, 0, -100000), 1), farAwayUpdates)
+      ];
+      const {
+        helper: testHelper,
+        onBeforeSceneRendered,
+        camera
+      } = createTestHelper(domElement, sdk, 'mock', undefined, false, createMockFacade({ collections }));
+
+      onBeforeSceneRendered.fire(createRenderParams(camera));
+
+      expect(visibleUpdates).toHaveBeenCalledTimes(1);
+      expect(behindCameraUpdates).not.toHaveBeenCalled();
+      expect(farAwayUpdates).not.toHaveBeenCalled();
+      testHelper.dispose();
+    });
+
+    test('updates a collection again once the camera moves so that its bounds become visible', () => {
+      const updates = vi.fn();
+      const collection = createCollectionWithBounds(new Sphere(new Vector3(0, 0, 500), 1), updates);
+      const {
+        helper: testHelper,
+        onBeforeSceneRendered,
+        camera
+      } = createTestHelper(domElement, sdk, 'mock', undefined, false, createMockFacade({ collections: [collection] }));
+
+      onBeforeSceneRendered.fire(createRenderParams(camera));
+      expect(updates).not.toHaveBeenCalled();
+
+      camera.position.set(0, 0, 510);
+      camera.lookAt(new Vector3(0, 0, 500));
+      camera.updateMatrixWorld();
+      onBeforeSceneRendered.fire(createRenderParams(camera));
+
+      expect(updates).toHaveBeenCalledTimes(1);
+      testHelper.dispose();
+    });
+  });
+
+  describe('hover recheck on render', () => {
+    test('rechecks hover only when the camera moved since the last check', () => {
+      const intersectCluster = vi.fn();
+      const {
+        helper: testHelper,
+        onBeforeSceneRendered,
+        camera
+      } = createTestHelper(
+        domElement,
+        sdk,
+        'mock',
+        undefined,
+        false,
+        createMockFacade({ onIntersectCluster: intersectCluster })
+      );
+      const params = { frameNumber: 0, renderer: new Mock<WebGLRenderer>().object(), camera };
+
+      // Pointer move establishes the camera baseline
+      testHelper.onHover(createPointerEvent(320, 240));
+      expect(intersectCluster).toHaveBeenCalledTimes(1);
+
+      // Camera and pointer are both still: no recheck
+      onBeforeSceneRendered.fire(params);
+      onBeforeSceneRendered.fire(params);
+      expect(intersectCluster).toHaveBeenCalledTimes(1);
+
+      // Camera position moves: recheck once, then the baseline is refreshed
+      camera.position.x += 1;
+      onBeforeSceneRendered.fire(params);
+      expect(intersectCluster).toHaveBeenCalledTimes(2);
+      onBeforeSceneRendered.fire(params);
+      expect(intersectCluster).toHaveBeenCalledTimes(2);
+
+      // Camera rotation only: recheck as well
+      camera.rotateY(0.1);
+      onBeforeSceneRendered.fire(params);
+      expect(intersectCluster).toHaveBeenCalledTimes(3);
+      testHelper.dispose();
+    });
+
+    test('does nothing on render when the pointer has not been over the viewer', () => {
+      const intersectCluster = vi.fn();
+      const {
+        helper: testHelper,
+        onBeforeSceneRendered,
+        camera
+      } = createTestHelper(
+        domElement,
+        sdk,
+        'mock',
+        undefined,
+        false,
+        createMockFacade({ onIntersectCluster: intersectCluster })
+      );
+
+      onBeforeSceneRendered.fire({ frameNumber: 0, renderer: new Mock<WebGLRenderer>().object(), camera });
+
+      expect(intersectCluster).not.toHaveBeenCalled();
+      testHelper.dispose();
     });
   });
 

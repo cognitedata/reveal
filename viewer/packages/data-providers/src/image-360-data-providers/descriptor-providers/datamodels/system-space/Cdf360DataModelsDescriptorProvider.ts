@@ -17,7 +17,7 @@ import { Euler, Matrix4 } from 'three';
 import { DataModelsSdk } from '../../../../DataModelsSdk';
 import { groupBy, partition } from 'lodash-es';
 import type { DMInstanceRef, DMInstanceKey } from '@reveal/utilities';
-import { dmInstanceRefToKey } from '@reveal/utilities';
+import { ConcurrencyLimiter, dmInstanceRefToKey } from '@reveal/utilities';
 import type { ClassicDataSourceType } from '../../../../DataSourceType';
 import { DEFAULT_360_IMAGE_MIME_TYPE } from '../../../../utilities/constants';
 
@@ -63,18 +63,26 @@ type ExhaustedQueryResult = {
   stations: QueryResult['stations'];
 };
 
+// Caps how many collections' paginated DMS query chains can be in flight at the same time.
+// Unlike the cdm/events datasources, this legacy path has no BatchLoader, so calling
+// add360ImageSet for many collections in quick succession would otherwise fire one
+// unthrottled query chain per collection.
+const DEFAULT_MAX_CONCURRENT_COLLECTION_QUERIES = 8;
+
 export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorProvider<ClassicDataSourceType> {
   readonly _dmsSdk: DataModelsSdk;
+  private readonly _queryLimiter: ConcurrencyLimiter;
 
-  constructor(sdk: CogniteClient) {
+  constructor(sdk: CogniteClient, maxConcurrentQueries: number = DEFAULT_MAX_CONCURRENT_COLLECTION_QUERIES) {
     this._dmsSdk = new DataModelsSdk(sdk);
+    this._queryLimiter = new ConcurrencyLimiter(maxConcurrentQueries);
   }
 
   public async get360ImageDescriptors(
     collectionIdentifier: Image360DataModelIdentifier,
     _: boolean
   ): Promise<Historical360ImageSet<ClassicDataSourceType>[]> {
-    const { image_collection, images } = await this.queryCollection(collectionIdentifier);
+    const { image_collection, images } = await this._queryLimiter.run(() => this.queryCollection(collectionIdentifier));
 
     if (image_collection.length === 0) {
       return [];
