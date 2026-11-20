@@ -34,7 +34,7 @@ describe(ConcurrencyLimiter.name, () => {
     vi.useRealTimers();
   });
 
-  test.each([0, -1, NaN, Infinity])('throws for invalid maxConcurrent %s', maxConcurrent => {
+  test.each([0, -1, 1.5, NaN, Infinity])('throws for invalid maxConcurrent %s', maxConcurrent => {
     expect(() => new ConcurrencyLimiter(maxConcurrent)).toThrow();
   });
 
@@ -122,5 +122,119 @@ describe(ConcurrencyLimiter.name, () => {
 
     await expect(throwingPromise).rejects.toThrow('sync boom');
     await expect(followingPromise).resolves.toBe('next');
+  });
+
+  test('starts an operation immediately when below the limit', async () => {
+    const limiter = new ConcurrencyLimiter(2);
+    const started: number[] = [];
+    const deferreds = [createDeferred<void>(), createDeferred<void>(), createDeferred<void>()];
+
+    const promises = deferreds.map((deferred, index) =>
+      limiter.run(() => {
+        started.push(index);
+        return deferred.promise;
+      })
+    );
+
+    // No awaiting needed: the first two start synchronously, the third is queued
+    expect(started).toEqual([0, 1]);
+
+    deferreds.forEach(deferred => deferred.resolve());
+    await Promise.all(promises);
+    expect(started).toEqual([0, 1, 2]);
+  });
+
+  describe('abort signal', () => {
+    test('drops a queued operation whose signal aborts without ever starting it', async () => {
+      const limiter = new ConcurrencyLimiter(1);
+      const blocker = createDeferred<void>();
+      const running = limiter.run(() => blocker.promise);
+
+      const abortController = new AbortController();
+      let queuedStarted = false;
+      const queued = limiter.run(async () => {
+        queuedStarted = true;
+      }, abortController.signal);
+
+      abortController.abort();
+      await expect(queued).rejects.toBe(abortController.signal.reason);
+
+      blocker.resolve();
+      await running;
+      await flushMicrotasks();
+      expect(queuedStarted).toBe(false);
+    });
+
+    test('aborting one queued operation leaves the others in order', async () => {
+      const limiter = new ConcurrencyLimiter(1);
+      const blocker = createDeferred<void>();
+      const started: string[] = [];
+      const running = limiter.run(() => blocker.promise);
+
+      const abortController = new AbortController();
+      const first = limiter.run(async () => {
+        started.push('first');
+      });
+      const aborted = limiter.run(async () => {
+        started.push('aborted');
+      }, abortController.signal);
+      const last = limiter.run(async () => {
+        started.push('last');
+      });
+
+      abortController.abort();
+      await expect(aborted).rejects.toBe(abortController.signal.reason);
+
+      blocker.resolve();
+      await Promise.all([running, first, last]);
+      expect(started).toEqual(['first', 'last']);
+    });
+
+    test('rejects immediately without starting when the signal is already aborted', async () => {
+      const limiter = new ConcurrencyLimiter(1);
+      const abortController = new AbortController();
+      abortController.abort();
+      let started = false;
+
+      await expect(
+        limiter.run(async () => {
+          started = true;
+        }, abortController.signal)
+      ).rejects.toBe(abortController.signal.reason);
+
+      expect(started).toBe(false);
+    });
+
+    test('aborting after the operation started does not cancel it or free its slot', async () => {
+      const limiter = new ConcurrencyLimiter(1);
+      const abortController = new AbortController();
+      const deferred = createDeferred<string>();
+      const started: string[] = [];
+
+      const run = limiter.run(() => deferred.promise, abortController.signal);
+      const following = limiter.run(async () => {
+        started.push('following');
+      });
+      abortController.abort();
+      await flushMicrotasks();
+
+      // Still running, so the following operation must still be waiting
+      expect(started).toEqual([]);
+
+      deferred.resolve('done');
+      await expect(run).resolves.toBe('done');
+      await following;
+      expect(started).toEqual(['following']);
+    });
+
+    test('does not leave abort listeners behind once the operation has started', async () => {
+      const limiter = new ConcurrencyLimiter(1);
+      const abortController = new AbortController();
+      const removeListener = vi.spyOn(abortController.signal, 'removeEventListener');
+
+      await limiter.run(async () => 'ok', abortController.signal);
+
+      expect(removeListener).toHaveBeenCalledWith('abort', expect.any(Function));
+    });
   });
 });
