@@ -2,6 +2,7 @@
  * Copyright 2026 Cognite AS
  */
 
+import { vi } from 'vitest';
 import { ConcurrencyLimiter } from './ConcurrencyLimiter';
 
 type Deferred<T> = {
@@ -21,10 +22,18 @@ function createDeferred<T>(): Deferred<T> {
 }
 
 async function flushMicrotasks(): Promise<void> {
-  await new Promise<void>(resolve => setImmediate(resolve));
+  await vi.advanceTimersByTimeAsync(0);
 }
 
 describe(ConcurrencyLimiter.name, () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   test.each([0, -1, NaN, Infinity])('throws for invalid maxConcurrent %s', maxConcurrent => {
     expect(() => new ConcurrencyLimiter(maxConcurrent)).toThrow();
   });
