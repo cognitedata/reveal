@@ -54,7 +54,7 @@ export class GltfSectorRepository implements SectorRepository {
   async loadSector(sector: WantedSector, abortSignal?: AbortSignal): Promise<ConsumedSector> {
     const metadata = sector.metadata as SectorMetadata;
 
-    if (metadata.sectorFileName === null || metadata.downloadSize === 0) {
+    if (!hasSectorFile(metadata)) {
       return this.getEmptyDetailedSector(sector.modelIdentifier, metadata);
     }
 
@@ -111,7 +111,19 @@ export class GltfSectorRepository implements SectorRepository {
     this._gltfCache.removeReference(cacheKey);
   }
 
+  releaseUnusedSector(sector: ConsumedSector): void {
+    // Only sectors loaded with geometry take a reference in loadSector; empty and failed loads don't
+    if (sector.levelOfDetail !== LevelOfDetail.Detailed || !hasSectorFile(sector.metadata)) {
+      return;
+    }
+    this.dereferenceSector(sector.modelIdentifier, sector.metadata.id);
+  }
+
   private wantedSectorCacheKey(modelIdentifier: ModelIdentifier, sectorId: number) {
     return modelIdentifier.sourceModelIdentifier() + '.' + sectorId;
   }
+}
+
+function hasSectorFile(metadata: SectorMetadata): boolean {
+  return metadata.sectorFileName !== null && metadata.downloadSize !== 0;
 }

@@ -93,6 +93,10 @@ export class CachedModelDataProvider implements ModelDataProvider {
     const data = await fetchFromProvider();
 
     const arrayBuffer = convertToArrayBuffer(data);
+    // An empty payload is never a valid data file; persisting it would serve it on every later load
+    if (arrayBuffer.byteLength === 0) {
+      return data;
+    }
     await this.cacheManager
       .storeResponse(key, arrayBuffer, contentType)
       .catch(err => console.warn(`[CachedModelDataProvider] Failed to cache ${key}:`, err));
