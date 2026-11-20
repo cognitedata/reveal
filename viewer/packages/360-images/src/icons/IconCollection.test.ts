@@ -9,6 +9,7 @@ import type { SceneHandler } from '@reveal/utilities';
 import { vi } from 'vitest';
 import type { ClusteredIcon } from './IconCollection';
 import { IconCollection } from './IconCollection';
+import { FlooredIconManager } from './FlooredIconManager';
 import type { IconOctree, Overlay3DIcon } from '@reveal/3d-overlays';
 import { PointOctant } from 'sparse-octree';
 import { assert } from '@reveal/utilities/assert';
@@ -562,6 +563,18 @@ describe(IconCollection.name, () => {
       collection.dispose();
     });
 
+    test('is padded to cover floor discs drawn below the lowest icon', () => {
+      // The lowest icon lies exactly on the unpadded sphere (center (0, 5, 0), radius 5), so any
+      // point below it is only covered by the padding
+      const collection = createCollection([new Vector3(0, 0, 0), new Vector3(0, 10, 0)]);
+      const belowLowest = new Vector3(0, -FlooredIconManager.FloorDiscHeightOffset, 0);
+
+      const sphere = collection.getWorldBoundingSphere();
+
+      expect(sphere.containsPoint(belowLowest)).toBe(true);
+      collection.dispose();
+    });
+
     test('writes into and returns the provided output sphere', () => {
       const collection = createCollection(positions);
       const out = new Sphere();
@@ -595,7 +608,7 @@ describe(IconCollection.name, () => {
       second.dispose();
     });
 
-    test('disposing one collection does not dispose the shared hover texture used by another', () => {
+    test('disposes the shared hover texture only once the last collection using it is disposed', () => {
       const first = createCollection([origin]);
       const second = createCollection([origin]);
       const texture = findHoverSprite().material.map;
@@ -604,10 +617,40 @@ describe(IconCollection.name, () => {
       texture.addEventListener('dispose', onDispose);
 
       first.dispose();
+      expect(onDispose).not.toHaveBeenCalled();
 
-      expect(onDispose).not.toHaveBeenCalled();
       second.dispose();
+      expect(onDispose).toHaveBeenCalledTimes(1);
+    });
+
+    test('disposing the same collection twice does not release the reference of another collection', () => {
+      const first = createCollection([origin]);
+      const second = createCollection([origin]);
+      const texture = findHoverSprite().material.map;
+      assert(texture !== null);
+      const onDispose = vi.fn();
+      texture.addEventListener('dispose', onDispose);
+
+      first.dispose();
+      first.dispose();
       expect(onDispose).not.toHaveBeenCalled();
+
+      second.dispose();
+      expect(onDispose).toHaveBeenCalledTimes(1);
+    });
+
+    test('creates a fresh texture once every collection using the previous one has been disposed', () => {
+      const first = createCollection([origin]);
+      const firstTexture = findHoverSprite().material.map;
+      first.dispose();
+      addedObjects = [];
+
+      const second = createCollection([origin]);
+      const secondTexture = findHoverSprite().material.map;
+
+      expect(secondTexture).not.toBeNull();
+      expect(secondTexture).not.toBe(firstTexture);
+      second.dispose();
     });
   });
 });
