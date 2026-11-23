@@ -250,6 +250,115 @@ describe(CdfImageFileProvider.name, () => {
     });
   });
 
+  describe('icon request concurrency', () => {
+    test('limits concurrent icon requests and keeps results in input order', async () => {
+      const maxConcurrentIcons = 3;
+      const iconCount = 8;
+      const limitedProvider = new CdfImageFileProvider(mockClient, 4, maxConcurrentIcons);
+      const pendingResponses: Array<() => void> = [];
+      let inFlight = 0;
+      let maxInFlight = 0;
+
+      fetchSpy.mockImplementation(async url => {
+        const id = Number(new URL(String(url)).searchParams.get('id'));
+        inFlight++;
+        maxInFlight = Math.max(maxInFlight, inFlight);
+        await new Promise<void>(resolve => pendingResponses.push(resolve));
+        inFlight--;
+        return createBinaryResponse(new Uint8Array([id]).buffer, 'image/png');
+      });
+
+      const ids = Array.from({ length: iconCount }, (_, i) => i + 1);
+      const resultPromise = limitedProvider.getIconBuffersWithMimeType(ids.map(id => ({ id })));
+
+      await vi.waitFor(() => expect(pendingResponses.length).toBe(maxConcurrentIcons));
+
+      let completed = 0;
+      while (completed < iconCount) {
+        await vi.waitFor(() => expect(pendingResponses.length).toBeGreaterThan(0));
+        expect(inFlight).toBeLessThanOrEqual(maxConcurrentIcons);
+        pendingResponses.shift()!();
+        completed++;
+      }
+
+      const results = await resultPromise;
+
+      expect(maxInFlight).toBe(maxConcurrentIcons);
+      expect(results.map(r => new Uint8Array(r.data)[0])).toEqual(ids);
+    });
+
+    test('a failed icon request does not block queued icon requests', async () => {
+      const limitedProvider = new CdfImageFileProvider(mockClient, 4, 1);
+
+      fetchSpy
+        .mockResolvedValueOnce(createErrorResponse(500, 'Server Error'))
+        .mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(8), 'image/png'));
+
+      const [failed, succeeded] = await Promise.allSettled([
+        limitedProvider.getIconBuffersWithMimeType([{ id: 1 }]),
+        limitedProvider.getIconBuffersWithMimeType([{ id: 2 }])
+      ]);
+
+      expect(failed.status).toBe('rejected');
+      expect(succeeded.status).toBe('fulfilled');
+    });
+  });
+
+  describe('download link concurrency', () => {
+    test('limits concurrent downloadlink requests across calls', async () => {
+      const maxConcurrent = 2;
+      const callCount = 5;
+      const limitedProvider = new CdfImageFileProvider(mockClient, maxConcurrent);
+      const pendingResponses: Array<() => void> = [];
+      let inFlight = 0;
+      let maxInFlight = 0;
+
+      fetchSpy.mockImplementation(async (_url, options) => {
+        const ids: Array<{ id: number }> = JSON.parse(String(options?.body)).items;
+        inFlight++;
+        maxInFlight = Math.max(maxInFlight, inFlight);
+        await new Promise<void>(resolve => pendingResponses.push(resolve));
+        inFlight--;
+        return createJsonResponse({ items: ids.map(({ id }) => ({ id, downloadUrl: `https://storage/${id}.jpg` })) });
+      });
+
+      const resultPromises = Array.from({ length: callCount }, (_, i) =>
+        limitedProvider.getFileDownloadUrls([{ id: i + 1 }])
+      );
+
+      await vi.waitFor(() => expect(pendingResponses.length).toBe(maxConcurrent));
+
+      let completed = 0;
+      while (completed < callCount) {
+        await vi.waitFor(() => expect(pendingResponses.length).toBeGreaterThan(0));
+        expect(inFlight).toBeLessThanOrEqual(maxConcurrent);
+        pendingResponses.shift()!();
+        completed++;
+      }
+
+      const results = await Promise.all(resultPromises);
+
+      expect(maxInFlight).toBe(maxConcurrent);
+      expect(results).toEqual([1, 2, 3, 4, 5].map(id => [`https://storage/${id}.jpg`]));
+    });
+
+    test('a failed downloadlink request does not block queued requests', async () => {
+      const limitedProvider = new CdfImageFileProvider(mockClient, 1);
+
+      fetchSpy
+        .mockResolvedValueOnce(createErrorResponse(500, 'Server Error'))
+        .mockResolvedValueOnce(createJsonResponse({ items: [{ id: 2, downloadUrl: 'https://storage/2.jpg' }] }));
+
+      const [failed, succeeded] = await Promise.allSettled([
+        limitedProvider.getFileDownloadUrls([{ id: 1 }]),
+        limitedProvider.getFileDownloadUrls([{ id: 2 }])
+      ]);
+
+      expect(failed.status).toBe('rejected');
+      expect(succeeded).toEqual({ status: 'fulfilled', value: ['https://storage/2.jpg'] });
+    });
+  });
+
   describe('getFileDownloadUrls', () => {
     test('returns array of download URL strings (not buffers)', async () => {
       const fileIdentifiers: FileIdentifier[] = [{ id: 123 }];

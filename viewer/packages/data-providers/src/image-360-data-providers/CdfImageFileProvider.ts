@@ -3,6 +3,7 @@
  */
 import type { CogniteClient, FileLink, IdEither } from '@cognite/sdk';
 import type { DMInstanceRef } from '@reveal/utilities';
+import { ConcurrencyLimiter } from '@reveal/utilities';
 import { chunk } from 'lodash-es';
 import { DEFAULT_360_IMAGE_MIME_TYPE } from '../utilities/constants';
 
@@ -33,11 +34,26 @@ function parseMimeType(contentType: string | null): 'image/jpeg' | 'image/png' {
   return DEFAULT_360_IMAGE_MIME_TYPE;
 }
 
+// Download links are requested from the CDF API for every image that is loaded or preloaded,
+// so many calls can be started at once (e.g. when hovering across a large collection).
+const DEFAULT_MAX_CONCURRENT_DOWNLOAD_LINK_REQUESTS = 4;
+
+// One icon request is sent per file, so loading icons for a large collection starts hundreds of requests.
+const DEFAULT_MAX_CONCURRENT_ICON_REQUESTS = 6;
+
 export class CdfImageFileProvider {
   private readonly _client;
+  private readonly _downloadLinkLimiter: ConcurrencyLimiter;
+  private readonly _iconLimiter: ConcurrencyLimiter;
 
-  constructor(sdk: CogniteClient) {
+  constructor(
+    sdk: CogniteClient,
+    maxConcurrentDownloadLinkRequests: number = DEFAULT_MAX_CONCURRENT_DOWNLOAD_LINK_REQUESTS,
+    maxConcurrentIconRequests: number = DEFAULT_MAX_CONCURRENT_ICON_REQUESTS
+  ) {
     this._client = sdk;
+    this._downloadLinkLimiter = new ConcurrencyLimiter(maxConcurrentDownloadLinkRequests);
+    this._iconLimiter = new ConcurrencyLimiter(maxConcurrentIconRequests);
   }
 
   /**
@@ -165,16 +181,18 @@ export class CdfImageFileProvider {
     };
 
     return Promise.all(
-      fileIds.map(async id => {
-        const url = `${baseUrl}?id=${id}`;
-        const response = await fetch(url, options);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch icon: ${response.status} ${response.statusText}`);
-        }
-        const mimeType = parseMimeType(response.headers.get('Content-Type'));
-        const data = await response.arrayBuffer();
-        return { data, mimeType };
-      })
+      fileIds.map(id =>
+        this._iconLimiter.run(async () => {
+          const url = `${baseUrl}?id=${id}`;
+          const response = await fetch(url, options);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch icon: ${response.status} ${response.statusText}`);
+          }
+          const mimeType = parseMimeType(response.headers.get('Content-Type'));
+          const data = await response.arrayBuffer();
+          return { data, mimeType };
+        })
+      )
     );
   }
 
@@ -211,12 +229,15 @@ export class CdfImageFileProvider {
         })
       };
 
-      // Direct fetch - batching already handles API limits
-      const response = await fetch(url, options);
-      if (!response.ok) {
-        throw new Error(`Failed to get download URLs: ${response.status} ${response.statusText}`);
-      }
-      const result = await response.json();
+      // The slot is held until the response body has been read. If the signal is aborted while the
+      // request is queued, fetch rejects immediately once it starts, so no request is sent.
+      const result = await this._downloadLinkLimiter.run(async () => {
+        const response = await fetch(url, options);
+        if (!response.ok) {
+          throw new Error(`Failed to get download URLs: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+      });
 
       allLinks.push(...result.items);
     }

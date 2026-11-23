@@ -5,7 +5,7 @@ import type { AnnotationModel, CogniteClient, FileInfo, IdEither, InternalId } f
 import type { InstanceReference } from '../types';
 import type { DataSourceType } from '../DataSourceType';
 import { getInstanceKey } from '../utilities/instanceIds';
-import { isDefined, isDmIdentifier } from '@reveal/utilities';
+import { ConcurrencyLimiter, isDefined, isDmIdentifier } from '@reveal/utilities';
 import { chunk, groupBy, partition } from 'lodash-es';
 
 export interface Cdf360ImageAnnotationCache {
@@ -14,8 +14,16 @@ export interface Cdf360ImageAnnotationCache {
   getFileInfosForFileIds(fileIds: IdEither[]): Promise<FileInfo[]>;
 }
 
-export function createCdf360ImageAnnotationCache(client: CogniteClient): Cdf360ImageAnnotationCache {
-  return new Cdf360ImageAnnotationCacheImpl(client);
+// Each files.retrieve call carries up to FILE_RETRIEVE_CHUNK_SIZE ids. A collection with many images
+// produces many chunks, which would otherwise all be sent at the same time.
+const FILE_RETRIEVE_CHUNK_SIZE = 1000;
+const DEFAULT_MAX_CONCURRENT_FILE_RETRIEVE_REQUESTS = 4;
+
+export function createCdf360ImageAnnotationCache(
+  client: CogniteClient,
+  maxConcurrentFileRetrieveRequests: number = DEFAULT_MAX_CONCURRENT_FILE_RETRIEVE_REQUESTS
+): Cdf360ImageAnnotationCache {
+  return new Cdf360ImageAnnotationCacheImpl(client, maxConcurrentFileRetrieveRequests);
 }
 
 class Cdf360ImageAnnotationCacheImpl implements Cdf360ImageAnnotationCache {
@@ -23,7 +31,14 @@ class Cdf360ImageAnnotationCacheImpl implements Cdf360ImageAnnotationCache {
   private readonly _fileIdToAnnotation: Map<number, Promise<AnnotationModel[]>> = new Map();
   private readonly _fileIdToFileInfo: Map<string, Promise<FileInfo>> = new Map();
 
-  constructor(private readonly _sdk: CogniteClient) {}
+  private readonly _fileRetrieveLimiter: ConcurrencyLimiter;
+
+  constructor(
+    private readonly _sdk: CogniteClient,
+    maxConcurrentFileRetrieveRequests: number
+  ) {
+    this._fileRetrieveLimiter = new ConcurrencyLimiter(maxConcurrentFileRetrieveRequests);
+  }
 
   public async reverseLookup(assetId: InstanceReference<DataSourceType>): Promise<AnnotationModel[]> {
     const key = getInstanceKey(assetId);
@@ -123,8 +138,8 @@ class Cdf360ImageAnnotationCacheImpl implements Cdf360ImageAnnotationCache {
 
   private fetchAndCacheFiles(fileIds: IdEither[]): Promise<FileInfo[]>[] {
     const uncachedResultBatches: Promise<FileInfo[]>[] = [];
-    for (const idChunk of chunk(fileIds, 1000)) {
-      const uncachedResultBatch = this._sdk.files.retrieve(idChunk);
+    for (const idChunk of chunk(fileIds, FILE_RETRIEVE_CHUNK_SIZE)) {
+      const uncachedResultBatch = this._fileRetrieveLimiter.run(() => this._sdk.files.retrieve(idChunk));
 
       this.cacheFileInfoResults(idChunk, uncachedResultBatch);
       uncachedResultBatches.push(uncachedResultBatch);
