@@ -36,3 +36,4 @@ export { autoMockWebGLRenderer } from './src/autoMockWebGLRenderer';
 export { createMockModelDataProvider } from './src/createMockModelDataProvider';
 export { mockDMModelIdentifier, mockClassicModelIdentifier } from './src/createMockModelIdentifiers';
 export { createMockEptGeometry } from './src/createMockEptGeometry';
+export { readFileAsArrayBuffer } from './src/readFileAsArrayBuffer';

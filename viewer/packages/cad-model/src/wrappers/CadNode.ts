@@ -105,6 +105,7 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
       this.treeIndexToSectorsMap,
       undefined,
       undefined,
+      undefined,
       {
         // Compact proxies are rebuilt outside the render loop, so the result must be drawn explicitly
         onDeferredRebuild: () => {

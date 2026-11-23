@@ -49,6 +49,7 @@ type SectorInstanceData = {
  */
 type InstanceBatch = {
   buffers: BatchBuffer[];
+  type: RevealGeometryCollectionType;
 };
 
 /**
@@ -94,8 +95,10 @@ const compactProxyUpdateThrottleDelay = 75;
  * The objective of this class is to batch together instances
  * of the same type from different sectors.
  * This is done to reduce the number of draw calls that have to be issued during rendering.
- * Essentially this works by allocating n (numberOfInstanceBatches) buffers for each unique instanced type
+ * Essentially this works by allocating up to n (numberOfInstanceBatches) buffers for each unique instanced type
  * and continually filling / ejecting data from those buffers when new sectors are added / removed.
+ * Each buffer is a draw call, so a type starts with one buffer and gets another one only when its buffers hold
+ * at least additionalBufferThresholdBytes each.
  */
 export class MultiBufferBatchingManager implements DrawCallBatchingManager {
   private readonly _sectorBatches: Map<number, SectorBatch>;
@@ -118,8 +121,10 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     private readonly treeIndexToSectorsMap: TreeIndexToSectorsMap,
     private readonly initialBufferSize = 1024,
     private readonly numberOfInstanceBatches = 2,
+    private readonly additionalBufferThresholdBytes = 256 * 1024,
     private readonly compactProxyHooks: CompactProxyHooks = {}
   ) {
+    assert(additionalBufferThresholdBytes >= 0, 'additionalBufferThresholdBytes must be zero or greater');
     this._sectorBatches = new Map();
     this._instanceBatches = new Map();
     this._materials = materials;
@@ -160,12 +165,13 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
         instanceAttributes
       );
 
-      const defragBufferUpdateRange = buffer.remove(batchId);
+      const { byteOffset, byteCount, bufferIsReallocated } = buffer.remove(batchId);
 
-      this.updateInstanceAttributes(instanceAttributes, {
-        byteOffset: defragBufferUpdateRange.byteOffset,
-        byteCount: defragBufferUpdateRange.byteCount
-      });
+      if (bufferIsReallocated) {
+        this.reallocateBufferGeometry(batchBuffer);
+      } else {
+        this.updateInstanceAttributes(instanceAttributes, { byteOffset, byteCount });
+      }
 
       mesh.count -= instanceCount;
 
@@ -182,6 +188,8 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     });
 
     this._sectorBatches.delete(sectorId);
+
+    sectorBatch.instanceBatches.forEach((_, instanceId) => this.disposeInstanceBatchIfEmpty(instanceId));
   }
 
   /**
@@ -232,16 +240,31 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     }
 
     for (const { buffers } of this._instanceBatches.values()) {
-      buffers.forEach(batchBuffer => {
-        this.disposeCompactProxy(batchBuffer);
-        this._batchGroup.remove(batchBuffer.mesh);
-        batchBuffer.mesh.geometry.dispose();
-      });
+      this.disposeBatchBuffers(buffers);
     }
 
     this.cancelCompactProxyFlush();
     this._sectorBatches.clear();
     this._instanceBatches.clear();
+  }
+
+  private disposeInstanceBatchIfEmpty(instanceId: string): void {
+    const instanceBatch = this._instanceBatches.get(instanceId);
+    if (instanceBatch === undefined || instanceBatch.buffers.some(({ buffer }) => buffer.batchCount > 0)) {
+      return;
+    }
+
+    this.disposeBatchBuffers(instanceBatch.buffers);
+    this._instanceBatches.delete(instanceId);
+  }
+
+  private disposeBatchBuffers(buffers: BatchBuffer[]): void {
+    buffers.forEach(batchBuffer => {
+      this._dirtyCompactProxyBuffers.delete(batchBuffer);
+      this.disposeCompactProxy(batchBuffer);
+      this._batchGroup.remove(batchBuffer.mesh);
+      batchBuffer.mesh.geometry.dispose();
+    });
   }
 
   // Until the deferred rebuild runs, the batch mesh is rendered as well (its layers include all
@@ -472,12 +495,6 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
 
     sectorBatch.instanceBatches.set(instanceId, sectorInstanceData);
 
-    GeometryBufferUtils.getAttributes(batchBuffer.mesh.geometry, InterleavedBufferAttribute).forEach(
-      ({ attribute }) => {
-        attribute.data.needsUpdate = true;
-      }
-    );
-
     const sourceInstanceAttributes = GeometryBufferUtils.getAttributes(bufferGeometry, InterleavedBufferAttribute);
 
     const addedVisibleTreeIndices = this.addTreeIndicesToMeshUserData(sourceInstanceAttributes, batchBuffer);
@@ -485,7 +502,11 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     if (bufferIsReallocated) {
       this.reallocateBufferGeometry(batchBuffer);
     } else {
-      this.updateInstanceAttributes(sourceInstanceAttributes, updateRange);
+      const batchInstanceAttributes = GeometryBufferUtils.getAttributes(
+        batchBuffer.mesh.geometry,
+        InterleavedBufferAttribute
+      );
+      this.updateInstanceAttributes(batchInstanceAttributes, updateRange);
     }
 
     const instanceCount = sourceInstanceAttributes[0].attribute.count;
@@ -568,6 +589,9 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
       byteCount: number;
     }
   ) {
+    if (updateRange.byteCount === 0) {
+      return;
+    }
     instanceAttributes.forEach(namedAttribute => {
       const attribute = namedAttribute.attribute;
       this.extendUpdateRange(attribute, updateRange);
@@ -604,6 +628,13 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
   private getBatchBufferToFill(instanceBatch: InstanceBatch): BatchBuffer {
     const smallestBuffer = minBy(instanceBatch.buffers, batchBuffer => batchBuffer.buffer.length);
     assert(smallestBuffer !== undefined);
+
+    const canAddBuffer = instanceBatch.buffers.length < this.numberOfInstanceBatches;
+    if (canAddBuffer && smallestBuffer.buffer.length >= this.additionalBufferThresholdBytes) {
+      const additionalBuffer = this.createBatchBuffer(instanceBatch.buffers[0].mesh.geometry, instanceBatch.type);
+      instanceBatch.buffers.push(additionalBuffer);
+      return additionalBuffer;
+    }
     return smallestBuffer;
   }
 
@@ -614,11 +645,9 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
       return instanceBatch;
     }
 
-    const batchBuffers: BatchBuffer[] = Array.from(Array(this.numberOfInstanceBatches)).map(() =>
-      this.createBatchBuffer(parsedGeometry.geometryBuffer, parsedGeometry.type)
-    );
+    const batchBuffers: BatchBuffer[] = [this.createBatchBuffer(parsedGeometry.geometryBuffer, parsedGeometry.type)];
 
-    const newInstanceBatch: InstanceBatch = { buffers: batchBuffers };
+    const newInstanceBatch: InstanceBatch = { buffers: batchBuffers, type: parsedGeometry.type };
     this._instanceBatches.set(parsedGeometry.instanceId, newInstanceBatch);
     return newInstanceBatch;
   }

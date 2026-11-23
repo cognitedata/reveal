@@ -8,7 +8,7 @@ import { LocalModelIdentifier } from '@reveal/data-providers';
 import type { IMock } from 'moq.ts';
 import { Mock, It } from 'moq.ts';
 
-import * as fs from 'fs';
+import { readFileAsArrayBuffer } from '../../../test-utilities/src/readFileAsArrayBuffer';
 
 export const defaultBaseUrl = 'https://some_baseurl.com';
 const modelIdentifier = new LocalModelIdentifier('some_model_identifier');
@@ -44,17 +44,17 @@ export function createMockedConsumedSector(): IMock<ConsumedSector> {
 }
 
 export function createBinaryFileProviderMock(): IMock<BinaryFileProvider> {
-  const fileBuffer = fs.readFileSync(import.meta.dirname + '/test.glb');
+  const fileBuffer = readFileAsArrayBuffer(import.meta.dirname + '/test.glb');
   return new Mock<BinaryFileProvider>()
     .setup(p => p.getBinaryFile(defaultBaseUrl, It.IsAny(), It.IsAny()))
-    .returnsAsync(fileBuffer.buffer);
+    .returnsAsync(fileBuffer);
 }
 
 export function createModelDataProviderMock(): IMock<ModelDataProvider> {
-  const fileBuffer = fs.readFileSync(import.meta.dirname + '/test.glb');
+  const fileBuffer = readFileAsArrayBuffer(import.meta.dirname + '/test.glb');
   return new Mock<ModelDataProvider>()
     .setup(p => p.getBinaryFile(defaultBaseUrl, It.IsAny(), It.IsAny()))
-    .returnsAsync(fileBuffer.buffer)
+    .returnsAsync(fileBuffer)
     .setup(p => p.getJsonFile(It.IsAny(), It.IsAny()))
     .returnsAsync({});
 }
