@@ -3,7 +3,7 @@
  */
 
 import { vi } from 'vitest';
-import type { CogniteClient, FileInfo } from '@cognite/sdk';
+import type { CogniteClient, FileInfo, HttpResponse } from '@cognite/sdk';
 import { Cdf360DataModelsDescriptorProvider } from './Cdf360DataModelsDescriptorProvider';
 import { It, Mock } from 'moq.ts';
 
@@ -169,8 +169,8 @@ describe(Cdf360DataModelsDescriptorProvider.name, () => {
     const descriptors = await provider.get360ImageDescriptors(
       {
         source: 'dm',
-        space: 'christjt-test-system-360',
-        image360CollectionExternalId: 'c_RC_2'
+        space: 'test_space',
+        image360CollectionExternalId: 'test_collection'
       },
       true
     );
@@ -238,5 +238,137 @@ describe(Cdf360DataModelsDescriptorProvider.name, () => {
     );
 
     expect(filesRetrieveMock).not.toHaveBeenCalled();
+  });
+
+  describe('batched collection loading', () => {
+    type QueryBody = {
+      cursors?: { images?: string; stations?: string };
+      with: {
+        image_collection: { nodes: { filter: { instanceReferences: { space: string; externalId: string }[] } } };
+      };
+    };
+
+    const imagesPageLimit = 10000;
+
+    function createImage(externalId: string, collectionExternalId: string) {
+      const image = structuredClone(mock.data.items.images[0]);
+      image.externalId = externalId;
+      image.properties.cdf_360_image_schema['Image360/v1'].collection360 = {
+        space: 'test_space',
+        externalId: collectionExternalId
+      };
+      return image;
+    }
+
+    function createCollection(externalId: string) {
+      const collection = structuredClone(mock.data.items.image_collection[0]);
+      collection.externalId = externalId;
+      return collection;
+    }
+
+    function createResponse(
+      collectionIds: string[],
+      images: ReturnType<typeof createImage>[],
+      nextCursor?: { images: string; stations: string }
+    ) {
+      return {
+        ...mock,
+        data: { items: { image_collection: collectionIds.map(createCollection), images, stations: [] }, nextCursor }
+      };
+    }
+
+    function createProvider(onPost: (body: QueryBody) => Promise<HttpResponse<unknown>> | HttpResponse<unknown>) {
+      const sdkMock = new Mock<CogniteClient>()
+        .setup(instance => instance.post(It.IsAny(), It.IsAny()))
+        .callback(async ({ args }) => onPost(args[1]?.data))
+        .setup(instance => instance.getBaseUrl())
+        .returns('https://example.com');
+      return new Cdf360DataModelsDescriptorProvider(sdkMock.object());
+    }
+
+    const identifierFor = (id: string) => ({
+      source: 'dm' as const,
+      space: 'test_space',
+      image360CollectionExternalId: id
+    });
+
+    test('loads many collections with a few sequential queries and returns each collection its own images', async () => {
+      const collectionCount = 120;
+      let inFlight = 0;
+      let maxInFlight = 0;
+      let queryCount = 0;
+
+      const provider = createProvider(async body => {
+        queryCount++;
+        inFlight++;
+        maxInFlight = Math.max(maxInFlight, inFlight);
+        await new Promise(resolve => setTimeout(resolve, 1));
+        inFlight--;
+        const ids = body.with.image_collection.nodes.filter.instanceReferences.map(ref => ref.externalId);
+        return createResponse(
+          ids,
+          ids.map(id => createImage(`${id}_image`, id))
+        );
+      });
+
+      const ids = Array.from({ length: collectionCount }, (_, i) => `collection_${i}`);
+      const results = await Promise.all(ids.map(id => provider.get360ImageDescriptors(identifierFor(id), true)));
+
+      expect(queryCount).toBeLessThanOrEqual(Math.ceil(collectionCount / 50) + 1);
+      expect(maxInFlight).toBe(1);
+      results.forEach((descriptors, index) => {
+        expect(descriptors.length).toBe(1);
+        expect(descriptors[0].collectionId).toBe(ids[index]);
+        expect(descriptors[0].id).toBe(`${ids[index]}_image`);
+      });
+    });
+
+    test('returns no descriptors for a collection that is missing from the batched result', async () => {
+      const provider = createProvider(() => createResponse(['present'], [createImage('present_image', 'present')]));
+
+      const [present, missing] = await Promise.all([
+        provider.get360ImageDescriptors(identifierFor('present'), true),
+        provider.get360ImageDescriptors(identifierFor('missing'), true)
+      ]);
+
+      expect(present.length).toBe(1);
+      expect(missing).toEqual([]);
+    });
+
+    test('follows the images cursor and assigns images from later pages to their collections', async () => {
+      const bodies: QueryBody[] = [];
+      const provider = createProvider(body => {
+        bodies.push(body);
+        if (body.cursors === undefined) {
+          const fullPage = Array.from({ length: imagesPageLimit }, (_, i) => createImage(`a_${i}`, 'a'));
+          return createResponse(['a', 'b'], fullPage, { images: 'images-cursor', stations: 'stations-cursor' });
+        }
+        return createResponse(['a', 'b'], [createImage('b_0', 'b')]);
+      });
+
+      const [a, b] = await Promise.all([
+        provider.get360ImageDescriptors(identifierFor('a'), true),
+        provider.get360ImageDescriptors(identifierFor('b'), true)
+      ]);
+
+      expect(bodies.length).toBe(2);
+      expect(bodies[1].cursors).toEqual({ images: 'images-cursor', stations: 'stations-cursor' });
+      expect(a.length).toBe(imagesPageLimit);
+      expect(b.map(d => d.id)).toEqual(['b_0']);
+    });
+
+    test('rejects every collection in a batch when the query fails', async () => {
+      const provider = createProvider(() => {
+        throw new Error('query failed');
+      });
+      vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      const results = await Promise.allSettled([
+        provider.get360ImageDescriptors(identifierFor('a'), true),
+        provider.get360ImageDescriptors(identifierFor('b'), true)
+      ]);
+
+      expect(results.map(r => r.status)).toEqual(['rejected', 'rejected']);
+    });
   });
 });

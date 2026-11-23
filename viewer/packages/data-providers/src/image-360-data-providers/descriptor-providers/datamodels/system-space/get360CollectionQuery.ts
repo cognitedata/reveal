@@ -2,6 +2,8 @@
  * Copyright 2023 Cognite AS
  */
 
+import type { DMInstanceRef } from '@reveal/utilities';
+
 const cdf360ImageSchemaSpace = 'cdf_360_image_schema';
 
 const Image360CollectionQuery = {
@@ -129,4 +131,30 @@ export function get360CollectionQuery(
   space: string
 ): Cdf360FdmQuery & { parameters: { collectionExternalId: string; collectionSpace: string } } {
   return { ...Image360CollectionQuery, parameters: { collectionExternalId: externalId, collectionSpace: space } };
+}
+
+export type Cdf360FdmBatchQuery = Omit<Cdf360FdmQuery, 'with'> & {
+  with: Omit<Cdf360FdmQuery['with'], 'image_collection'> & {
+    image_collection: { nodes: { filter: { instanceReferences: DMInstanceRef[] } }; limit: number };
+  };
+};
+
+/**
+ * Builds a single query that loads several image collections (and their images/stations) at once.
+ * Images from all requested collections share the `images` page limit and cursor, so the
+ * results must be regrouped per collection using each image's `collection360` property.
+ */
+export function get360CollectionsQuery(collections: DMInstanceRef[]): Cdf360FdmBatchQuery {
+  return {
+    ...Image360CollectionQuery,
+    with: {
+      ...Image360CollectionQuery.with,
+      image_collection: {
+        nodes: {
+          filter: { instanceReferences: collections }
+        },
+        limit: collections.length
+      }
+    }
+  };
 }

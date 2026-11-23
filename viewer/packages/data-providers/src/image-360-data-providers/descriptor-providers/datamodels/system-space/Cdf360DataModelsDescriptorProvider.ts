@@ -7,11 +7,9 @@ import type {
   Historical360ImageSet,
   Image360Descriptor,
   Image360DescriptorProvider,
-  Image360FileDescriptor,
-  QueryNextCursors
+  Image360FileDescriptor
 } from '../../../../types';
-import type { Cdf360FdmQuery } from './get360CollectionQuery';
-import { get360CollectionQuery } from './get360CollectionQuery';
+import { Cdf360DataModelsBatchCollectionLoader } from './Cdf360DataModelsBatchCollectionLoader';
 import { assert } from '@reveal/utilities/assert';
 import { Euler, Matrix4 } from 'three';
 import { DataModelsSdk } from '../../../../DataModelsSdk';
@@ -52,29 +50,28 @@ export type Image360BaseIdentifier = {
   image360CollectionExternalId: string;
 };
 
-type QueryResult = Awaited<ReturnType<typeof DataModelsSdk.prototype.queryNodesAndEdges<Cdf360FdmQuery>>>;
+type CollectionQueryResult = Awaited<ReturnType<Cdf360DataModelsBatchCollectionLoader['getCollection']>>;
 
-type ImageInstanceResult = QueryResult['images'][number];
+type ImageInstanceResult = CollectionQueryResult['images'][number];
 type ImageResultProperties = ImageInstanceResult['properties']['cdf_360_image_schema']['Image360/v1'];
-
-type ExhaustedQueryResult = {
-  image_collection: QueryResult['image_collection'];
-  images: QueryResult['images'];
-  stations: QueryResult['stations'];
-};
 
 export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorProvider<ClassicDataSourceType> {
   readonly _dmsSdk: DataModelsSdk;
+  private readonly _collectionLoader: Cdf360DataModelsBatchCollectionLoader;
 
   constructor(sdk: CogniteClient) {
     this._dmsSdk = new DataModelsSdk(sdk);
+    this._collectionLoader = new Cdf360DataModelsBatchCollectionLoader(this._dmsSdk);
   }
 
   public async get360ImageDescriptors(
     collectionIdentifier: Image360DataModelIdentifier,
     _: boolean
   ): Promise<Historical360ImageSet<ClassicDataSourceType>[]> {
-    const { image_collection, images } = await this.queryCollection(collectionIdentifier);
+    const { image_collection, images } = await this._collectionLoader.getCollection({
+      space: collectionIdentifier.space,
+      externalId: collectionIdentifier.image360CollectionExternalId
+    });
 
     if (image_collection.length === 0) {
       return [];
@@ -145,47 +142,6 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
         mimeType: DEFAULT_360_IMAGE_MIME_TYPE
       }
     ];
-  }
-
-  private async queryCollection({
-    image360CollectionExternalId,
-    space
-  }: Image360DataModelIdentifier): Promise<ExhaustedQueryResult> {
-    const result: ExhaustedQueryResult = {
-      image_collection: [],
-      images: [],
-      stations: []
-    };
-
-    const query = get360CollectionQuery(image360CollectionExternalId, space);
-
-    const imageLimit = query.with.images.limit;
-
-    let nextCursor: QueryNextCursors<Cdf360FdmQuery> | undefined = undefined;
-    let hasNext = true;
-
-    while (hasNext) {
-      const {
-        image_collection,
-        images,
-        stations,
-        nextCursor: currentCursor
-      }: QueryResult = await this._dmsSdk.queryNodesAndEdges(query, nextCursor);
-      if (result.image_collection.length === 0) {
-        result.image_collection.push(...image_collection);
-      }
-      result.images.push(...images);
-      result.stations.push(...stations);
-
-      hasNext =
-        images.length === imageLimit && currentCursor?.images !== undefined && currentCursor?.stations !== undefined;
-      nextCursor = {
-        images: currentCursor?.images,
-        stations: currentCursor?.stations
-      };
-    }
-
-    return result;
   }
 
   private getHistorical360ImageSet(
