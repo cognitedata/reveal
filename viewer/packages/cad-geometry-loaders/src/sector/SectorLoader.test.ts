@@ -295,6 +295,36 @@ describe('SectorLoader', () => {
     expect(downloads.releasedSectorIds).not.toContain(slowestSectorId);
   });
 
+  test('loadSectors does not release a queued download that starts and is then claimed by the superseding load', async () => {
+    // Arrange: the first load fills every download slot, so the rest of its sectors wait in the queue
+    const downloads = createControlledDownloads();
+    const loadInput = { ...input, models: [downloads.cadNode] };
+    const firstLoading = asyncIteratorToArray(loader.loadSectors(loadInput));
+    await downloads.settle();
+    const [firstSectorId, secondSectorId] = downloads.requestedSectorIds;
+    const inFlightCount = downloads.requestedSectorIds.length;
+
+    // A slot frees up, so the first queued sector starts downloading
+    downloads.complete(firstSectorId);
+    await downloads.settle();
+    const startedFromQueueSectorId = downloads.requestedSectorIds[inFlightCount];
+
+    // Act: the new load reuses that download, then the first load stops before the download completes
+    const secondLoading = asyncIteratorToArray(loader.loadSectors(loadInput));
+    await downloads.settle();
+    downloads.complete(secondSectorId);
+    await downloads.settle();
+    downloads.complete(startedFromQueueSectorId);
+    await downloads.settle();
+    await downloads.completeAll();
+    const [, secondResult] = await Promise.all([firstLoading, secondLoading]);
+    await downloads.settle();
+
+    // Assert
+    expect(secondResult.map(sector => sector.metadata.id)).toContain(startedFromQueueSectorId);
+    expect(downloads.releasedSectorIds).not.toContain(startedFromQueueSectorId);
+  });
+
   test('loadSectors stops a batch that is still being culled when the consumer stops iterating', async () => {
     // Arrange
     const downloads = createControlledDownloads();
@@ -417,6 +447,10 @@ class ControlledDownloads {
   /** Lets everything that can progress without a download completing do so. Requires fake timers. */
   async settle(): Promise<void> {
     await vi.advanceTimersByTimeAsync(0);
+  }
+
+  complete(sectorId: number): void {
+    this.completePending(id => id === sectorId);
   }
 
   completeAllExcept(sectorId: number): void {
