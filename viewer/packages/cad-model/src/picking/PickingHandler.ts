@@ -195,26 +195,10 @@ export class PickingHandler {
       domElement: input.domElement,
       cadNodes: visibleCadNodes
     };
-    const treeIndexPixels = this._pickPixelColorStorage.pixelBuffer;
-    const depthPixels = this._depthPixelBuffer;
 
-    const treeIndexRead = this.pickPixel(
-      pickInput,
-      this._treeIndexRenderPipeline,
-      this._clearColor,
-      this._clearAlpha,
-      shouldRunAsync,
-      treeIndexPixels
-    );
-    const depthRead = this.pickPixel(
-      pickInput,
-      this._depthRenderPipeline,
-      this._clearColor,
-      this._clearAlpha,
-      shouldRunAsync,
-      depthPixels
-    );
-    await Promise.all([treeIndexRead, depthRead]);
+    const treeIndexRead = this.pickTreeIndexPixel(pickInput, shouldRunAsync);
+    const depthRead = this.intersectCadNodeDepth(pickInput, shouldRunAsync, this._depthPixelBuffer);
+    const [treeIndexPixels, { distance, point }] = await Promise.all([treeIndexRead, depthRead]);
 
     const modelIndex = CadPickBuffer.decodeModelIndex(treeIndexPixels, 0);
     if (modelIndex === undefined) {
@@ -225,8 +209,6 @@ export class PickingHandler {
       return undefined;
     }
     const treeIndex = CadPickBuffer.decodeTreeIndex(treeIndexPixels, 0);
-    const depth = CadPickBuffer.unpackDepth(depthPixels, 0);
-    const { distance, point } = depthToIntersection(depth, camera, input.normalizedCoords);
     return { distance, point, treeIndex, object: cadNode, cadNode };
   }
 
@@ -272,8 +254,8 @@ export class PickingHandler {
     }
   }
 
-  private async intersectCadNodeDepth(input: PickingInput, shouldRunAsync: boolean) {
-    const depth = await this.pickDepth(input, shouldRunAsync);
+  private async intersectCadNodeDepth(input: PickingInput, shouldRunAsync: boolean, pixelBuffer?: Uint8Array) {
+    const depth = await this.pickDepth(input, shouldRunAsync, pixelBuffer);
     return depthToIntersection(depth, input.camera, input.normalizedCoords);
   }
 
@@ -302,33 +284,30 @@ export class PickingHandler {
   }
 
   private async pickTreeIndex(input: TreeIndexPickingInput, shouldRunAsync: boolean): Promise<number | undefined> {
-    const pixelBuffer = await this.pickPixel(
-      input,
-      this._treeIndexRenderPipeline,
-      this._clearColor,
-      this._clearAlpha,
-      shouldRunAsync
-    );
+    const pixelBuffer = await this.pickTreeIndexPixel(input, shouldRunAsync);
 
     if (pixelBuffer[3] === 0) {
       return;
     }
 
-    const treeIndex = pixelBuffer[0] * 255 * 255 + pixelBuffer[1] * 255 + pixelBuffer[2];
-
-    return treeIndex;
+    return CadPickBuffer.decodeTreeIndex(pixelBuffer, 0);
   }
 
-  private async pickDepth(input: PickingInput, shouldRunAsync: boolean): Promise<number> {
-    const pixelBuffer = await this.pickPixel(
+  private async pickTreeIndexPixel(input: PickingInput, shouldRunAsync: boolean): Promise<Uint8Array> {
+    return this.pickPixel(input, this._treeIndexRenderPipeline, this._clearColor, this._clearAlpha, shouldRunAsync);
+  }
+
+  private async pickDepth(input: PickingInput, shouldRunAsync: boolean, pixelBuffer?: Uint8Array): Promise<number> {
+    const depthPixels = await this.pickPixel(
       input,
       this._depthRenderPipeline,
       this._clearColor,
       this._clearAlpha,
-      shouldRunAsync
+      shouldRunAsync,
+      pixelBuffer
     );
 
-    return CadPickBuffer.unpackDepth(pixelBuffer, 0);
+    return CadPickBuffer.unpackDepth(depthPixels, 0);
   }
 
   private async pickPixel(

@@ -2019,16 +2019,11 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       const cadNodes = cadModels.map(x => x.cadNode);
       // Do not refresh the renderer while a CAD pick hides models, as the frame would show them missing.
       // A pick that renders all the models together does not hide any, so the viewer keeps rendering.
-      const pauseRendering = this._pickingHandler.hidesModelsWhilePicking(cadNodes);
-      if (pauseRendering) {
-        this._forceStopRendering = true;
-      }
+      this._forceStopRendering = this._pickingHandler.hidesModelsWhilePicking(cadNodes);
       const cadResults = await this._pickingHandler
         .intersectCadNodes(cadNodes, input, options?.asyncCADIntersection ?? true)
         .finally(() => {
-          if (pauseRendering) {
-            this._forceStopRendering = false;
-          }
+          this._forceStopRendering = false;
         });
 
       if (cadResults.length > 0) {
