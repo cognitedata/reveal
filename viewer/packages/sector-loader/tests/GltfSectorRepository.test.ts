@@ -396,6 +396,43 @@ describe(GltfSectorRepository.name, () => {
     expect(getBinaryFile).toHaveBeenCalledWith('', signedUrl, undefined);
   });
 
+  describe('releaseUnusedSector', () => {
+    const sectorFileMetadata = { id: 7, sectorFileName: 'test.glb', downloadSize: 100 };
+
+    function createConsumedSector(metadata: Partial<SectorMetadata>, levelOfDetail: LevelOfDetail): ConsumedSector {
+      const wantedSector = createWantedSectorWithMetadata(metadata, levelOfDetail).object();
+      return new Mock<ConsumedSector>()
+        .setup(p => p.modelIdentifier)
+        .returns(wantedSector.modelIdentifier)
+        .setup(p => p.metadata)
+        .returns(wantedSector.metadata)
+        .setup(p => p.levelOfDetail)
+        .returns(levelOfDetail)
+        .object();
+    }
+
+    test('dereferences a detailed sector that was loaded from a file', () => {
+      const dereferenceSector = vi.spyOn(sectorRepository, 'dereferenceSector');
+      const consumedSector = createConsumedSector(sectorFileMetadata, LevelOfDetail.Detailed);
+
+      sectorRepository.releaseUnusedSector(consumedSector);
+
+      expect(dereferenceSector).toHaveBeenCalledExactlyOnceWith(consumedSector.modelIdentifier, sectorFileMetadata.id);
+    });
+
+    test.each([
+      ['is discarded', sectorFileMetadata, LevelOfDetail.Discarded],
+      ['has no sector file', { ...sectorFileMetadata, sectorFileName: null }, LevelOfDetail.Detailed],
+      ['has an empty sector file', { ...sectorFileMetadata, downloadSize: 0 }, LevelOfDetail.Detailed]
+    ])('does not dereference a sector that %s', (_, metadata, levelOfDetail) => {
+      const dereferenceSector = vi.spyOn(sectorRepository, 'dereferenceSector');
+
+      sectorRepository.releaseUnusedSector(createConsumedSector(metadata, levelOfDetail));
+
+      expect(dereferenceSector).not.toHaveBeenCalled();
+    });
+  });
+
   // Helper functions
   const createWantedSectorWithMetadata = (
     metadata: Partial<SectorMetadata>,

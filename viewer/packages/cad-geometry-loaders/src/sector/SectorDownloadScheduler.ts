@@ -178,7 +178,7 @@ export class SectorDownloadScheduler {
 
       const { abortSignal, abort } = this.createAbortSignal();
       const sectorDownload = this.downloadOrDiscard(downloadSector, sector, abortSignal);
-      this._pendingSectorDownloads.set(nextSectorIdentifier, { consumedSector: sectorDownload, abort });
+      this._pendingSectorDownloads.set(nextSectorIdentifier, { consumedSector: queuedDeferredPromise, abort });
       sectorDownload.then(consumedSector => {
         queuedDeferredPromise.resolve(consumedSector);
       });

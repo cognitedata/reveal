@@ -169,6 +169,21 @@ describe(DataFileCacheManager.name, () => {
     warnSpy.mockRestore();
   });
 
+  test('should drop an empty entry so the file is fetched again', async () => {
+    await cacheManager.storeResponse(TEST_FILE_URL, new ArrayBuffer(0), TEST_CONTENT_TYPE);
+    const cache = await mockCacheStorage.open('test-cache');
+    expect(await cache.match(TEST_FILE_URL)).toBeDefined();
+
+    expect(await cacheManager.getCachedResponse(TEST_FILE_URL)).toBeUndefined();
+    expect(await cache.match(TEST_FILE_URL)).toBeUndefined();
+  });
+
+  test('should report an empty entry as not cached', async () => {
+    await cacheManager.storeResponse(TEST_FILE_URL, new ArrayBuffer(0), TEST_CONTENT_TYPE);
+
+    expect(await cacheManager.has(TEST_FILE_URL)).toBe(false);
+  });
+
   test('should handle invalid header values gracefully', async () => {
     const cache = await mockCacheStorage.open('test-cache');
     const INVALID_FILE_URL = 'https://example.com/invalid.bin';

@@ -88,6 +88,18 @@ describe(CachedModelDataProvider.name, () => {
     expect(isCached).toBe(true);
   });
 
+  test('should not cache an empty binary file', async () => {
+    getBinaryFileMock.mockResolvedValue(new ArrayBuffer(0));
+
+    const data = await cachedProvider.getBinaryFile(TEST_URL, TEST_FILENAME);
+
+    expect(data.byteLength).toBe(0);
+    expect(await cachedProvider.isCached(TEST_URL, TEST_FILENAME)).toBe(false);
+
+    await cachedProvider.getBinaryFile(TEST_URL, TEST_FILENAME);
+    expect(mockBaseProvider.getBinaryFile).toHaveBeenCalledTimes(2);
+  });
+
   test('should fetch JSON from base provider on cache miss', async () => {
     const data = await cachedProvider.getJsonFile(TEST_URL, 'test.json');
 
