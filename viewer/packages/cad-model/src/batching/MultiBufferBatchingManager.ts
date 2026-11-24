@@ -235,15 +235,19 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
   public dispose(): void {
     this.cancelCompactProxyFlush();
 
-    for (const sectorId of this._sectorBatches.keys()) {
-      this.removeSectorBatches(sectorId);
-    }
-
+    // Everything is thrown away, so the batches are freed as they are. Removing the sectors one by
+    // one first would, for every sector, move the rest of each buffer it is in to close the gap it
+    // leaves, which takes many seconds for a large model and is work on data nobody will use.
     for (const { buffers } of this._instanceBatches.values()) {
+      buffers.forEach(({ mesh }) => {
+        mesh.count = 0;
+        mesh.visible = false;
+        mesh.layers.disableAll();
+        (mesh.userData.treeIndices as Map<number, number>).clear();
+      });
       this.disposeBatchBuffers(buffers);
     }
 
-    this.cancelCompactProxyFlush();
     this._sectorBatches.clear();
     this._instanceBatches.clear();
   }

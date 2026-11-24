@@ -17,7 +17,7 @@ import type { Materials, StyledTreeIndexSets } from '@reveal/rendering';
 import { MultiBufferBatchingManager } from './MultiBufferBatchingManager';
 import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
 import { sum } from 'lodash-es';
-import { IndexSet, NumericRange } from '@reveal/utilities';
+import { DynamicDefragmentedBuffer, IndexSet, NumericRange } from '@reveal/utilities';
 import { assert } from '@reveal/utilities/assert';
 
 describe(MultiBufferBatchingManager.name, () => {
@@ -176,6 +176,42 @@ describe(MultiBufferBatchingManager.name, () => {
 
     expect(geometryGroup.children).toHaveLength(0);
     disposeSpies.forEach(disposeSpy => expect(disposeSpy).toHaveBeenCalledTimes(1));
+  });
+
+  test('dispose() frees the batches without removing the sectors from them one by one', () => {
+    const removeSpy = vi.spyOn(DynamicDefragmentedBuffer.prototype, 'remove');
+    for (let sectorId = 0; sectorId < 20; sectorId++) {
+      manager.batchGeometries([createParsedGeometry(RevealGeometryCollectionType.BoxCollection, 10, 0)], sectorId);
+    }
+
+    manager.dispose();
+
+    expect(removeSpy).not.toHaveBeenCalled();
+    expect(geometryGroup.children).toHaveLength(0);
+    removeSpy.mockRestore();
+  });
+
+  test('dispose() leaves the removed meshes empty', () => {
+    manager.batchGeometries([createParsedGeometry(RevealGeometryCollectionType.BoxCollection, 10, 0)], 1);
+    const mesh = getMeshes()[0];
+
+    manager.dispose();
+
+    expect(mesh.count).toBe(0);
+    expect(mesh.visible).toBe(false);
+    expect(mesh.layers.mask).toBe(0);
+    expect(mesh.userData.treeIndices.size).toBe(0);
+  });
+
+  test('sectors can be added again after dispose()', () => {
+    manager.batchGeometries([createParsedGeometry(RevealGeometryCollectionType.BoxCollection, 10, 0)], 1);
+    manager.dispose();
+
+    manager.batchGeometries([createParsedGeometry(RevealGeometryCollectionType.BoxCollection, 10, 0)], 1);
+
+    expect(getMeshes()).toHaveLength(1);
+    expect(getMeshes()[0].count).toBe(10);
+    expect(() => manager.removeSectorBatches(1)).not.toThrow();
   });
 
   describe('batch buffer memory', () => {
@@ -591,6 +627,24 @@ describe(`${MultiBufferBatchingManager.name} compact proxies`, () => {
 
     expect(proxyMesh()).toBeUndefined();
     expect(batchMesh().layers.mask).not.toBe(0);
+  });
+
+  test('dispose() removes proxies, releases their geometry and cancels a pending rebuild', () => {
+    manager.batchGeometries([createGeometry([1, 3, 4, 5])], 1);
+    manager.batchGeometries([createGeometry([2, 6, 7, 8])], 2);
+    manager.batchGeometries([createGeometry([2, 9, 10, 11])], 3);
+    manager.updateCompactProxies();
+    // Removing visible instances leaves a rebuild pending
+    manager.removeSectorBatches(3);
+    const disposeSpy = vi.spyOn(proxyMesh()!.geometry, 'dispose');
+
+    manager.dispose();
+    vi.advanceTimersByTime(200);
+
+    expect(geometryGroup.children).toHaveLength(0);
+    expect(disposeSpy).toHaveBeenCalledTimes(1);
+    expect(onCompactProxiesRebuilt).not.toHaveBeenCalled();
+    expect(vi.getTimerCount()).toBe(0);
   });
 
   test('a removed proxy releases its geometry', () => {
