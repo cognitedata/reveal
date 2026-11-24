@@ -87,7 +87,7 @@ export class Cdf360DataModelsBatchCollectionLoader extends BatchLoader<DMInstanc
     }
 
     for (const image of all.images) {
-      const collectionRef = image.properties.cdf_360_image_schema['Image360/v1'].collection360;
+      const collectionRef = image.properties?.cdf_360_image_schema?.['Image360/v1']?.collection360;
       if (!isDmIdentifier(collectionRef)) {
         continue;
       }
