@@ -4,7 +4,7 @@
 
 import { Mock, It } from 'moq.ts';
 import type { CircleGeometry, MeshBasicMaterial, Object3D, WebGLRenderer } from 'three';
-import { InstancedMesh, Matrix4, PerspectiveCamera, Quaternion, Ray, Sphere, Sprite, Vector3 } from 'three';
+import { Box3, InstancedMesh, Matrix4, PerspectiveCamera, Quaternion, Ray, Sphere, Sprite, Vector3 } from 'three';
 import type { SceneHandler } from '@reveal/utilities';
 import { vi } from 'vitest';
 import type { ClusteredIcon } from './IconCollection';
@@ -536,6 +536,12 @@ describe(IconCollection.name, () => {
 
   describe('getWorldBoundingSphere', () => {
     const positions = [new Vector3(-5, 2, 3), new Vector3(10, 0, 0), new Vector3(0, -7, 4)];
+    const iconRadius = 0.3;
+    const padding = iconRadius + FlooredIconManager.FloorDiscHeightOffset;
+    const margin = 0.1;
+
+    const pointJustOutside = (sphere: Sphere): Vector3 =>
+      sphere.center.clone().add(new Vector3(1, 0, 0).multiplyScalar(sphere.radius + margin));
 
     test('encloses every icon position with an identity transform', () => {
       const collection = createCollection(positions);
@@ -543,6 +549,17 @@ describe(IconCollection.name, () => {
       const sphere = collection.getWorldBoundingSphere();
 
       positions.forEach(position => expect(sphere.containsPoint(position)).toBe(true));
+      collection.dispose();
+    });
+
+    test('does not extend beyond the icon bounds plus padding', () => {
+      const collection = createCollection(positions);
+      const localRadius = new Box3().setFromPoints(positions).getBoundingSphere(new Sphere()).radius;
+
+      const sphere = collection.getWorldBoundingSphere();
+
+      expect(sphere.radius).toBeCloseTo(localRadius + padding, 5);
+      expect(sphere.containsPoint(pointJustOutside(sphere))).toBe(false);
       collection.dispose();
     });
 
@@ -560,6 +577,11 @@ describe(IconCollection.name, () => {
       positions.forEach(position => {
         expect(sphere.containsPoint(position.clone().applyMatrix4(transform))).toBe(true);
       });
+
+      const maxScale = 3;
+      const localRadius = new Box3().setFromPoints(positions).getBoundingSphere(new Sphere()).radius;
+      expect(sphere.radius).toBeCloseTo(localRadius * maxScale + padding, 5);
+      expect(sphere.containsPoint(pointJustOutside(sphere))).toBe(false);
       collection.dispose();
     });
 
@@ -571,7 +593,10 @@ describe(IconCollection.name, () => {
 
       const sphere = collection.getWorldBoundingSphere();
 
+      const tooFarBelowLowest = new Vector3(0, -(padding + margin), 0);
+
       expect(sphere.containsPoint(belowLowest)).toBe(true);
+      expect(sphere.containsPoint(tooFarBelowLowest)).toBe(false);
       collection.dispose();
     });
 
