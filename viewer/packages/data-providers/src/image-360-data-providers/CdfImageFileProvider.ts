@@ -191,7 +191,7 @@ export class CdfImageFileProvider {
           const mimeType = parseMimeType(response.headers.get('Content-Type'));
           const data = await response.arrayBuffer();
           return { data, mimeType };
-        })
+        }, abortSignal)
       )
     );
   }
@@ -230,14 +230,14 @@ export class CdfImageFileProvider {
       };
 
       // The slot is held until the response body has been read. If the signal is aborted while the
-      // request is queued, fetch rejects immediately once it starts, so no request is sent.
+      // request is queued, the limiter drops it without starting, so no request is sent.
       const result = await this._downloadLinkLimiter.run(async () => {
         const response = await fetch(url, options);
         if (!response.ok) {
           throw new Error(`Failed to get download URLs: ${response.status} ${response.statusText}`);
         }
         return response.json();
-      });
+      }, abortSignal);
 
       allLinks.push(...result.items);
     }
