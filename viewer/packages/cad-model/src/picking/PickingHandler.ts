@@ -11,6 +11,7 @@ import type { SceneHandler } from '@reveal/utilities';
 import { WebGLRendererStateHelper } from '@reveal/utilities';
 import type { CadNode } from '../wrappers/CadNode';
 import { Mutex } from 'async-mutex';
+import { assignModelIndices, MAX_COMBINED_PICK_MODELS } from './assignModelIndices';
 import { CadPickBuffer } from './CadPickBuffer';
 import { CadPickCache } from './CadPickCache';
 import { depthToIntersection } from './depthToIntersection';
@@ -40,6 +41,7 @@ export class PickingHandler {
     renderTarget: WebGLRenderTarget;
     pixelBuffer: Uint8Array;
   };
+  private readonly _depthPixelBuffer = new Uint8Array(4);
 
   private readonly _pipelineExecutor: BasicPipelineExecutor;
   private readonly _depthRenderPipeline: CadGeometryRenderModePipelineProvider;
@@ -94,6 +96,16 @@ export class PickingHandler {
     this._pickPixelColorStorage.renderTarget.dispose();
   }
 
+  /**
+   * Whether a pick among the given models hides models while it runs. A frame rendered during such a pick would
+   * show the models missing, so the caller must not render until the pick has finished.
+   * @param cadNodes The models that will be picked among.
+   * @returns True if rendering must be paused during the pick.
+   */
+  public hidesModelsWhilePicking(cadNodes: CadNode[]): boolean {
+    return cadNodes.filter(node => node.visible).length > MAX_COMBINED_PICK_MODELS;
+  }
+
   public async intersectCadNodes(
     cadNodes: CadNode[],
     input: IntersectInput,
@@ -119,6 +131,14 @@ export class PickingHandler {
       }
 
       const filteredCadNodes = this.filterOutOfBoundCadNodes(visibleCadNodes, input);
+
+      if (!this.hidesModelsWhilePicking(visibleCadNodes)) {
+        if (filteredCadNodes.length === 0) {
+          return results;
+        }
+        const hit = await this.intersectVisibleCadNodes(visibleCadNodes, input, shouldRunAsync);
+        return hit === undefined ? results : [hit];
+      }
 
       for (const cadNodeData of filteredCadNodes) {
         // Skip cad node when its bounds is further away than any already hit position.
@@ -152,6 +172,44 @@ export class PickingHandler {
       visibleCadNodes.forEach(p => (p.visible = true));
       release();
     }
+  }
+
+  /**
+   * Picks among all the visible models with one tree index pass and one depth pass of the picked pixel, so the
+   * cost does not depend on the number of models. No model is hidden, and both passes are rendered before
+   * waiting for the pixels, so they describe the same frame.
+   */
+  private async intersectVisibleCadNodes(
+    visibleCadNodes: CadNode[],
+    input: IntersectInput,
+    shouldRunAsync: boolean
+  ): Promise<IntersectCadNodesResult | undefined> {
+    assignModelIndices(visibleCadNodes);
+
+    // The camera can move while waiting for the pixels, so keep the one the passes are rendered with
+    const camera = input.camera.clone();
+    const pickInput: PickingInput = {
+      normalizedCoords: input.normalizedCoords,
+      camera,
+      renderer: input.renderer,
+      domElement: input.domElement,
+      cadNodes: visibleCadNodes
+    };
+
+    const treeIndexRead = this.pickTreeIndexPixel(pickInput, shouldRunAsync);
+    const depthRead = this.intersectCadNodeDepth(pickInput, shouldRunAsync, this._depthPixelBuffer);
+    const [treeIndexPixels, { distance, point }] = await Promise.all([treeIndexRead, depthRead]);
+
+    const modelIndex = CadPickBuffer.decodeModelIndex(treeIndexPixels, 0);
+    if (modelIndex === undefined) {
+      return undefined;
+    }
+    const cadNode = visibleCadNodes[modelIndex];
+    if (cadNode === undefined) {
+      return undefined;
+    }
+    const treeIndex = CadPickBuffer.decodeTreeIndex(treeIndexPixels, 0);
+    return { distance, point, treeIndex, object: cadNode, cadNode };
   }
 
   private filterOutOfBoundCadNodes(cadNodes: CadNode[], input: IntersectInput) {
@@ -196,8 +254,8 @@ export class PickingHandler {
     }
   }
 
-  private async intersectCadNodeDepth(input: PickingInput, shouldRunAsync: boolean) {
-    const depth = await this.pickDepth(input, shouldRunAsync);
+  private async intersectCadNodeDepth(input: PickingInput, shouldRunAsync: boolean, pixelBuffer?: Uint8Array) {
+    const depth = await this.pickDepth(input, shouldRunAsync, pixelBuffer);
     return depthToIntersection(depth, input.camera, input.normalizedCoords);
   }
 
@@ -226,33 +284,30 @@ export class PickingHandler {
   }
 
   private async pickTreeIndex(input: TreeIndexPickingInput, shouldRunAsync: boolean): Promise<number | undefined> {
-    const pixelBuffer = await this.pickPixel(
-      input,
-      this._treeIndexRenderPipeline,
-      this._clearColor,
-      this._clearAlpha,
-      shouldRunAsync
-    );
+    const pixelBuffer = await this.pickTreeIndexPixel(input, shouldRunAsync);
 
     if (pixelBuffer[3] === 0) {
       return;
     }
 
-    const treeIndex = pixelBuffer[0] * 255 * 255 + pixelBuffer[1] * 255 + pixelBuffer[2];
-
-    return treeIndex;
+    return CadPickBuffer.decodeTreeIndex(pixelBuffer, 0);
   }
 
-  private async pickDepth(input: PickingInput, shouldRunAsync: boolean): Promise<number> {
-    const pixelBuffer = await this.pickPixel(
+  private async pickTreeIndexPixel(input: PickingInput, shouldRunAsync: boolean): Promise<Uint8Array> {
+    return this.pickPixel(input, this._treeIndexRenderPipeline, this._clearColor, this._clearAlpha, shouldRunAsync);
+  }
+
+  private async pickDepth(input: PickingInput, shouldRunAsync: boolean, pixelBuffer?: Uint8Array): Promise<number> {
+    const depthPixels = await this.pickPixel(
       input,
       this._depthRenderPipeline,
       this._clearColor,
       this._clearAlpha,
-      shouldRunAsync
+      shouldRunAsync,
+      pixelBuffer
     );
 
-    return CadPickBuffer.unpackDepth(pixelBuffer, 0);
+    return CadPickBuffer.unpackDepth(depthPixels, 0);
   }
 
   private async pickPixel(
@@ -260,9 +315,10 @@ export class PickingHandler {
     renderPipeline: RenderPipelineProvider,
     clearColor: Color,
     clearAlpha: number,
-    shouldRunAsync: boolean
+    shouldRunAsync: boolean,
+    pixelBuffer: Uint8Array = this._pickPixelColorStorage.pixelBuffer
   ) {
-    const { renderTarget, pixelBuffer } = this._pickPixelColorStorage;
+    const { renderTarget } = this._pickPixelColorStorage;
     const { camera, normalizedCoords, renderer, domElement } = input;
 
     // Prepare camera that only renders the single pixel we are interested in
