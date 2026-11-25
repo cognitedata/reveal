@@ -16,7 +16,7 @@ import { PickingHandler } from '@reveal/cad-model';
 
 import { It, Mock } from 'moq.ts';
 import type { BeforeSceneRenderedDelegate, DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
-import { CustomObject } from '@reveal/utilities';
+import { CustomObject, DeferredPromise } from '@reveal/utilities';
 import { mockClientAuthentication, autoMockWebGLRenderer } from '../../../../../test-utilities';
 import type { DataSourceType } from '@reveal/data-providers';
 import type { DefaultImage360Collection, Image360ClusterIntersectionData, Image360Entity } from '@reveal/360-images';
@@ -306,6 +306,85 @@ describe('Cognite3DViewer', () => {
       expect(onRendered).toHaveBeenCalledTimes(4);
       expect(pointCloudInvalidateSpy).toHaveBeenCalledTimes(1);
       expect(cadInvalidateSpy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('rendering while picking CAD models', () => {
+    let domElement: HTMLDivElement;
+    let viewer: Cognite3DViewer;
+    let cadPick: DeferredPromise<Awaited<ReturnType<PickingHandler['intersectCadNodes']>>>;
+    let intersectCadNodesSpy: MockInstance<PickingHandler['intersectCadNodes']>;
+    let hidesModelsWhilePickingSpy: MockInstance<PickingHandler['hidesModelsWhilePicking']>;
+    let onRendered: VitestMock<SceneRenderedDelegate>;
+
+    beforeEach(() => {
+      cadPick = new DeferredPromise();
+      intersectCadNodesSpy = vi.spyOn(PickingHandler.prototype, 'intersectCadNodes').mockReturnValue(cadPick);
+      hidesModelsWhilePickingSpy = vi.spyOn(PickingHandler.prototype, 'hidesModelsWhilePicking');
+
+      // The viewer only renders while its canvas is visible, see the pick cache invalidation tests
+      domElement = document.body.appendChild(document.createElement('div'));
+      viewer = new Cognite3DViewer({ sdk, renderer, domElement, _sectorCuller, logMetrics: false });
+      viewer.canvas.style.visibility = 'visible';
+      viewer.canvas.style.display = 'block';
+
+      onRendered = vi.fn<SceneRenderedDelegate>();
+      viewer.on('sceneRendered', onRendered);
+    });
+
+    afterEach(() => {
+      viewer.dispose();
+      domElement.remove();
+      intersectCadNodesSpy.mockRestore();
+      hidesModelsWhilePickingSpy.mockRestore();
+    });
+
+    function rendersNextFrame(): boolean {
+      onRendered.mockClear();
+      viewer.requestRedraw();
+      vi.advanceTimersToNextFrame();
+      return onRendered.mock.calls.length > 0;
+    }
+
+    function startCadPick(hidesModels: boolean): {
+      pick: ReturnType<Cognite3DViewer['getAnyIntersectionFromPixel']>;
+      cadPickStarted: Promise<void>;
+    } {
+      hidesModelsWhilePickingSpy.mockReturnValue(hidesModels);
+      const pick = viewer.getAnyIntersectionFromPixel(new Vector2(1, 1));
+      const cadPickStarted = vi.waitFor(() => expect(intersectCadNodesSpy).toHaveBeenCalledTimes(1));
+      return { pick, cadPickStarted };
+    }
+
+    test('keeps rendering during a pick that does not hide models', async () => {
+      const { pick, cadPickStarted } = startCadPick(false);
+      await cadPickStarted;
+
+      expect(rendersNextFrame()).toBe(true);
+
+      cadPick.resolve([]);
+      await pick;
+    });
+
+    test('pauses rendering during a pick that hides models and resumes when it has finished', async () => {
+      const { pick, cadPickStarted } = startCadPick(true);
+      await cadPickStarted;
+
+      expect(rendersNextFrame()).toBe(false);
+
+      cadPick.resolve([]);
+      await pick;
+      expect(rendersNextFrame()).toBe(true);
+    });
+
+    test('resumes rendering when a pick that hides models fails', async () => {
+      const { pick, cadPickStarted } = startCadPick(true);
+      await cadPickStarted;
+
+      cadPick.reject(new Error('Pick failed'));
+
+      await expect(pick).rejects.toThrow('Pick failed');
+      expect(rendersNextFrame()).toBe(true);
     });
   });
 

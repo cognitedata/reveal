@@ -4,11 +4,12 @@
 
 import { Mock, It } from 'moq.ts';
 import type { CircleGeometry, MeshBasicMaterial, Object3D, WebGLRenderer } from 'three';
-import { InstancedMesh, Matrix4, PerspectiveCamera, Ray, Vector3 } from 'three';
+import { Box3, InstancedMesh, Matrix4, PerspectiveCamera, Quaternion, Ray, Sphere, Sprite, Vector3 } from 'three';
 import type { SceneHandler } from '@reveal/utilities';
 import { vi } from 'vitest';
 import type { ClusteredIcon } from './IconCollection';
 import { IconCollection } from './IconCollection';
+import { FlooredIconManager } from './FlooredIconManager';
 import type { IconOctree, Overlay3DIcon } from '@reveal/3d-overlays';
 import { PointOctant } from 'sparse-octree';
 import { assert } from '@reveal/utilities/assert';
@@ -531,5 +532,150 @@ describe(IconCollection.name, () => {
     expect(collection.intersectCluster(hitRay)).toBeUndefined();
 
     collection.dispose();
+  });
+
+  describe('getWorldBoundingSphere', () => {
+    const positions = [new Vector3(-5, 2, 3), new Vector3(10, 0, 0), new Vector3(0, -7, 4)];
+    const iconRadius = 0.3;
+    const padding = iconRadius + FlooredIconManager.FloorDiscHeightOffset;
+    const margin = 0.1;
+
+    const pointJustOutside = (sphere: Sphere): Vector3 =>
+      sphere.center.clone().add(new Vector3(1, 0, 0).multiplyScalar(sphere.radius + margin));
+
+    test('encloses every icon position with an identity transform', () => {
+      const collection = createCollection(positions);
+
+      const sphere = collection.getWorldBoundingSphere();
+
+      positions.forEach(position => expect(sphere.containsPoint(position)).toBe(true));
+      collection.dispose();
+    });
+
+    test('does not extend beyond the icon bounds plus padding', () => {
+      const collection = createCollection(positions);
+      const localRadius = new Box3().setFromPoints(positions).getBoundingSphere(new Sphere()).radius;
+
+      const sphere = collection.getWorldBoundingSphere();
+
+      expect(sphere.radius).toBeCloseTo(localRadius + padding, 5);
+      expect(sphere.containsPoint(pointJustOutside(sphere))).toBe(false);
+      collection.dispose();
+    });
+
+    test('follows translation and non-uniform scale of the collection transform', () => {
+      const collection = createCollection(positions);
+      const transform = new Matrix4().compose(
+        new Vector3(100, -50, 20),
+        new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), Math.PI / 3),
+        new Vector3(2, 3, 0.5)
+      );
+      collection.setTransform(transform);
+
+      const sphere = collection.getWorldBoundingSphere();
+
+      positions.forEach(position => {
+        expect(sphere.containsPoint(position.clone().applyMatrix4(transform))).toBe(true);
+      });
+
+      const maxScale = 3;
+      const localRadius = new Box3().setFromPoints(positions).getBoundingSphere(new Sphere()).radius;
+      expect(sphere.radius).toBeCloseTo(localRadius * maxScale + padding, 5);
+      expect(sphere.containsPoint(pointJustOutside(sphere))).toBe(false);
+      collection.dispose();
+    });
+
+    test('is padded to cover floor discs drawn below the lowest icon', () => {
+      // The lowest icon lies exactly on the unpadded sphere (center (0, 5, 0), radius 5), so any
+      // point below it is only covered by the padding
+      const collection = createCollection([new Vector3(0, 0, 0), new Vector3(0, 10, 0)]);
+      const belowLowest = new Vector3(0, -FlooredIconManager.FloorDiscHeightOffset, 0);
+
+      const sphere = collection.getWorldBoundingSphere();
+
+      const tooFarBelowLowest = new Vector3(0, -(padding + margin), 0);
+
+      expect(sphere.containsPoint(belowLowest)).toBe(true);
+      expect(sphere.containsPoint(tooFarBelowLowest)).toBe(false);
+      collection.dispose();
+    });
+
+    test('writes into and returns the provided output sphere', () => {
+      const collection = createCollection(positions);
+      const out = new Sphere();
+
+      const result = collection.getWorldBoundingSphere(out);
+
+      expect(result).toBe(out);
+      expect(out.radius).toBeGreaterThan(0);
+      collection.dispose();
+    });
+  });
+
+  describe('shared textures', () => {
+    const findHoverSprite = (): Sprite => {
+      const sprite = addedObjects.find((o): o is Sprite => o instanceof Sprite);
+      assert(sprite !== undefined);
+      return sprite;
+    };
+
+    test('collections share the same hover icon texture', () => {
+      const first = createCollection([origin]);
+      const firstTexture = findHoverSprite().material.map;
+      addedObjects = [];
+      const second = createCollection([origin]);
+      const secondTexture = findHoverSprite().material.map;
+
+      expect(firstTexture).not.toBeNull();
+      expect(secondTexture).toBe(firstTexture);
+
+      first.dispose();
+      second.dispose();
+    });
+
+    test('disposes the shared hover texture only once the last collection using it is disposed', () => {
+      const first = createCollection([origin]);
+      const second = createCollection([origin]);
+      const texture = findHoverSprite().material.map;
+      assert(texture !== null);
+      const onDispose = vi.fn();
+      texture.addEventListener('dispose', onDispose);
+
+      first.dispose();
+      expect(onDispose).not.toHaveBeenCalled();
+
+      second.dispose();
+      expect(onDispose).toHaveBeenCalledTimes(1);
+    });
+
+    test('disposing the same collection twice does not release the reference of another collection', () => {
+      const first = createCollection([origin]);
+      const second = createCollection([origin]);
+      const texture = findHoverSprite().material.map;
+      assert(texture !== null);
+      const onDispose = vi.fn();
+      texture.addEventListener('dispose', onDispose);
+
+      first.dispose();
+      first.dispose();
+      expect(onDispose).not.toHaveBeenCalled();
+
+      second.dispose();
+      expect(onDispose).toHaveBeenCalledTimes(1);
+    });
+
+    test('creates a fresh texture once every collection using the previous one has been disposed', () => {
+      const first = createCollection([origin]);
+      const firstTexture = findHoverSprite().material.map;
+      first.dispose();
+      addedObjects = [];
+
+      const second = createCollection([origin]);
+      const secondTexture = findHoverSprite().material.map;
+
+      expect(secondTexture).not.toBeNull();
+      expect(secondTexture).not.toBe(firstTexture);
+      second.dispose();
+    });
   });
 });

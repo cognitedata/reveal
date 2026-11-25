@@ -25,6 +25,8 @@ type LoadContext = {
   sectorCuller: SectorCuller;
   sectorCullerInput: DetermineSectorsInput;
   models: CadNode[];
+  /** Downloads this load may still yield, see {@link SectorLoader.releaseClaimedDownloads} */
+  claimedDownloads: Set<Promise<ConsumedSector>>;
 };
 
 /**
@@ -45,6 +47,16 @@ export class SectorLoader {
   private readonly _sectorDownloadScheduler: SectorDownloadScheduler;
 
   private _batchId = 0;
+
+  /**
+   * Every loaded sector holds a reference in the sector cache until it is shown and later discarded. Sectors that
+   * no load yields are never shown, so their reference is released here. A download can be shared by several loads
+   * (the download scheduler reuses in-flight downloads), so it is released only after the last load that may yield
+   * it has stopped.
+   */
+  private readonly _downloadClaimCounts = new Map<Promise<ConsumedSector>, number>();
+  /** Sectors that have been yielded or released, so their cache reference is accounted for */
+  private readonly _handledSectors = new WeakSet<ConsumedSector>();
 
   constructor(
     sectorCuller: SectorCuller,
@@ -103,27 +115,35 @@ export class SectorLoader {
 
     // A newer load has reset the progress helper and discards results from this one, so a superseded load
     // must neither report progress nor keep processing its remaining batches.
+    // A stopped load counts as superseded, so a batch that is still being culled when it stops claims nothing.
+    let isStopped = false;
     const context: LoadContext = {
-      isSuperseded: () => currentBatchId !== this._batchId,
+      isSuperseded: () => isStopped || currentBatchId !== this._batchId,
       sectorCuller,
       sectorCullerInput,
-      models: cadModels
+      models: cadModels,
+      claimedDownloads: new Set()
     };
 
-    const batches = chunk(changedSectors, SectorLoadingBatchSize);
-    // Always keep the next batch started before consuming the current one, so the download scheduler can start
-    // its sectors as soon as a slot frees up instead of waiting for the slowest download in the current batch.
-    let nextBatch = batches.length > 0 ? this.startBatch(batches[0], context) : undefined;
-    for (let i = 0; nextBatch !== undefined; i++) {
-      const currentBatch = await nextBatch;
-      if (context.isSuperseded()) {
-        return;
-      }
-      nextBatch = i + 1 < batches.length ? this.startBatch(batches[i + 1], context) : undefined;
-      // Avoid an unhandled rejection while the current batch is consumed. The error still surfaces at the next await.
-      nextBatch?.catch(() => {});
+    try {
+      const batches = chunk(changedSectors, SectorLoadingBatchSize);
+      // Always keep the next batch started before consuming the current one, so the download scheduler can start
+      // its sectors as soon as a slot frees up instead of waiting for the slowest download in the current batch.
+      let nextBatch = batches.length > 0 ? this.startBatch(batches[0], context) : undefined;
+      for (let i = 0; nextBatch !== undefined; i++) {
+        const currentBatch = await nextBatch;
+        if (context.isSuperseded()) {
+          return;
+        }
+        nextBatch = i + 1 < batches.length ? this.startBatch(batches[i + 1], context) : undefined;
+        // Avoid an unhandled rejection while the current batch is consumed. The error still surfaces at the next await.
+        nextBatch?.catch(() => {});
 
-      yield* this.consumeBatch(currentBatch, context);
+        yield* this.consumeBatch(currentBatch, context);
+      }
+    } finally {
+      isStopped = true;
+      this.releaseClaimedDownloads(context);
     }
   }
 
@@ -159,7 +179,44 @@ export class SectorLoader {
       return [];
     }
     this._progressHelper.reportNewSectorsCulled(batch.length - filteredSectors.length);
-    return this.startLoadingBatch(filteredSectors, context.models);
+    const downloads = this.startLoadingBatch(filteredSectors, context.models);
+    downloads.forEach(download => this.claimDownload(download, context));
+    return downloads;
+  }
+
+  private claimDownload(download: Promise<ConsumedSector>, context: LoadContext): void {
+    if (context.claimedDownloads.has(download)) {
+      return;
+    }
+    context.claimedDownloads.add(download);
+    this._downloadClaimCounts.set(download, (this._downloadClaimCounts.get(download) ?? 0) + 1);
+  }
+
+  /**
+   * Called when a load stops. Releases the cache reference of every download that neither this nor any other
+   * load yields.
+   */
+  private releaseClaimedDownloads(context: LoadContext): void {
+    for (const download of context.claimedDownloads) {
+      const remainingClaims = (this._downloadClaimCounts.get(download) ?? 1) - 1;
+      if (remainingClaims > 0) {
+        this._downloadClaimCounts.set(download, remainingClaims);
+        continue;
+      }
+      this._downloadClaimCounts.delete(download);
+      download.then(sector => {
+        // A newer load may have claimed the download while it was in flight
+        if (this._downloadClaimCounts.has(download) || this._handledSectors.has(sector)) {
+          return;
+        }
+        this._handledSectors.add(sector);
+        const model = context.models.find(
+          model => model.cadModelMetadata.modelIdentifier.revealInternalId === sector.modelIdentifier.revealInternalId
+        );
+        model?.releaseUnusedSector(sector);
+      });
+    }
+    context.claimedDownloads.clear();
   }
 
   /**
@@ -182,6 +239,8 @@ export class SectorLoader {
           resolvedSector.levelOfDetail
         );
         this._progressHelper.reportSectorYielded();
+        // The consumer takes over the cache reference of a yielded sector
+        this._handledSectors.add(resolvedSector);
         yield resolvedSector; // progress will be reported when sector is loaded by CadManager
       } else {
         this._progressHelper.reportNewSectorsLoaded(1);
