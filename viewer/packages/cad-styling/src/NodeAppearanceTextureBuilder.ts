@@ -18,6 +18,7 @@ export class NodeAppearanceTextureBuilder {
   private readonly _handleStylesChangedListener = this.handleStylesChanged.bind(this);
 
   private _needsUpdate = true;
+  private _visibleNodesVersion = 0;
   private readonly _allTreeIndices: IndexSet;
   private readonly _overrideColorDefaultAppearanceRgba: Uint8ClampedArray;
   private readonly _overrideColorPerTreeIndexTexture: DataTexture;
@@ -91,6 +92,14 @@ export class NodeAppearanceTextureBuilder {
   }
 
   /**
+   * Incremented every time build() changes the set of visible nodes. Lets consumers that cache
+   * data derived from the visible nodes detect that it is outdated.
+   */
+  get visibleNodesVersion(): number {
+    return this._visibleNodesVersion;
+  }
+
+  /**
    * A texture holding at least one element per node with color override
    * and style information. RGB is used to store color, A is used to store
    * style toggles, with the following bit layout:
@@ -125,7 +134,11 @@ export class NodeAppearanceTextureBuilder {
     const pickableBefore = this.snapshotPickableSets();
     this.populateTexture(rgba);
     this.populateNodeSets(rgba);
-    if (!areSnapshotsEqual(pickableBefore, this.snapshotPickableSets())) {
+    const pickableAfter = this.snapshotPickableSets();
+    if (!areRangesEqual(pickableBefore.visible, pickableAfter.visible)) {
+      this._visibleNodesVersion++;
+    }
+    if (!areSnapshotsEqual(pickableBefore, pickableAfter)) {
       this._pickCacheInvalidator.request();
     }
 

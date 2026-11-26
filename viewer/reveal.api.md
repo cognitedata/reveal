@@ -629,6 +629,9 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     getSubtreeTreeIndices(treeIndex: number): Promise<NumericRange>;
     iterateNodesByTreeIndex(action: (treeIndex: number) => void): Promise<void>;
     iterateSubtreeByTreeIndex(treeIndex: number, action: (treeIndex: number) => void): Promise<void>;
+    set keepLoadedSectors(enabled: boolean);
+    // @beta
+    get keepLoadedSectors(): boolean;
     lockTreeIndices(treeIndices: number[]): void;
     mapBoxFromCdfToModelCoordinates(box: Box3, out?: Box3): Box3;
     mapNodeIdsToTreeIndices(nodeIds: CogniteInternalId[]): Promise<number[]>;
@@ -641,6 +644,9 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     get modelUnitToMetersFactor(): number | undefined;
     get nodeCount(): number;
     removeAllStyledNodeCollections(): void;
+    set renderOnlyVisibleInstances(enabled: boolean);
+    // @beta
+    get renderOnlyVisibleInstances(): boolean;
     resetNodeTransform(treeIndices: NumericRange): void;
     resetNodeTransformByTreeIndex(treeIndex: number, applyToChildren?: boolean): Promise<number>;
     readonly revisionId: number;

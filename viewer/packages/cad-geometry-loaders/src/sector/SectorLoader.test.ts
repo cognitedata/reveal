@@ -387,6 +387,70 @@ describe('SectorLoader', () => {
     expect(discarded.length).toBe(1);
   });
 
+  describe('sectors leaving the view', () => {
+    const loadSectorThenDiscard = async (maximumRenderCost: number, keepLoadedSectors: boolean) => {
+      cadNodeMock.setup(p => p.keepLoadedSectors).returns(keepLoadedSectors);
+      const modelId = model.modelIdentifier.revealInternalId;
+      const sector = model.scene.getAllSectors()[0];
+      stateHandler.updateState(modelId, sector.id, LevelOfDetail.Detailed);
+      culler.determineSectors = () => ({
+        wantedSectors: [{ ...createWantedSector(model, sector), levelOfDetail: LevelOfDetail.Discarded }],
+        spentBudget: noBudget
+      });
+      input.budget = { highDetailProximityThreshold: 0, maximumRenderCost };
+
+      const result = await asyncIteratorToArray(loader.loadSectors(input));
+      return { result, stillLoaded: !stateHandler.hasStateChanged(modelId, sector.id, LevelOfDetail.Detailed) };
+    };
+
+    test('are unloaded by default', async () => {
+      const { result, stillLoaded } = await loadSectorThenDiscard(Infinity, false);
+
+      expect(result.map(x => x.levelOfDetail)).toEqual([LevelOfDetail.Discarded]);
+      expect(stillLoaded).toBe(false);
+    });
+
+    test('are kept loaded when enabled and the budget is unlimited', async () => {
+      const { result, stillLoaded } = await loadSectorThenDiscard(Infinity, true);
+
+      expect(result).toHaveLength(0);
+      expect(stillLoaded).toBe(true);
+    });
+
+    test('are unloaded when enabled but the budget is limited', async () => {
+      const { result, stillLoaded } = await loadSectorThenDiscard(1000, true);
+
+      expect(result.map(x => x.levelOfDetail)).toEqual([LevelOfDetail.Discarded]);
+      expect(stillLoaded).toBe(false);
+    });
+
+    test('are unloaded by the next load after being disabled', async () => {
+      const modelId = model.modelIdentifier.revealInternalId;
+      const sectorId = model.scene.getAllSectors()[0].id;
+      const kept = await loadSectorThenDiscard(Infinity, true);
+      expect(kept.stillLoaded).toBe(true);
+      cadNodeMock.setup(p => p.keepLoadedSectors).returns(false);
+
+      const result = await asyncIteratorToArray(loader.loadSectors(input));
+
+      expect(result.map(x => x.levelOfDetail)).toEqual([LevelOfDetail.Discarded]);
+      expect(stateHandler.hasStateChanged(modelId, sectorId, LevelOfDetail.Detailed)).toBe(true);
+    });
+
+    test('are unloaded by the next load after the budget becomes limited', async () => {
+      const modelId = model.modelIdentifier.revealInternalId;
+      const sectorId = model.scene.getAllSectors()[0].id;
+      const kept = await loadSectorThenDiscard(Infinity, true);
+      expect(kept.stillLoaded).toBe(true);
+      input.budget = { highDetailProximityThreshold: 0, maximumRenderCost: 1000 };
+
+      const result = await asyncIteratorToArray(loader.loadSectors(input));
+
+      expect(result.map(x => x.levelOfDetail)).toEqual([LevelOfDetail.Discarded]);
+      expect(stateHandler.hasStateChanged(modelId, sectorId, LevelOfDetail.Detailed)).toBe(true);
+    });
+  });
+
   function createControlledDownloads(): ControlledDownloads {
     vi.useFakeTimers();
     const downloads = new ControlledDownloads();

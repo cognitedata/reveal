@@ -3,14 +3,22 @@
  */
 import type { ParsedGeometry } from '@reveal/sector-parser';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
-import { BufferGeometry, Group, InstancedMesh, InterleavedBuffer, InterleavedBufferAttribute } from 'three';
+import {
+  BufferAttribute,
+  BufferGeometry,
+  Group,
+  InstancedMesh,
+  InterleavedBuffer,
+  InterleavedBufferAttribute
+} from 'three';
 import { Mock } from 'moq.ts';
 import { vi } from 'vitest';
 import type { Materials, StyledTreeIndexSets } from '@reveal/rendering';
+import { RenderLayer, setModelRenderLayers } from '@reveal/rendering';
 import { MultiBufferBatchingManager } from './MultiBufferBatchingManager';
 import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
 import { sum } from 'lodash-es';
-import { IndexSet } from '@reveal/utilities';
+import { DynamicDefragmentedBuffer, IndexSet, NumericRange } from '@reveal/utilities';
 import { assert } from '@reveal/utilities/assert';
 
 describe(MultiBufferBatchingManager.name, () => {
@@ -26,15 +34,11 @@ describe(MultiBufferBatchingManager.name, () => {
       inFront: new IndexSet(),
       visible: new IndexSet()
     };
-    return new MultiBufferBatchingManager(
-      geometryGroup,
-      materials,
-      styledIndexSets,
-      new TreeIndexToSectorsMap(10),
-      1024,
-      numberOfInstanceBuffers,
+    return new MultiBufferBatchingManager(geometryGroup, materials, styledIndexSets, new TreeIndexToSectorsMap(10), {
+      initialBufferSize: 1024,
+      numberOfInstanceBatches: numberOfInstanceBuffers,
       additionalBufferThresholdBytes
-    );
+    });
   }
 
   function getMeshes(): InstancedMesh[] {
@@ -169,6 +173,42 @@ describe(MultiBufferBatchingManager.name, () => {
 
     expect(geometryGroup.children).toHaveLength(0);
     disposeSpies.forEach(disposeSpy => expect(disposeSpy).toHaveBeenCalledTimes(1));
+  });
+
+  test('dispose() frees the batches without removing the sectors from them one by one', () => {
+    const removeSpy = vi.spyOn(DynamicDefragmentedBuffer.prototype, 'remove');
+    for (let sectorId = 0; sectorId < 20; sectorId++) {
+      manager.batchGeometries([createParsedGeometry(RevealGeometryCollectionType.BoxCollection, 10, 0)], sectorId);
+    }
+
+    manager.dispose();
+
+    expect(removeSpy).not.toHaveBeenCalled();
+    expect(geometryGroup.children).toHaveLength(0);
+    removeSpy.mockRestore();
+  });
+
+  test('dispose() leaves the removed meshes empty', () => {
+    manager.batchGeometries([createParsedGeometry(RevealGeometryCollectionType.BoxCollection, 10, 0)], 1);
+    const mesh = getMeshes()[0];
+
+    manager.dispose();
+
+    expect(mesh.count).toBe(0);
+    expect(mesh.visible).toBe(false);
+    expect(mesh.layers.mask).toBe(0);
+    expect(mesh.userData.treeIndices.size).toBe(0);
+  });
+
+  test('sectors can be added again after dispose()', () => {
+    manager.batchGeometries([createParsedGeometry(RevealGeometryCollectionType.BoxCollection, 10, 0)], 1);
+    manager.dispose();
+
+    manager.batchGeometries([createParsedGeometry(RevealGeometryCollectionType.BoxCollection, 10, 0)], 1);
+
+    expect(getMeshes()).toHaveLength(1);
+    expect(getMeshes()[0].count).toBe(10);
+    expect(() => manager.removeSectorBatches(1)).not.toThrow();
   });
 
   describe('batch buffer memory', () => {
@@ -358,6 +398,444 @@ describe(MultiBufferBatchingManager.name, () => {
       expect(addedMesh.userData.treeIndices.size).toBe(0);
     });
   });
+});
+
+describe(`${MultiBufferBatchingManager.name} compact proxies`, () => {
+  let geometryGroup: Group;
+  let manager: MultiBufferBatchingManager;
+  let styledIndexSets: StyledTreeIndexSets;
+  let onCompactProxiesRebuilt: () => void;
+  let visibleVersion: number;
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    onCompactProxiesRebuilt = vi.fn();
+    visibleVersion = 0;
+    geometryGroup = new Group();
+    styledIndexSets = {
+      back: new IndexSet(new NumericRange(0, 100)),
+      ghost: new IndexSet(),
+      inFront: new IndexSet(),
+      visible: new IndexSet([2])
+    };
+    manager = new MultiBufferBatchingManager(
+      geometryGroup,
+      new Mock<Materials>().object(),
+      styledIndexSets,
+      new TreeIndexToSectorsMap(100),
+      {
+        initialBufferSize: 1024,
+        numberOfInstanceBatches: 1,
+        compactProxyHooks: { onDeferredRebuild: onCompactProxiesRebuilt, getVisibleNodesVersion: () => visibleVersion }
+      }
+    );
+    manager.setCompactProxiesEnabled(true);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  const batchMesh = (): InstancedMesh => {
+    const mesh = geometryGroup.children.find(c => !c.userData.isCompactProxy);
+    assert(mesh instanceof InstancedMesh);
+    return mesh;
+  };
+  const proxyMesh = (): InstancedMesh | undefined => {
+    const mesh = geometryGroup.children.find(c => c.userData.isCompactProxy);
+    assert(mesh === undefined || mesh instanceof InstancedMesh);
+    return mesh;
+  };
+  const requireProxyMesh = (): InstancedMesh => {
+    const mesh = proxyMesh();
+    assert(mesh !== undefined);
+    return mesh;
+  };
+  const proxyTreeIndices = () => {
+    const proxy = requireProxyMesh();
+    const attribute = proxy.geometry.getAttribute('a_treeIndex');
+    return Array.from({ length: proxy.count }, (_, i) => attribute.getX(i));
+  };
+
+  test('updateCompactProxies() draws only visible instances through a proxy', () => {
+    manager.batchGeometries([createGeometry([1, 2, 3, 4, 5])], 1);
+
+    manager.updateCompactProxies();
+
+    expect(proxyTreeIndices()).toEqual([2]);
+    expect(requireProxyMesh().layers.mask).not.toBe(0);
+    expect(batchMesh().layers.mask).toBe(0);
+  });
+
+  test('a proxy holds visible instances from several runs in batch order', () => {
+    styledIndexSets.visible.addRange(new NumericRange(3, 1));
+    styledIndexSets.visible.addRange(new NumericRange(6, 1));
+    styledIndexSets.visible.addRange(new NumericRange(9, 2));
+    visibleVersion++;
+    manager.batchGeometries([createGeometry([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])], 1);
+
+    manager.updateCompactProxies();
+
+    expect(proxyTreeIndices()).toEqual([2, 3, 6, 9, 10]);
+    expect(batchMesh().layers.mask).toBe(0);
+  });
+
+  test('adding a sector with only hidden instances keeps the batch mesh disabled', () => {
+    manager.batchGeometries([createGeometry([1, 2, 3, 4, 5])], 1);
+    manager.updateCompactProxies();
+
+    manager.batchGeometries([createGeometry([6, 7, 8])], 2);
+
+    expect(batchMesh().layers.mask).toBe(0);
+    expect(proxyTreeIndices()).toEqual([2]);
+  });
+
+  test('adding a sector with visible instances draws the batch mesh until the proxy is rebuilt', () => {
+    manager.batchGeometries([createGeometry([1, 2, 3, 4, 5])], 1);
+    manager.updateCompactProxies();
+
+    manager.batchGeometries([createGeometry([2, 9, 10, 11])], 2);
+    manager.batchGeometries([createGeometry([12, 13])], 3);
+
+    expect(batchMesh().layers.mask).not.toBe(0);
+
+    vi.advanceTimersByTime(200);
+
+    expect(proxyTreeIndices()).toEqual([2, 2]);
+    expect(batchMesh().layers.mask).toBe(0);
+  });
+
+  test('removing the sector holding visible instances rebuilds the proxy', () => {
+    manager.batchGeometries([createGeometry([1, 3, 4, 5])], 1);
+    manager.batchGeometries([createGeometry([2, 6, 7, 8])], 2);
+    manager.updateCompactProxies();
+
+    manager.removeSectorBatches(2);
+    vi.advanceTimersByTime(200);
+
+    expect(proxyMesh()).toBeUndefined();
+    expect(batchMesh().layers.mask).toBe(0);
+  });
+
+  test('the deferred rebuild after removing visible instances requests a redraw', () => {
+    manager.batchGeometries([createGeometry([1, 3, 4, 5])], 1);
+    manager.batchGeometries([createGeometry([2, 6, 7, 8])], 2);
+    manager.updateCompactProxies();
+
+    manager.removeSectorBatches(2);
+
+    expect(onCompactProxiesRebuilt).not.toHaveBeenCalled();
+
+    vi.advanceTimersByTime(200);
+
+    expect(onCompactProxiesRebuilt).toHaveBeenCalledTimes(1);
+  });
+
+  test('the deferred rebuild after adding visible instances requests a redraw', () => {
+    manager.batchGeometries([createGeometry([1, 2, 3, 4, 5])], 1);
+    manager.updateCompactProxies();
+
+    manager.batchGeometries([createGeometry([2, 9, 10, 11])], 2);
+    vi.advanceTimersByTime(200);
+
+    expect(onCompactProxiesRebuilt).toHaveBeenCalledTimes(1);
+  });
+
+  test('adding or removing only hidden instances does not request a redraw', () => {
+    manager.batchGeometries([createGeometry([1, 2, 3, 4, 5])], 1);
+    manager.updateCompactProxies();
+
+    manager.batchGeometries([createGeometry([6, 7, 8])], 2);
+    manager.removeSectorBatches(2);
+    vi.advanceTimersByTime(200);
+
+    expect(onCompactProxiesRebuilt).not.toHaveBeenCalled();
+  });
+
+  test('a sector added after a styling change is classified with the new visibility', () => {
+    manager.batchGeometries([createGeometry([1, 2, 3, 4, 5])], 1);
+    manager.updateCompactProxies();
+
+    // The styled sets change, but updateCompactProxies() has not been called yet
+    styledIndexSets.visible.add(9);
+    visibleVersion++;
+    manager.batchGeometries([createGeometry([9, 10, 11, 12])], 2);
+
+    expect(batchMesh().layers.mask).not.toBe(0);
+
+    vi.advanceTimersByTime(200);
+
+    expect(proxyTreeIndices()).toEqual([2, 9]);
+    expect(batchMesh().layers.mask).toBe(0);
+  });
+
+  test('updateCompactProxies() does not recompute batch layers when told they are current', () => {
+    manager.batchGeometries([createGeometry([1, 2, 3, 4, 5])], 1);
+    const intersectionSpy = vi.spyOn(styledIndexSets.visible, 'hasIntersectionWithMap');
+
+    manager.updateCompactProxies({ batchLayersAreCurrent: true });
+
+    expect(intersectionSpy).not.toHaveBeenCalled();
+    expect(proxyTreeIndices()).toEqual([2]);
+    expect(batchMesh().layers.mask).toBe(0);
+  });
+
+  test('a styling change that keeps visibility does not rebuild proxies', () => {
+    manager.batchGeometries([createGeometry([1, 2, 3, 4, 5])], 1);
+    manager.updateCompactProxies();
+    const attribute = requireProxyMesh().geometry.getAttribute('a_treeIndex');
+    assert(attribute instanceof InterleavedBufferAttribute);
+    const uploadVersion = attribute.data.version;
+    const proxy = requireProxyMesh();
+
+    // As CadNode does: the shared pass recomputes the batch layers, then the proxies are updated
+    setModelRenderLayers(geometryGroup, styledIndexSets);
+    manager.updateCompactProxies({ batchLayersAreCurrent: true });
+
+    expect(attribute.data.version).toBe(uploadVersion);
+    expect(requireProxyMesh()).toBe(proxy);
+    expect(proxyTreeIndices()).toEqual([2]);
+    expect(batchMesh().layers.mask).toBe(0);
+  });
+
+  test('a styling change that changes visibility rebuilds proxies', () => {
+    manager.batchGeometries([createGeometry([1, 2, 3, 4, 5])], 1);
+    manager.updateCompactProxies();
+
+    styledIndexSets.visible.add(3);
+    visibleVersion++;
+    manager.updateCompactProxies();
+
+    expect(proxyTreeIndices()).toEqual([2, 3]);
+    expect(batchMesh().layers.mask).toBe(0);
+  });
+
+  test('a ghost change without a visibility change moves the proxy to the new layers', () => {
+    manager.batchGeometries([createGeometry([1, 2, 3, 4, 5])], 1);
+    manager.updateCompactProxies();
+    expect(requireProxyMesh().layers.isEnabled(RenderLayer.Ghost)).toBe(false);
+
+    styledIndexSets.ghost.add(2);
+    manager.updateCompactProxies();
+
+    expect(requireProxyMesh().layers.isEnabled(RenderLayer.Ghost)).toBe(true);
+    expect(proxyTreeIndices()).toEqual([2]);
+    expect(batchMesh().layers.mask).toBe(0);
+  });
+
+  test('a styling change that keeps visibility keeps a pending deferred rebuild', () => {
+    manager.batchGeometries([createGeometry([1, 2, 3, 4, 5])], 1);
+    manager.updateCompactProxies();
+    manager.batchGeometries([createGeometry([2, 9, 10, 11])], 2);
+
+    manager.updateCompactProxies();
+    vi.advanceTimersByTime(200);
+
+    expect(proxyTreeIndices()).toEqual([2, 2]);
+    expect(batchMesh().layers.mask).toBe(0);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  test('re-enabling compact proxies rebuilds them', () => {
+    manager.batchGeometries([createGeometry([1, 2, 3, 4, 5])], 1);
+    manager.updateCompactProxies();
+    manager.setCompactProxiesEnabled(false);
+
+    styledIndexSets.visible.add(3);
+    visibleVersion++;
+    manager.updateCompactProxies();
+    manager.setCompactProxiesEnabled(true);
+
+    expect(proxyTreeIndices()).toEqual([2, 3]);
+    expect(batchMesh().layers.mask).toBe(0);
+  });
+
+  test('a rebuilt proxy only uploads the instances in use', () => {
+    manager.batchGeometries([createGeometry([1, 2, 3, 4, 5])], 1);
+
+    manager.updateCompactProxies();
+
+    const attribute = requireProxyMesh().geometry.getAttribute('a_treeIndex');
+    assert(attribute instanceof InterleavedBufferAttribute);
+    expect(attribute.data.updateRanges).toEqual([{ start: 0, count: attribute.data.stride }]);
+  });
+
+  test('no proxy is used when most instances are visible', () => {
+    styledIndexSets.visible.addRange(new NumericRange(1, 4));
+    visibleVersion++;
+    manager.batchGeometries([createGeometry([1, 2, 3, 4, 5])], 1);
+
+    manager.updateCompactProxies();
+
+    expect(proxyMesh()).toBeUndefined();
+    expect(batchMesh().layers.mask).not.toBe(0);
+  });
+
+  test('removing many sectors in one pass defers the proxy rebuild to a single update', () => {
+    for (let sectorId = 1; sectorId <= 20; sectorId++) {
+      manager.batchGeometries([createGeometry([2, 50 + sectorId])], sectorId);
+    }
+    manager.updateCompactProxies();
+
+    for (let sectorId = 1; sectorId <= 19; sectorId++) {
+      manager.removeSectorBatches(sectorId);
+    }
+
+    // Not rebuilt yet: the proxy still holds the visible instance of every sector
+    expect(onCompactProxiesRebuilt).not.toHaveBeenCalled();
+    expect(requireProxyMesh().count).toBe(20);
+    expect(requireProxyMesh().layers.mask).not.toBe(0);
+
+    vi.advanceTimersByTime(200);
+
+    expect(onCompactProxiesRebuilt).toHaveBeenCalledTimes(1);
+    expect(requireProxyMesh().count).toBe(1);
+    expect(batchMesh().count).toBe(2);
+  });
+
+  test('when disabled, layers are recomputed immediately on removal as in the original behaviour', () => {
+    manager.setCompactProxiesEnabled(false);
+    manager.batchGeometries([createGeometry([2, 3])], 1);
+    manager.batchGeometries([createGeometry([4, 5])], 2);
+    expect(batchMesh().layers.mask).not.toBe(0);
+
+    manager.removeSectorBatches(1);
+
+    expect(batchMesh().layers.mask).toBe(0);
+    expect(proxyMesh()).toBeUndefined();
+  });
+
+  test('when disabled, adding visible instances enables layers immediately', () => {
+    manager.setCompactProxiesEnabled(false);
+    manager.batchGeometries([createGeometry([4, 5])], 1);
+    expect(batchMesh().layers.mask).toBe(0);
+
+    manager.batchGeometries([createGeometry([2, 6])], 2);
+
+    expect(batchMesh().layers.mask).not.toBe(0);
+    expect(proxyMesh()).toBeUndefined();
+  });
+
+  test('disabling removes existing proxies and renders the batch mesh again', () => {
+    manager.batchGeometries([createGeometry([1, 2, 3, 4, 5])], 1);
+    manager.updateCompactProxies();
+    expect(proxyMesh()).toBeDefined();
+
+    manager.setCompactProxiesEnabled(false);
+
+    expect(proxyMesh()).toBeUndefined();
+    expect(batchMesh().layers.mask).not.toBe(0);
+  });
+
+  test('dispose() removes proxies, releases their geometry and cancels a pending rebuild', () => {
+    manager.batchGeometries([createGeometry([1, 3, 4, 5])], 1);
+    manager.batchGeometries([createGeometry([2, 6, 7, 8])], 2);
+    manager.batchGeometries([createGeometry([2, 9, 10, 11])], 3);
+    manager.updateCompactProxies();
+    // Removing visible instances leaves a rebuild pending
+    manager.removeSectorBatches(3);
+    const disposeSpy = vi.spyOn(requireProxyMesh().geometry, 'dispose');
+
+    manager.dispose();
+    vi.advanceTimersByTime(200);
+
+    expect(geometryGroup.children).toHaveLength(0);
+    expect(disposeSpy).toHaveBeenCalledTimes(1);
+    expect(onCompactProxiesRebuilt).not.toHaveBeenCalled();
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  test('a removed proxy releases its geometry', () => {
+    manager.batchGeometries([createGeometry([1, 2, 3, 4, 5])], 1);
+    manager.updateCompactProxies();
+    const disposeSpy = vi.spyOn(requireProxyMesh().geometry, 'dispose');
+
+    manager.setCompactProxiesEnabled(false);
+
+    expect(disposeSpy).toHaveBeenCalledTimes(1);
+  });
+
+  test('a proxy owns copies of the template attributes of the batch', () => {
+    const geometry = createGeometry([1, 2, 3, 4, 5]);
+    geometry.geometryBuffer.setAttribute('position', new BufferAttribute(new Float32Array([0, 1, 2]), 3));
+    geometry.geometryBuffer.setIndex([0]);
+    manager.batchGeometries([geometry], 1);
+
+    manager.updateCompactProxies();
+
+    const proxyGeometry = requireProxyMesh().geometry;
+    const batchGeometry = batchMesh().geometry;
+    expect(proxyGeometry.getAttribute('position')).not.toBe(batchGeometry.getAttribute('position'));
+    expect(Array.from(proxyGeometry.getAttribute('position').array)).toEqual([0, 1, 2]);
+    expect(proxyGeometry.getIndex()).not.toBe(batchGeometry.getIndex());
+    const proxyIndex = proxyGeometry.getIndex();
+    assert(proxyIndex !== null);
+    expect(Array.from(proxyIndex.array)).toEqual([0]);
+  });
+
+  test('a newly filled batch mesh is never in the default render layer', () => {
+    manager.batchGeometries([createGeometry([1, 2, 3, 4, 5])], 1);
+
+    expect(batchMesh().layers.isEnabled(0)).toBe(false);
+    expect(batchMesh().layers.mask).not.toBe(0);
+  });
+
+  function createGeometry(treeIndices: number[]) {
+    return createParsedGeometryWithTreeIndices(RevealGeometryCollectionType.BoxCollection, treeIndices, 0);
+  }
+});
+
+test(`${MultiBufferBatchingManager.name} does not create compact proxies by default`, () => {
+  const geometryGroup = new Group();
+  const visible = new IndexSet([2]);
+  // The lookup of visible nodes is built from the ranges of the visible set
+  const visibleRangesSpy = vi.spyOn(visible, 'toRangeArray');
+  const manager = new MultiBufferBatchingManager(
+    geometryGroup,
+    new Mock<Materials>().object(),
+    {
+      back: new IndexSet(new NumericRange(0, 100)),
+      ghost: new IndexSet(),
+      inFront: new IndexSet(),
+      visible
+    },
+    new TreeIndexToSectorsMap(100),
+    { initialBufferSize: 1024, numberOfInstanceBatches: 1 }
+  );
+  manager.batchGeometries(
+    [createParsedGeometryWithTreeIndices(RevealGeometryCollectionType.BoxCollection, [1, 2, 3, 4, 5], 0)],
+    1
+  );
+
+  manager.updateCompactProxies();
+  manager.removeSectorBatches(1);
+
+  expect(geometryGroup.children.some(child => child.userData.isCompactProxy)).toBe(false);
+  expect(visibleRangesSpy).not.toHaveBeenCalled();
+});
+
+test(`${MultiBufferBatchingManager.name} renders batches in their render layers by default`, () => {
+  const geometryGroup = new Group();
+  const manager = new MultiBufferBatchingManager(
+    geometryGroup,
+    new Mock<Materials>().object(),
+    {
+      back: new IndexSet(new NumericRange(0, 100)),
+      ghost: new IndexSet(),
+      inFront: new IndexSet(),
+      visible: new IndexSet([2])
+    },
+    new TreeIndexToSectorsMap(100),
+    { initialBufferSize: 1024, numberOfInstanceBatches: 1 }
+  );
+
+  manager.batchGeometries(
+    [createParsedGeometryWithTreeIndices(RevealGeometryCollectionType.BoxCollection, [1, 2, 3, 4, 5], 0)],
+    1
+  );
+
+  expect(geometryGroup.children[0].layers.mask).not.toBe(0);
+  expect(geometryGroup.children[0].layers.isEnabled(0)).toBe(false);
 });
 
 const FLOATS_PER_ELEMENT = 3;

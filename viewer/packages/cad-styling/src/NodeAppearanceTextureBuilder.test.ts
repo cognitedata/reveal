@@ -48,6 +48,29 @@ describe('NodeAppearanceTextureBuilder', () => {
     expect(builder.needsUpdate).toBeFalsy();
   });
 
+  test('visibleNodesVersion changes when the visible nodes change', () => {
+    builder.build();
+    const version = builder.visibleNodesVersion;
+
+    styleProvider.assignStyledNodeCollection(nodeCollection, { visible: false });
+    vi.runAllTimers();
+    builder.build();
+
+    expect(builder.visibleNodesVersion).not.toBe(version);
+  });
+
+  test('visibleNodesVersion does not change for a colour-only style change', () => {
+    builder.build();
+    const version = builder.visibleNodesVersion;
+
+    styleProvider.assignStyledNodeCollection(nodeCollection, { color: new Color(1, 0, 0) });
+    vi.runAllTimers();
+    builder.build();
+
+    expect(builder.needsUpdate).toBe(false);
+    expect(builder.visibleNodesVersion).toBe(version);
+  });
+
   test('needsUpdate() is true after style provider is changed', () => {
     builder.build(); // Reset needsUpdate
     styleProvider.assignStyledNodeCollection(nodeCollection, { renderGhosted: true });
