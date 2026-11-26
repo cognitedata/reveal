@@ -399,12 +399,23 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     const treeIndexStride = treeIndexAttribute.data.stride;
     const treeIndexOffset = treeIndexAttribute.offset;
     let compactCount = 0;
-    for (let i = 0; i < mesh.count; i++) {
-      const treeIndex = treeIndexArray[i * treeIndexStride + treeIndexOffset];
-      if (isVisibleInLookup(visibleLookup, treeIndex)) {
-        const from = i * instanceByteSize;
-        proxy.data.set(source.subarray(from, from + instanceByteSize), compactCount * instanceByteSize);
-        compactCount++;
+    // Copy each run of consecutive visible instances with one set() instead of one per instance
+    let runStart = -1;
+    const instanceCount = mesh.count;
+    for (let i = 0; i <= instanceCount; i++) {
+      const visible =
+        i < instanceCount && isVisibleInLookup(visibleLookup, treeIndexArray[i * treeIndexStride + treeIndexOffset]);
+      if (visible) {
+        if (runStart < 0) {
+          runStart = i;
+        }
+      } else if (runStart >= 0) {
+        proxy.data.set(
+          source.subarray(runStart * instanceByteSize, i * instanceByteSize),
+          compactCount * instanceByteSize
+        );
+        compactCount += i - runStart;
+        runStart = -1;
       }
     }
 

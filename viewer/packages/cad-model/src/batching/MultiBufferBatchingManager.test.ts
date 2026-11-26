@@ -466,6 +466,18 @@ describe(`${MultiBufferBatchingManager.name} compact proxies`, () => {
     expect(batchMesh().layers.mask).toBe(0);
   });
 
+  test('a proxy holds visible instances from several runs in batch order', () => {
+    styledIndexSets.visible.addRange(new NumericRange(3, 1));
+    styledIndexSets.visible.addRange(new NumericRange(6, 1));
+    styledIndexSets.visible.addRange(new NumericRange(9, 2));
+    manager.batchGeometries([createGeometry([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])], 1);
+
+    manager.updateCompactProxies();
+
+    expect(proxyTreeIndices()).toEqual([2, 3, 6, 9, 10]);
+    expect(batchMesh().layers.mask).toBe(0);
+  });
+
   test('adding a sector with only hidden instances keeps the batch mesh disabled', () => {
     manager.batchGeometries([createGeometry([1, 2, 3, 4, 5])], 1);
     manager.updateCompactProxies();
