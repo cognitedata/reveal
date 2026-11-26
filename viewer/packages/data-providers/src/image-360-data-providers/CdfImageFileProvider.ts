@@ -3,6 +3,7 @@
  */
 import type { CogniteClient, FileLink, IdEither } from '@cognite/sdk';
 import type { DMInstanceRef } from '@reveal/utilities';
+import { ConcurrencyLimiter } from '@reveal/utilities';
 import { chunk } from 'lodash-es';
 import { DEFAULT_360_IMAGE_MIME_TYPE } from '../utilities/constants';
 
@@ -20,6 +21,20 @@ export type FileDownloadResult = {
   mimeType: 'image/jpeg' | 'image/png';
 };
 
+// Download links are requested from the CDF API for every image that is loaded or preloaded,
+// so many calls can be started at once (e.g. when hovering across a large collection).
+const DEFAULT_MAX_CONCURRENT_DOWNLOAD_LINK_REQUESTS = 4;
+
+// One icon request is sent per file, so loading icons for a large collection starts hundreds of requests.
+const DEFAULT_MAX_CONCURRENT_ICON_REQUESTS = 6;
+
+const FILE_RETRIEVE_CHUNK_SIZE = 1000;
+const DEFAULT_MAX_CONCURRENT_FILE_RETRIEVE_REQUESTS = 4;
+
+type DownloadLinkResponse = {
+  items: (FileLink & IdEither)[];
+};
+
 function parseMimeType(contentType: string | null): 'image/jpeg' | 'image/png' {
   if (contentType) {
     const lowerContentType = contentType.toLowerCase();
@@ -35,9 +50,20 @@ function parseMimeType(contentType: string | null): 'image/jpeg' | 'image/png' {
 
 export class CdfImageFileProvider {
   private readonly _client;
+  private readonly _downloadLinkLimiter: ConcurrencyLimiter;
+  private readonly _iconLimiter: ConcurrencyLimiter;
+  private readonly _fileRetrieveLimiter: ConcurrencyLimiter;
 
-  constructor(sdk: CogniteClient) {
+  constructor(
+    sdk: CogniteClient,
+    maxConcurrentDownloadLinkRequests: number = DEFAULT_MAX_CONCURRENT_DOWNLOAD_LINK_REQUESTS,
+    maxConcurrentIconRequests: number = DEFAULT_MAX_CONCURRENT_ICON_REQUESTS,
+    maxConcurrentFileRetrieveRequests: number = DEFAULT_MAX_CONCURRENT_FILE_RETRIEVE_REQUESTS
+  ) {
     this._client = sdk;
+    this._downloadLinkLimiter = new ConcurrencyLimiter(maxConcurrentDownloadLinkRequests);
+    this._iconLimiter = new ConcurrencyLimiter(maxConcurrentIconRequests);
+    this._fileRetrieveLimiter = new ConcurrencyLimiter(maxConcurrentFileRetrieveRequests);
   }
 
   /**
@@ -87,7 +113,7 @@ export class CdfImageFileProvider {
   ): Promise<FileDownloadResult[]> {
     const { withInternalId, withoutInternalId } = this.partitionIdentifiersByInternalId(fileIdentifiers);
 
-    const resolvedIds = await this.resolveInternalIds(withoutInternalId);
+    const resolvedIds = await this.resolveInternalIds(withoutInternalId, abortSignal);
 
     const allIds = [...withInternalId, ...resolvedIds];
     const iconResults = await this.fetchIconsById(
@@ -120,14 +146,20 @@ export class CdfImageFileProvider {
    * Resolves internal file IDs for identifiers that don't have them using the files API.
    */
   private async resolveInternalIds(
-    identifiersMap: Array<{ index: number; identifier: FileIdentifier }>
+    identifiersMap: Array<{ index: number; identifier: FileIdentifier }>,
+    abortSignal?: AbortSignal
   ): Promise<Array<{ index: number; id: number }>> {
     if (identifiersMap.length === 0) {
       return [];
     }
 
     const identifiers = identifiersMap.map(item => item.identifier);
-    const fileInfos = await this._client.files.retrieve(identifiers);
+    const fileInfoBatches = await Promise.all(
+      chunk(identifiers, FILE_RETRIEVE_CHUNK_SIZE).map(identifierChunk =>
+        this._fileRetrieveLimiter.run(() => this._client.files.retrieve(identifierChunk), abortSignal)
+      )
+    );
+    const fileInfos = fileInfoBatches.flat();
 
     return identifiersMap.map((item, i) => ({
       index: item.index,
@@ -165,16 +197,18 @@ export class CdfImageFileProvider {
     };
 
     return Promise.all(
-      fileIds.map(async id => {
-        const url = `${baseUrl}?id=${id}`;
-        const response = await fetch(url, options);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch icon: ${response.status} ${response.statusText}`);
-        }
-        const mimeType = parseMimeType(response.headers.get('Content-Type'));
-        const data = await response.arrayBuffer();
-        return { data, mimeType };
-      })
+      fileIds.map(id =>
+        this._iconLimiter.run(async () => {
+          const url = `${baseUrl}?id=${id}`;
+          const response = await fetch(url, options);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch icon: ${response.status} ${response.statusText}`);
+          }
+          const mimeType = parseMimeType(response.headers.get('Content-Type'));
+          const data = await response.arrayBuffer();
+          return { data, mimeType };
+        }, abortSignal)
+      )
     );
   }
 
@@ -211,12 +245,15 @@ export class CdfImageFileProvider {
         })
       };
 
-      // Direct fetch - batching already handles API limits
-      const response = await fetch(url, options);
-      if (!response.ok) {
-        throw new Error(`Failed to get download URLs: ${response.status} ${response.statusText}`);
-      }
-      const result = await response.json();
+      // The slot is held until the response body has been read. If the signal is aborted while the
+      // request is queued, the limiter drops it without starting, so no request is sent.
+      const result = await this._downloadLinkLimiter.run(async (): Promise<DownloadLinkResponse> => {
+        const response = await fetch(url, options);
+        if (!response.ok) {
+          throw new Error(`Failed to get download URLs: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+      }, abortSignal);
 
       allLinks.push(...result.items);
     }

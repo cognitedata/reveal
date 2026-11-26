@@ -4,7 +4,7 @@
 
 import type { Mock as ViMock } from 'vitest';
 import { vi } from 'vitest';
-import type { CogniteClient } from '@cognite/sdk';
+import type { CogniteClient, FileInfo, IdEitherWithInstance } from '@cognite/sdk';
 import { Mock } from 'moq.ts';
 import type { FileIdentifier } from './CdfImageFileProvider';
 import { CdfImageFileProvider } from './CdfImageFileProvider';
@@ -250,6 +250,202 @@ describe(CdfImageFileProvider.name, () => {
     });
   });
 
+  describe('icon request concurrency', () => {
+    test('limits concurrent icon requests and keeps results in input order', async () => {
+      const maxConcurrentIcons = 3;
+      const iconCount = 8;
+      const limitedProvider = new CdfImageFileProvider(mockClient, 4, maxConcurrentIcons);
+      const pendingResponses: Array<() => void> = [];
+      let inFlight = 0;
+      let maxInFlight = 0;
+
+      fetchSpy.mockImplementation(async url => {
+        const id = Number(new URL(String(url)).searchParams.get('id'));
+        inFlight++;
+        maxInFlight = Math.max(maxInFlight, inFlight);
+        await new Promise<void>(resolve => pendingResponses.push(resolve));
+        inFlight--;
+        return createBinaryResponse(new Uint8Array([id]).buffer, 'image/png');
+      });
+
+      const ids = Array.from({ length: iconCount }, (_, i) => i + 1);
+      const resultPromise = limitedProvider.getIconBuffersWithMimeType(ids.map(id => ({ id })));
+
+      await vi.waitFor(() => expect(pendingResponses.length).toBe(maxConcurrentIcons));
+
+      let completed = 0;
+      while (completed < iconCount) {
+        await vi.waitFor(() => expect(pendingResponses.length).toBeGreaterThan(0));
+        expect(inFlight).toBeLessThanOrEqual(maxConcurrentIcons);
+        pendingResponses.shift()!();
+        completed++;
+      }
+
+      const results = await resultPromise;
+
+      expect(maxInFlight).toBe(maxConcurrentIcons);
+      expect(results.map(r => new Uint8Array(r.data)[0])).toEqual(ids);
+    });
+
+    test('a failed icon request does not block queued icon requests', async () => {
+      const limitedProvider = new CdfImageFileProvider(mockClient, 4, 1);
+
+      fetchSpy
+        .mockResolvedValueOnce(createErrorResponse(500, 'Server Error'))
+        .mockResolvedValueOnce(createBinaryResponse(new ArrayBuffer(8), 'image/png'));
+
+      const [failed, succeeded] = await Promise.allSettled([
+        limitedProvider.getIconBuffersWithMimeType([{ id: 1 }]),
+        limitedProvider.getIconBuffersWithMimeType([{ id: 2 }])
+      ]);
+
+      expect(failed.status).toBe('rejected');
+      expect(succeeded.status).toBe('fulfilled');
+    });
+  });
+
+  describe('download link concurrency', () => {
+    test('limits concurrent downloadlink requests across calls', async () => {
+      const maxConcurrent = 2;
+      const callCount = 5;
+      const limitedProvider = new CdfImageFileProvider(mockClient, maxConcurrent);
+      const pendingResponses: Array<() => void> = [];
+      let inFlight = 0;
+      let maxInFlight = 0;
+
+      fetchSpy.mockImplementation(async (_url, options) => {
+        const ids: Array<{ id: number }> = JSON.parse(String(options?.body)).items;
+        inFlight++;
+        maxInFlight = Math.max(maxInFlight, inFlight);
+        await new Promise<void>(resolve => pendingResponses.push(resolve));
+        inFlight--;
+        return createJsonResponse({ items: ids.map(({ id }) => ({ id, downloadUrl: `https://storage/${id}.jpg` })) });
+      });
+
+      const resultPromises = Array.from({ length: callCount }, (_, i) =>
+        limitedProvider.getFileDownloadUrls([{ id: i + 1 }])
+      );
+
+      await vi.waitFor(() => expect(pendingResponses.length).toBe(maxConcurrent));
+
+      let completed = 0;
+      while (completed < callCount) {
+        await vi.waitFor(() => expect(pendingResponses.length).toBeGreaterThan(0));
+        expect(inFlight).toBeLessThanOrEqual(maxConcurrent);
+        pendingResponses.shift()!();
+        completed++;
+      }
+
+      const results = await Promise.all(resultPromises);
+
+      expect(maxInFlight).toBe(maxConcurrent);
+      expect(results).toEqual([1, 2, 3, 4, 5].map(id => [`https://storage/${id}.jpg`]));
+    });
+
+    test('a failed downloadlink request does not block queued requests', async () => {
+      const limitedProvider = new CdfImageFileProvider(mockClient, 1);
+
+      fetchSpy
+        .mockResolvedValueOnce(createErrorResponse(500, 'Server Error'))
+        .mockResolvedValueOnce(createJsonResponse({ items: [{ id: 2, downloadUrl: 'https://storage/2.jpg' }] }));
+
+      const [failed, succeeded] = await Promise.allSettled([
+        limitedProvider.getFileDownloadUrls([{ id: 1 }]),
+        limitedProvider.getFileDownloadUrls([{ id: 2 }])
+      ]);
+
+      expect(failed.status).toBe('rejected');
+      expect(succeeded).toEqual({ status: 'fulfilled', value: ['https://storage/2.jpg'] });
+    });
+  });
+
+  describe('abort handling', () => {
+    test('does not send a queued downloadlink request when its signal is aborted', async () => {
+      const limitedProvider = new CdfImageFileProvider(mockClient, 1);
+      const firstResponse = createDeferred<Response>();
+      fetchSpy.mockImplementationOnce(() => firstResponse.promise);
+
+      const first = limitedProvider.getFileDownloadUrls([{ id: 1 }]);
+      await vi.waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(1));
+
+      const abortController = new AbortController();
+      const abortReason = new Error('aborted by test');
+      const second = limitedProvider.getFileDownloadUrls([{ id: 2 }], abortController.signal);
+      const secondResult = expect(second).rejects.toBe(abortReason);
+      abortController.abort(abortReason);
+      await secondResult;
+
+      firstResponse.resolve(createJsonResponse({ items: [{ id: 1, downloadUrl: 'https://storage/1.jpg' }] }));
+      await expect(first).resolves.toEqual(['https://storage/1.jpg']);
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+    });
+
+    test('does not send a queued icon request when its signal is aborted', async () => {
+      const limitedProvider = new CdfImageFileProvider(mockClient, 4, 1);
+      const firstResponse = createDeferred<Response>();
+      fetchSpy.mockImplementationOnce(() => firstResponse.promise);
+
+      const first = limitedProvider.getIconBuffersWithMimeType([{ id: 1 }]);
+      await vi.waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(1));
+
+      const abortController = new AbortController();
+      const abortReason = new Error('aborted by test');
+      const second = limitedProvider.getIconBuffersWithMimeType([{ id: 2 }], abortController.signal);
+      const secondResult = expect(second).rejects.toBe(abortReason);
+      abortController.abort(abortReason);
+      await secondResult;
+
+      firstResponse.resolve(createBinaryResponse(new ArrayBuffer(8), 'image/png'));
+      await expect(first).resolves.toHaveLength(1);
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+    });
+
+    test('does not call files.retrieve for a queued request when its signal is aborted', async () => {
+      const firstRetrieve = createDeferred<FileInfo[]>();
+      const retrieve = vi.fn().mockImplementationOnce(() => firstRetrieve.promise);
+      const limitedProvider = new CdfImageFileProvider(createMockClientWithRetrieveFn(retrieve), 4, 6, 1);
+      fetchSpy.mockResolvedValue(createBinaryResponse(new ArrayBuffer(8), 'image/png'));
+
+      const first = limitedProvider.getIconBuffersWithMimeType([{ externalId: 'a' }]);
+      await vi.waitFor(() => expect(retrieve).toHaveBeenCalledTimes(1));
+
+      const abortController = new AbortController();
+      const abortReason = new Error('aborted by test');
+      const second = limitedProvider.getIconBuffersWithMimeType([{ externalId: 'b' }], abortController.signal);
+      const secondResult = expect(second).rejects.toBe(abortReason);
+      abortController.abort(abortReason);
+      await secondResult;
+
+      firstRetrieve.resolve([createFileInfo(1)]);
+      await expect(first).resolves.toHaveLength(1);
+      expect(retrieve).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('files.retrieve concurrency', () => {
+    test('chunks identifiers into batches of at most 1000 and limits concurrent calls', async () => {
+      let inFlight = 0;
+      let maxInFlight = 0;
+      const retrieve = vi.fn(async (ids: unknown[]) => {
+        inFlight++;
+        maxInFlight = Math.max(maxInFlight, inFlight);
+        await new Promise(resolve => setTimeout(resolve, 0));
+        inFlight--;
+        return ids.map((_, i) => createFileInfo(i));
+      });
+      fetchSpy.mockImplementation(async () => createBinaryResponse(new ArrayBuffer(1), 'image/png'));
+      const limitedProvider = new CdfImageFileProvider(createMockClientWithRetrieveFn(retrieve), 4, 6, 2);
+
+      const identifiers = Array.from({ length: 4500 }, (_, i) => ({ externalId: `file-${i}` }));
+      const results = await limitedProvider.getIconBuffersWithMimeType(identifiers);
+
+      expect(results).toHaveLength(4500);
+      expect(retrieve).toHaveBeenCalledTimes(5);
+      expect(Math.max(...retrieve.mock.calls.map(([ids]) => ids.length))).toBe(1000);
+      expect(maxInFlight).toBe(2);
+    });
+  });
+
   describe('getFileDownloadUrls', () => {
     test('returns array of download URL strings (not buffers)', async () => {
       const fileIdentifiers: FileIdentifier[] = [{ id: 123 }];
@@ -428,7 +624,27 @@ describe(CdfImageFileProvider.name, () => {
     };
   }
 
-  function createMockClientWithFilesRetrieve(fileIds: number[]): CogniteClient {
+  function createDeferred<T>(): { promise: Promise<T>; resolve: (value: T) => void } {
+    let resolve!: (value: T) => void;
+    const promise = new Promise<T>(res => {
+      resolve = res;
+    });
+    return { promise, resolve };
+  }
+
+  function createFileInfo(id: number): FileInfo {
+    return {
+      id,
+      uploaded: true,
+      name: 'test',
+      lastUpdatedTime: new Date('2025-01-01'),
+      createdTime: new Date('2025-01-01')
+    };
+  }
+
+  function createMockClientWithRetrieveFn(
+    retrieve: (ids: IdEitherWithInstance[]) => Promise<FileInfo[]>
+  ): CogniteClient {
     return new Mock<CogniteClient>()
       .setup(c => c.getBaseUrl())
       .returns('https://example.com')
@@ -437,17 +653,11 @@ describe(CdfImageFileProvider.name, () => {
       .setup(c => c.getDefaultRequestHeaders())
       .returns({ Authorization: 'Bearer token' })
       .setup(c => c.files.retrieve)
-      .returns(() =>
-        Promise.resolve(
-          fileIds.map(id => ({
-            id,
-            uploaded: true,
-            name: 'test',
-            lastUpdatedTime: new Date('2025-01-01'),
-            createdTime: new Date('2025-01-01')
-          }))
-        )
-      )
+      .returns(retrieve)
       .object();
+  }
+
+  function createMockClientWithFilesRetrieve(fileIds: number[]): CogniteClient {
+    return createMockClientWithRetrieveFn(() => Promise.resolve(fileIds.map(createFileInfo)));
   }
 });
