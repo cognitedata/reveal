@@ -103,6 +103,8 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * growing with the parts of the model that have been viewed. Kept sectors are still rendered,
    * so the frame rate can drop as more of the model is loaded unless most of it is hidden (see
    * {@link CogniteCadModel.renderOnlyVisibleInstances}). Has no effect with a limited budget.
+   * Turning this off does not unload kept sectors immediately; they are unloaded by the next sector
+   * update, for example when the camera moves. Setting a limited budget starts such an update.
    * Disabled by default.
    * @example
    * ```js

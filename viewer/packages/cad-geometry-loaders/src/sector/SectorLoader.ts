@@ -92,6 +92,8 @@ export class SectorLoader {
     const hasSectorChanged = this._modelStateHandler.hasStateChanged.bind(this._modelStateHandler);
     // With an unlimited budget nothing has to be evicted to make room, so models that opt in keep
     // loaded sectors when they leave the view instead of unloading and later rebuilding them.
+    // Turning this off does not unload kept sectors immediately; they are unloaded by the next sector
+    // update, for example when the camera moves. Setting a limited budget starts such an update.
     const modelsKeepingLoadedSectors =
       input.budget.maximumRenderCost === Infinity
         ? new Set(
