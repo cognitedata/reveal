@@ -169,8 +169,8 @@ describe(Cdf360DataModelsDescriptorProvider.name, () => {
     const descriptors = await provider.get360ImageDescriptors(
       {
         source: 'dm',
-        space: 'christjt-test-system-360',
-        image360CollectionExternalId: 'c_RC_2'
+        space: 'test_space',
+        image360CollectionExternalId: 'test_collection'
       },
       true
     );
@@ -238,5 +238,21 @@ describe(Cdf360DataModelsDescriptorProvider.name, () => {
     );
 
     expect(filesRetrieveMock).not.toHaveBeenCalled();
+  });
+
+  test('returns no descriptors when the collection does not exist', async () => {
+    const sdkMock = new Mock<CogniteClient>()
+      .setup(instance => instance.post(It.IsAny(), It.IsAny()))
+      .returns(Promise.resolve({ ...mock, data: { items: { image_collection: [], images: [], stations: [] } } }))
+      .setup(instance => instance.getBaseUrl())
+      .returns('https://example.com');
+    const provider = new Cdf360DataModelsDescriptorProvider(sdkMock.object());
+
+    const descriptors = await provider.get360ImageDescriptors(
+      { source: 'dm', space: 'test_space', image360CollectionExternalId: 'missing' },
+      true
+    );
+
+    expect(descriptors).toEqual([]);
   });
 });
