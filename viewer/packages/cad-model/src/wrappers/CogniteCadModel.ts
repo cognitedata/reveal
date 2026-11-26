@@ -84,6 +84,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * ```js
    * model.renderOnlyVisibleInstances = true;
    * ```
+   * @beta
    */
   set renderOnlyVisibleInstances(enabled: boolean) {
     this.cadNode.renderOnlyVisibleInstances = enabled;
@@ -91,6 +92,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
 
   /**
    * Returns whether only visible instances are rendered. See the setter for details.
+   * @beta
    */
   get renderOnlyVisibleInstances(): boolean {
     return this.cadNode.renderOnlyVisibleInstances;
@@ -99,10 +101,13 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   /**
    * When enabled and the CAD budget is unlimited (`maximumRenderCost: Infinity`), sectors that
    * have been loaded are kept loaded when they leave the view instead of being unloaded. This
-   * avoids unloading and rebuilding geometry every time the camera stops, at the cost of memory
-   * growing with the parts of the model that have been viewed. Kept sectors are still rendered,
-   * so the frame rate can drop as more of the model is loaded unless most of it is hidden (see
-   * {@link CogniteCadModel.renderOnlyVisibleInstances}). Has no effect with a limited budget.
+   * avoids unloading and rebuilding geometry every time the camera stops. Has no effect unless
+   * `maximumRenderCost` is `Infinity`.
+   *
+   * Memory is not capped: nothing is unloaded while this is enabled, so memory grows with every
+   * part of the model that has been viewed. Kept sectors stay in the scene and are still processed
+   * every frame, so the frame rate can drop as more of the model is loaded unless most of it is
+   * hidden (see {@link CogniteCadModel.renderOnlyVisibleInstances}).
    * Turning this off does not unload kept sectors immediately; they are unloaded by the next sector
    * update, for example when the camera moves. Setting a limited budget starts such an update.
    * Disabled by default.
@@ -111,6 +116,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * viewer.cadBudget = { ...viewer.cadBudget, maximumRenderCost: Infinity };
    * model.keepLoadedSectors = true;
    * ```
+   * @beta
    */
   set keepLoadedSectors(enabled: boolean) {
     this.cadNode.keepLoadedSectors = enabled;
@@ -118,6 +124,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
 
   /**
    * Returns whether loaded sectors are kept loaded. See the setter for details.
+   * @beta
    */
   get keepLoadedSectors(): boolean {
     return this.cadNode.keepLoadedSectors;
