@@ -33,15 +33,11 @@ describe(MultiBufferBatchingManager.name, () => {
       inFront: new IndexSet(),
       visible: new IndexSet()
     };
-    return new MultiBufferBatchingManager(
-      geometryGroup,
-      materials,
-      styledIndexSets,
-      new TreeIndexToSectorsMap(10),
-      1024,
-      numberOfInstanceBuffers,
+    return new MultiBufferBatchingManager(geometryGroup, materials, styledIndexSets, new TreeIndexToSectorsMap(10), {
+      initialBufferSize: 1024,
+      numberOfInstanceBatches: numberOfInstanceBuffers,
       additionalBufferThresholdBytes
-    );
+    });
   }
 
   function getMeshes(): InstancedMesh[] {
@@ -426,10 +422,11 @@ describe(`${MultiBufferBatchingManager.name} compact proxies`, () => {
       new Mock<Materials>().object(),
       styledIndexSets,
       new TreeIndexToSectorsMap(100),
-      1024,
-      1,
-      undefined,
-      { onDeferredRebuild: onCompactProxiesRebuilt, getStyledSetsVersion: () => styledSetsVersion }
+      {
+        initialBufferSize: 1024,
+        numberOfInstanceBatches: 1,
+        compactProxyHooks: { onDeferredRebuild: onCompactProxiesRebuilt, getStyledSetsVersion: () => styledSetsVersion }
+      }
     );
     manager.setCompactProxiesEnabled(true);
   });
@@ -702,8 +699,7 @@ test(`${MultiBufferBatchingManager.name} does not create compact proxies by defa
       visible
     },
     new TreeIndexToSectorsMap(100),
-    1024,
-    1
+    { initialBufferSize: 1024, numberOfInstanceBatches: 1 }
   );
   manager.batchGeometries(
     [createParsedGeometryWithTreeIndices(RevealGeometryCollectionType.BoxCollection, [1, 2, 3, 4, 5], 0)],
@@ -729,8 +725,7 @@ test(`${MultiBufferBatchingManager.name} renders batches in their render layers 
       visible: new IndexSet([2])
     },
     new TreeIndexToSectorsMap(100),
-    1024,
-    1
+    { initialBufferSize: 1024, numberOfInstanceBatches: 1 }
   );
 
   manager.batchGeometries(

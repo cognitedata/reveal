@@ -88,6 +88,20 @@ export type CompactProxyHooks = {
   getStyledSetsVersion?: () => number;
 };
 
+/**
+ * Optional settings for {@link MultiBufferBatchingManager}.
+ */
+export type MultiBufferBatchingManagerOptions = {
+  /** Initial size of each batch buffer. Default 1024. */
+  initialBufferSize?: number;
+  /** Maximum number of buffers (draw calls) per instanced type. Default 2. */
+  numberOfInstanceBatches?: number;
+  /** Size each buffer of a type must reach before the type gets another buffer. Default 256 KiB. */
+  additionalBufferThresholdBytes?: number;
+  /** Hooks used when compact proxies are enabled. */
+  compactProxyHooks?: CompactProxyHooks;
+};
+
 const compactProxyMaxVisibleRatio = 0.5;
 const compactProxyUpdateThrottleDelay = 75;
 
@@ -113,18 +127,23 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
   private _visibleLookupVersion = 0;
   private readonly _layerMaskScratch = new Object3D();
   private _compactProxiesEnabled = false;
+  private readonly initialBufferSize: number;
+  private readonly numberOfInstanceBatches: number;
+  private readonly additionalBufferThresholdBytes: number;
+  private readonly compactProxyHooks: CompactProxyHooks;
 
   constructor(
     batchGroup: Group,
     materials: Materials,
     styleTreeIndexSets: StyledTreeIndexSets,
     private readonly treeIndexToSectorsMap: TreeIndexToSectorsMap,
-    private readonly initialBufferSize = 1024,
-    private readonly numberOfInstanceBatches = 2,
-    private readonly additionalBufferThresholdBytes = 256 * 1024,
-    private readonly compactProxyHooks: CompactProxyHooks = {}
+    options: MultiBufferBatchingManagerOptions = {}
   ) {
-    assert(additionalBufferThresholdBytes >= 0, 'additionalBufferThresholdBytes must be zero or greater');
+    this.initialBufferSize = options.initialBufferSize ?? 1024;
+    this.numberOfInstanceBatches = options.numberOfInstanceBatches ?? 2;
+    this.additionalBufferThresholdBytes = options.additionalBufferThresholdBytes ?? 256 * 1024;
+    this.compactProxyHooks = options.compactProxyHooks ?? {};
+    assert(this.additionalBufferThresholdBytes >= 0, 'additionalBufferThresholdBytes must be zero or greater');
     this._sectorBatches = new Map();
     this._instanceBatches = new Map();
     this._materials = materials;

@@ -103,15 +103,14 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
       materials,
       this._styledTreeIndexSets,
       this.treeIndexToSectorsMap,
-      undefined,
-      undefined,
-      undefined,
       {
-        // Compact proxies are rebuilt outside the render loop, so the result must be drawn explicitly
-        onDeferredRebuild: () => {
-          this._needsRedraw = true;
-        },
-        getStyledSetsVersion: () => this._cadMaterial.nodeAppearanceTextureBuilder.nodeSetsVersion
+        compactProxyHooks: {
+          // Compact proxies are rebuilt outside the render loop, so the result must be drawn explicitly
+          onDeferredRebuild: () => {
+            this._needsRedraw = true;
+          },
+          getStyledSetsVersion: () => this._cadMaterial.nodeAppearanceTextureBuilder.nodeSetsVersion
+        }
       }
     );
     this._rootSector = new RootSectorNode(model);
