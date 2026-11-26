@@ -89,4 +89,43 @@ describe(createCdf360ImageAnnotationCache, () => {
 
     expect(mockFileRetrieve).toHaveBeenCalledExactlyOnceWith([FILE_ID]);
   });
+
+  test('limits concurrent files.retrieve requests when many id chunks are requested', async () => {
+    const maxConcurrent = 2;
+    const chunkCount = 6;
+    const fileIds = Array.from({ length: chunkCount * 1000 }, (_, i) => ({ id: i + 1 }));
+    const pendingResponses: Array<() => void> = [];
+    let inFlight = 0;
+    let maxInFlight = 0;
+
+    mockFileRetrieve.mockImplementation(ids => {
+      inFlight++;
+      maxInFlight = Math.max(maxInFlight, inFlight);
+      return new Promise(resolve => {
+        pendingResponses.push(() => {
+          inFlight--;
+          resolve(ids.map(id => createFileInfo(id)));
+        });
+      });
+    });
+
+    const cache = createCdf360ImageAnnotationCache(mockSdk, maxConcurrent);
+    const resultPromise = cache.getFileInfosForFileIds(fileIds);
+
+    await vi.waitFor(() => expect(pendingResponses.length).toBe(maxConcurrent));
+
+    let completed = 0;
+    while (completed < chunkCount) {
+      await vi.waitFor(() => expect(pendingResponses.length).toBeGreaterThan(0));
+      expect(inFlight).toBeLessThanOrEqual(maxConcurrent);
+      pendingResponses.shift()!();
+      completed++;
+    }
+
+    const result = await resultPromise;
+
+    expect(maxInFlight).toBe(maxConcurrent);
+    expect(mockFileRetrieve).toHaveBeenCalledTimes(chunkCount);
+    expect(result.map(info => info.id)).toEqual(fileIds.map(id => id.id));
+  });
 });
