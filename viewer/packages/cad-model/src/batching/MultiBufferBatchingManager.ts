@@ -355,7 +355,7 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     const treeIndexCounts = mesh.userData.treeIndices as Map<number, number>;
     let visibleInstanceCount = 0;
     for (const [treeIndex, count] of treeIndexCounts) {
-      if (visibleLookup[treeIndex] === 1) {
+      if (isVisibleInLookup(visibleLookup, treeIndex)) {
         visibleInstanceCount += count;
       }
     }
@@ -381,7 +381,8 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     const treeIndexOffset = treeIndexAttribute.offset;
     let compactCount = 0;
     for (let i = 0; i < mesh.count; i++) {
-      if (visibleLookup[treeIndexArray[i * treeIndexStride + treeIndexOffset]] === 1) {
+      const treeIndex = treeIndexArray[i * treeIndexStride + treeIndexOffset];
+      if (isVisibleInLookup(visibleLookup, treeIndex)) {
         const from = i * instanceByteSize;
         proxy.data.set(source.subarray(from, from + instanceByteSize), compactCount * instanceByteSize);
         compactCount++;
@@ -469,7 +470,7 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     for (let i = firstWholeInstanceIndex; i < firstInvalidInstanceIndex; i++) {
       const treeIndex = treeIndexAttribute.getX(i);
       decrementOrDeleteIndex(mesh.userData.treeIndices, treeIndex);
-      removedVisibleInstances ||= visibleLookup?.[treeIndex] === 1;
+      removedVisibleInstances ||= visibleLookup !== undefined && isVisibleInLookup(visibleLookup, treeIndex);
     }
     return removedVisibleInstances;
   }
@@ -551,7 +552,7 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     for (let i = 0; i < treeIndexInterleavedAttribute.count; i++) {
       const treeIndex = treeIndexInterleavedAttribute.getX(i);
       incrementOrInsertIndex(batchBuffer.mesh.userData.treeIndices, treeIndex);
-      if (visibleLookup?.[treeIndex] === 1) {
+      if (visibleLookup !== undefined && isVisibleInLookup(visibleLookup, treeIndex)) {
         incrementOrInsertIndex(addedVisibleTreeIndices, treeIndex);
       }
     }
@@ -733,4 +734,11 @@ function createOwnedTemplateGeometry(source: BufferGeometry): BufferGeometry {
     geometry.setIndex(index.clone());
   }
   return geometry;
+}
+
+// The lookup only reaches the highest visible tree index, so hidden tree indices are often beyond
+// its end. Reading a typed array out of bounds is several times slower than checking the length
+// first, and this runs once per instance.
+function isVisibleInLookup(visibleLookup: Uint8Array, treeIndex: number): boolean {
+  return treeIndex < visibleLookup.length && visibleLookup[treeIndex] === 1;
 }

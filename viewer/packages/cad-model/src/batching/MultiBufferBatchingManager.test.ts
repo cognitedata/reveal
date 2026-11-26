@@ -580,18 +580,20 @@ describe(`${MultiBufferBatchingManager.name} compact proxies`, () => {
       manager.batchGeometries([createGeometry([2, 50 + sectorId])], sectorId);
     }
     manager.updateCompactProxies();
-    const updateSpy = vi.spyOn(manager as unknown as { updateCompactProxy: () => void }, 'updateCompactProxy');
 
     for (let sectorId = 1; sectorId <= 19; sectorId++) {
       manager.removeSectorBatches(sectorId);
     }
 
-    expect(updateSpy).not.toHaveBeenCalled();
+    // Not rebuilt yet: the proxy still holds the visible instance of every sector
+    expect(onCompactProxiesRebuilt).not.toHaveBeenCalled();
+    expect(proxyMesh()!.count).toBe(20);
     expect(proxyMesh()!.layers.mask).not.toBe(0);
 
     vi.advanceTimersByTime(200);
 
-    expect(updateSpy).toHaveBeenCalledTimes(1);
+    expect(onCompactProxiesRebuilt).toHaveBeenCalledTimes(1);
+    expect(proxyMesh()!.count).toBe(1);
     expect(batchMesh().count).toBe(2);
   });
 
@@ -687,6 +689,9 @@ describe(`${MultiBufferBatchingManager.name} compact proxies`, () => {
 
 test(`${MultiBufferBatchingManager.name} does not create compact proxies by default`, () => {
   const geometryGroup = new Group();
+  const visible = new IndexSet([2]);
+  // The lookup of visible nodes is built from the ranges of the visible set
+  const visibleRangesSpy = vi.spyOn(visible, 'toRangeArray');
   const manager = new MultiBufferBatchingManager(
     geometryGroup,
     new Mock<Materials>().object(),
@@ -694,13 +699,12 @@ test(`${MultiBufferBatchingManager.name} does not create compact proxies by defa
       back: new IndexSet(new NumericRange(0, 100)),
       ghost: new IndexSet(),
       inFront: new IndexSet(),
-      visible: new IndexSet([2])
+      visible
     },
     new TreeIndexToSectorsMap(100),
     1024,
     1
   );
-  const visibleLookupSpy = vi.spyOn(manager as unknown as { getVisibleLookup: () => Uint8Array }, 'getVisibleLookup');
   manager.batchGeometries(
     [createParsedGeometryWithTreeIndices(RevealGeometryCollectionType.BoxCollection, [1, 2, 3, 4, 5], 0)],
     1
@@ -710,7 +714,7 @@ test(`${MultiBufferBatchingManager.name} does not create compact proxies by defa
   manager.removeSectorBatches(1);
 
   expect(geometryGroup.children.some(child => child.userData.isCompactProxy)).toBe(false);
-  expect(visibleLookupSpy).not.toHaveBeenCalled();
+  expect(visibleRangesSpy).not.toHaveBeenCalled();
 });
 
 test(`${MultiBufferBatchingManager.name} renders batches in their render layers by default`, () => {
