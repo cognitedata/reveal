@@ -82,10 +82,11 @@ export type CompactProxyHooks = {
    */
   onDeferredRebuild?: () => void;
   /**
-   * Returns a number that changes whenever the content of the styled tree index sets changes.
-   * Used to detect that the cached lookup of visible nodes is outdated.
+   * Returns a number that changes whenever the set of visible nodes changes. Used to detect that the
+   * cached lookup of visible nodes is outdated, and to skip rebuilding compact proxies when a
+   * styling change keeps the visible nodes as they are.
    */
-  getStyledSetsVersion?: () => number;
+  getVisibleNodesVersion?: () => number;
 };
 
 /**
@@ -125,6 +126,8 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
   private _visibleLookup = new Uint8Array(0);
   private _visibleLookupNeedsUpdate = true;
   private _visibleLookupVersion = 0;
+  // Visible nodes version all compact proxies were last rebuilt with; undefined forces a full rebuild
+  private _compactProxiesVisibleNodesVersion: number | undefined;
   private readonly _layerMaskScratch = new Object3D();
   private _compactProxiesEnabled = false;
   private readonly initialBufferSize: number;
@@ -220,26 +223,70 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
       return;
     }
     this._compactProxiesEnabled = enabled;
+    this._compactProxiesVisibleNodesVersion = undefined;
     this.updateCompactProxies();
   }
 
   /**
-   * Rebuilds the compact proxies of all batches. Must be called after node styling has changed,
-   * as this is what refreshes the cached lookup of visible nodes.
-   * @param options Rebuild options.
+   * Updates the compact proxies of all batches after node styling has changed. Proxies are fully
+   * rebuilt when the visible nodes have changed (or no version hook is given). Otherwise only their
+   * render layers are updated, and batches with a pending rebuild are rebuilt now.
+   * @param options Update options.
    * @param options.batchLayersAreCurrent Set when the render layers of the batch meshes have just
    * been recomputed by the caller, to avoid computing them a second time.
    */
   public updateCompactProxies(options?: { batchLayersAreCurrent?: boolean }): void {
+    const batchLayersAreCurrent = options?.batchLayersAreCurrent ?? false;
+    const visibleNodesVersion = this.compactProxyHooks.getVisibleNodesVersion?.();
+    if (
+      this._compactProxiesEnabled &&
+      visibleNodesVersion !== undefined &&
+      visibleNodesVersion === this._compactProxiesVisibleNodesVersion
+    ) {
+      this.updateCompactProxiesKeepingVisibility(batchLayersAreCurrent);
+      return;
+    }
+
     this._visibleLookupNeedsUpdate = true;
     this.cancelCompactProxyFlush();
+    this._compactProxiesVisibleNodesVersion = undefined;
     if (!this._compactProxiesEnabled && !this.hasCompactProxies()) {
       return;
     }
-    const batchLayersAreCurrent = options?.batchLayersAreCurrent ?? false;
     for (const { buffers } of this._instanceBatches.values()) {
       buffers.forEach(batchBuffer => this.updateCompactProxy(batchBuffer, batchLayersAreCurrent));
     }
+    if (this._compactProxiesEnabled) {
+      this._compactProxiesVisibleNodesVersion = visibleNodesVersion;
+    }
+  }
+
+  // The visible nodes are unchanged since every proxy was last built, so a proxy that is not
+  // pending a rebuild still holds the right instances and only needs the new render layers.
+  private updateCompactProxiesKeepingVisibility(batchLayersAreCurrent: boolean): void {
+    for (const { buffers } of this._instanceBatches.values()) {
+      buffers.forEach(batchBuffer => {
+        const { mesh, compactProxy } = batchBuffer;
+        if (this._dirtyCompactProxyBuffers.has(batchBuffer)) {
+          this.updateCompactProxy(batchBuffer, batchLayersAreCurrent);
+          return;
+        }
+        if (!batchLayersAreCurrent) {
+          setModelRenderLayers(mesh, this._styledTreeIndexSets);
+        }
+        if (compactProxy === undefined) {
+          return;
+        }
+        if (mesh.layers.mask === 0) {
+          this.disposeCompactProxy(batchBuffer);
+          return;
+        }
+        compactProxy.mesh.layers.mask = mesh.layers.mask;
+        mesh.layers.disableAll();
+      });
+    }
+    // Every pending rebuild has just been done
+    this.cancelCompactProxyFlush();
   }
 
   private hasCompactProxies(): boolean {
@@ -317,12 +364,12 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
   /**
    * Byte-per-tree-index lookup of visible nodes. IndexSet.contains() is too slow to call
    * per instance when sectors with hundreds of thousands of instances are added/removed.
-   * The lookup is rebuilt when the styled sets have changed since it was made, so sectors added or
+   * The lookup is rebuilt when the visible nodes have changed since it was made, so sectors added or
    * removed between a styling change and the updateCompactProxies() call that follows it are
    * classified with the current visibility.
    */
   private getVisibleLookup(): Uint8Array {
-    const version = this.compactProxyHooks.getStyledSetsVersion?.() ?? 0;
+    const version = this.compactProxyHooks.getVisibleNodesVersion?.() ?? 0;
     if (!this._visibleLookupNeedsUpdate && version === this._visibleLookupVersion) {
       return this._visibleLookup;
     }

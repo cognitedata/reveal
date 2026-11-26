@@ -18,7 +18,7 @@ export class NodeAppearanceTextureBuilder {
   private readonly _handleStylesChangedListener = this.handleStylesChanged.bind(this);
 
   private _needsUpdate = true;
-  private _nodeSetsVersion = 0;
+  private _visibleNodesVersion = 0;
   private readonly _allTreeIndices: IndexSet;
   private readonly _overrideColorDefaultAppearanceRgba: Uint8ClampedArray;
   private readonly _overrideColorPerTreeIndexTexture: DataTexture;
@@ -92,11 +92,11 @@ export class NodeAppearanceTextureBuilder {
   }
 
   /**
-   * Incremented every time build() has repopulated the node sets (visible, ghosted, in front and
-   * regular). Lets consumers that cache data derived from the sets detect that it is outdated.
+   * Incremented every time build() changes the set of visible nodes. Lets consumers that cache
+   * data derived from the visible nodes detect that it is outdated.
    */
-  get nodeSetsVersion(): number {
-    return this._nodeSetsVersion;
+  get visibleNodesVersion(): number {
+    return this._visibleNodesVersion;
   }
 
   /**
@@ -134,8 +134,11 @@ export class NodeAppearanceTextureBuilder {
     const pickableBefore = this.snapshotPickableSets();
     this.populateTexture(rgba);
     this.populateNodeSets(rgba);
-    this._nodeSetsVersion++;
-    if (!areSnapshotsEqual(pickableBefore, this.snapshotPickableSets())) {
+    const pickableAfter = this.snapshotPickableSets();
+    if (!areRangesEqual(pickableBefore.visible, pickableAfter.visible)) {
+      this._visibleNodesVersion++;
+    }
+    if (!areSnapshotsEqual(pickableBefore, pickableAfter)) {
       this._pickCacheInvalidator.request();
     }
 

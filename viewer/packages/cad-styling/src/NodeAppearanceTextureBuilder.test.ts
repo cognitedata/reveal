@@ -48,17 +48,27 @@ describe('NodeAppearanceTextureBuilder', () => {
     expect(builder.needsUpdate).toBeFalsy();
   });
 
-  test('nodeSetsVersion changes when build() repopulates the node sets, and only then', () => {
+  test('visibleNodesVersion changes when the visible nodes change', () => {
     builder.build();
-    const version = builder.nodeSetsVersion;
-
-    builder.build();
-    expect(builder.nodeSetsVersion).toBe(version);
+    const version = builder.visibleNodesVersion;
 
     styleProvider.assignStyledNodeCollection(nodeCollection, { visible: false });
     vi.runAllTimers();
     builder.build();
-    expect(builder.nodeSetsVersion).not.toBe(version);
+
+    expect(builder.visibleNodesVersion).not.toBe(version);
+  });
+
+  test('visibleNodesVersion does not change for a colour-only style change', () => {
+    builder.build();
+    const version = builder.visibleNodesVersion;
+
+    styleProvider.assignStyledNodeCollection(nodeCollection, { color: new Color(1, 0, 0) });
+    vi.runAllTimers();
+    builder.build();
+
+    expect(builder.needsUpdate).toBe(false);
+    expect(builder.visibleNodesVersion).toBe(version);
   });
 
   test('needsUpdate() is true after style provider is changed', () => {

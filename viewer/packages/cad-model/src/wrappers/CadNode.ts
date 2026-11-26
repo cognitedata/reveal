@@ -109,7 +109,7 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
           onDeferredRebuild: () => {
             this._needsRedraw = true;
           },
-          getStyledSetsVersion: () => this._cadMaterial.nodeAppearanceTextureBuilder.nodeSetsVersion
+          getVisibleNodesVersion: () => this._cadMaterial.nodeAppearanceTextureBuilder.visibleNodesVersion
         }
       }
     );

@@ -14,6 +14,7 @@ import {
 import { Mock } from 'moq.ts';
 import { vi } from 'vitest';
 import type { Materials, StyledTreeIndexSets } from '@reveal/rendering';
+import { RenderLayer, setModelRenderLayers } from '@reveal/rendering';
 import { MultiBufferBatchingManager } from './MultiBufferBatchingManager';
 import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
 import { sum } from 'lodash-es';
@@ -404,12 +405,12 @@ describe(`${MultiBufferBatchingManager.name} compact proxies`, () => {
   let manager: MultiBufferBatchingManager;
   let styledIndexSets: StyledTreeIndexSets;
   let onCompactProxiesRebuilt: () => void;
-  let styledSetsVersion: number;
+  let visibleVersion: number;
 
   beforeEach(() => {
     vi.useFakeTimers();
     onCompactProxiesRebuilt = vi.fn();
-    styledSetsVersion = 0;
+    visibleVersion = 0;
     geometryGroup = new Group();
     styledIndexSets = {
       back: new IndexSet(new NumericRange(0, 100)),
@@ -425,7 +426,7 @@ describe(`${MultiBufferBatchingManager.name} compact proxies`, () => {
       {
         initialBufferSize: 1024,
         numberOfInstanceBatches: 1,
-        compactProxyHooks: { onDeferredRebuild: onCompactProxiesRebuilt, getStyledSetsVersion: () => styledSetsVersion }
+        compactProxyHooks: { onDeferredRebuild: onCompactProxiesRebuilt, getVisibleNodesVersion: () => visibleVersion }
       }
     );
     manager.setCompactProxiesEnabled(true);
@@ -470,6 +471,7 @@ describe(`${MultiBufferBatchingManager.name} compact proxies`, () => {
     styledIndexSets.visible.addRange(new NumericRange(3, 1));
     styledIndexSets.visible.addRange(new NumericRange(6, 1));
     styledIndexSets.visible.addRange(new NumericRange(9, 2));
+    visibleVersion++;
     manager.batchGeometries([createGeometry([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])], 1);
 
     manager.updateCompactProxies();
@@ -556,7 +558,7 @@ describe(`${MultiBufferBatchingManager.name} compact proxies`, () => {
 
     // The styled sets change, but updateCompactProxies() has not been called yet
     styledIndexSets.visible.add(9);
-    styledSetsVersion++;
+    visibleVersion++;
     manager.batchGeometries([createGeometry([9, 10, 11, 12])], 2);
 
     expect(batchMesh().layers.mask).not.toBe(0);
@@ -578,6 +580,76 @@ describe(`${MultiBufferBatchingManager.name} compact proxies`, () => {
     expect(batchMesh().layers.mask).toBe(0);
   });
 
+  test('a styling change that keeps visibility does not rebuild proxies', () => {
+    manager.batchGeometries([createGeometry([1, 2, 3, 4, 5])], 1);
+    manager.updateCompactProxies();
+    const attribute = requireProxyMesh().geometry.getAttribute('a_treeIndex');
+    assert(attribute instanceof InterleavedBufferAttribute);
+    const uploadVersion = attribute.data.version;
+    const proxy = requireProxyMesh();
+
+    // As CadNode does: the shared pass recomputes the batch layers, then the proxies are updated
+    setModelRenderLayers(geometryGroup, styledIndexSets);
+    manager.updateCompactProxies({ batchLayersAreCurrent: true });
+
+    expect(attribute.data.version).toBe(uploadVersion);
+    expect(requireProxyMesh()).toBe(proxy);
+    expect(proxyTreeIndices()).toEqual([2]);
+    expect(batchMesh().layers.mask).toBe(0);
+  });
+
+  test('a styling change that changes visibility rebuilds proxies', () => {
+    manager.batchGeometries([createGeometry([1, 2, 3, 4, 5])], 1);
+    manager.updateCompactProxies();
+
+    styledIndexSets.visible.add(3);
+    visibleVersion++;
+    manager.updateCompactProxies();
+
+    expect(proxyTreeIndices()).toEqual([2, 3]);
+    expect(batchMesh().layers.mask).toBe(0);
+  });
+
+  test('a ghost change without a visibility change moves the proxy to the new layers', () => {
+    manager.batchGeometries([createGeometry([1, 2, 3, 4, 5])], 1);
+    manager.updateCompactProxies();
+    expect(requireProxyMesh().layers.isEnabled(RenderLayer.Ghost)).toBe(false);
+
+    styledIndexSets.ghost.add(2);
+    manager.updateCompactProxies();
+
+    expect(requireProxyMesh().layers.isEnabled(RenderLayer.Ghost)).toBe(true);
+    expect(proxyTreeIndices()).toEqual([2]);
+    expect(batchMesh().layers.mask).toBe(0);
+  });
+
+  test('a styling change that keeps visibility keeps a pending deferred rebuild', () => {
+    manager.batchGeometries([createGeometry([1, 2, 3, 4, 5])], 1);
+    manager.updateCompactProxies();
+    manager.batchGeometries([createGeometry([2, 9, 10, 11])], 2);
+
+    manager.updateCompactProxies();
+    vi.advanceTimersByTime(200);
+
+    expect(proxyTreeIndices()).toEqual([2, 2]);
+    expect(batchMesh().layers.mask).toBe(0);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  test('re-enabling compact proxies rebuilds them', () => {
+    manager.batchGeometries([createGeometry([1, 2, 3, 4, 5])], 1);
+    manager.updateCompactProxies();
+    manager.setCompactProxiesEnabled(false);
+
+    styledIndexSets.visible.add(3);
+    visibleVersion++;
+    manager.updateCompactProxies();
+    manager.setCompactProxiesEnabled(true);
+
+    expect(proxyTreeIndices()).toEqual([2, 3]);
+    expect(batchMesh().layers.mask).toBe(0);
+  });
+
   test('a rebuilt proxy only uploads the instances in use', () => {
     manager.batchGeometries([createGeometry([1, 2, 3, 4, 5])], 1);
 
@@ -590,6 +662,7 @@ describe(`${MultiBufferBatchingManager.name} compact proxies`, () => {
 
   test('no proxy is used when most instances are visible', () => {
     styledIndexSets.visible.addRange(new NumericRange(1, 4));
+    visibleVersion++;
     manager.batchGeometries([createGeometry([1, 2, 3, 4, 5])], 1);
 
     manager.updateCompactProxies();
