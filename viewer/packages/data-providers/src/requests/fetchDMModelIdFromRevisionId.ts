@@ -3,10 +3,14 @@
  */
 
 import type { CogniteClient, QueryRequest } from '@cognite/sdk';
+import { ConcurrencyLimiter } from '@reveal/utilities';
 import { DataModelsSdk } from '../DataModelsSdk';
 import { COGNITE_3D_REVISION_SOURCE } from '../utilities/constants';
 import { getNodeExternalIdEqualsFilter, getNodeSpaceEqualsFilter } from '../utilities/utils';
 import { isCoreDm3DRevisionFilter } from '../image-360-data-providers/cdm/queryFilters';
+
+const DEFAULT_MAX_CONCURRENT_DM_REVISION_LOOKUPS = 4;
+const lookupLimiter = new ConcurrencyLimiter(DEFAULT_MAX_CONCURRENT_DM_REVISION_LOOKUPS);
 
 type Cognite3DRevisionProperties = {
   model3D: { externalId: string; space: string };
@@ -23,7 +27,7 @@ export async function fetchDMModelIdFromRevisionId(
 
   const fdmSdk = new DataModelsSdk(sdk);
   const query = getModelIdQuery(revisionExternalId, space);
-  const result = await fdmSdk.queryNodesAndEdges(query);
+  const result = await lookupLimiter.run(() => fdmSdk.queryNodesAndEdges(query));
   if (result.revision.length === 0) {
     throw new Error(`No revision view found for external ID ${revisionExternalId}`);
   }
@@ -42,7 +46,7 @@ export async function fetchDMModelIdFromRevisionId(
   return { modelId, revisionId };
 }
 
-export function extractNumericId(externalId: string): number | null {
+function extractNumericId(externalId: string): number | null {
   const lastUnderscoreIndex = externalId.lastIndexOf('_');
   if (lastUnderscoreIndex === -1) {
     return null;

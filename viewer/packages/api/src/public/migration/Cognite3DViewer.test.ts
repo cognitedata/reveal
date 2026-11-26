@@ -142,6 +142,40 @@ describe('Cognite3DViewer', () => {
     expect(onCameraChange).toHaveBeenCalled();
   });
 
+  test('addModel looks up the ids of a data modeling CAD model once', async () => {
+    vi.spyOn(CdfModelMetadataProvider.prototype, 'getModelOutputs').mockResolvedValue([
+      { format: File3dFormat.GltfCadModel, version: 9, blobId: 1 }
+    ]);
+    vi.spyOn(CdfModelDataProvider.prototype, 'getJsonFile').mockResolvedValue(sceneJson);
+    const postSpy = vi.spyOn(sdk, 'post').mockResolvedValue({
+      status: 200,
+      headers: {},
+      data: {
+        items: {
+          revision: [
+            {
+              properties: {
+                cdf_cdm: { 'Cognite3DRevision/v1': { model3D: { externalId: 'cog_3d_model_789', space: 'my-space' } } }
+              }
+            }
+          ]
+        }
+      }
+    });
+    const viewer = new Cognite3DViewer<DataSourceType>({ sdk, renderer, _sectorCuller, logMetrics: false });
+
+    const model = await viewer.addModel({
+      modelId: 1,
+      revisionId: 2,
+      revisionExternalId: 'cog_3d_revision_2',
+      revisionSpace: 'my-space'
+    });
+
+    const lookups = postSpy.mock.calls.filter(([url]) => url.endsWith('/models/instances/query'));
+    expect(lookups).toHaveLength(1);
+    expect(model.modelId).toBe(789);
+  });
+
   test('fitCameraToBoundingBox with 0 duration, moves camera immediatly', () => {
     // Arrange
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: false });

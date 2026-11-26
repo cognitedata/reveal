@@ -77,7 +77,7 @@ describe(getModelAndRevisionId.name, () => {
     expectLookups(Times.Once());
   });
 
-  test('uses the classic ids given with data modeling options without a lookup', async () => {
+  test('looks up the ids of data modeling options that also have classic ids', async () => {
     const options: AddModelOptions<DataSourceType> = {
       revisionExternalId: `cog_3d_revision_${revisionId}`,
       revisionSpace,
@@ -85,22 +85,7 @@ describe(getModelAndRevisionId.name, () => {
       revisionId
     };
 
-    await expect(getModelAndRevisionId(options, sdk)).resolves.toEqual({ modelId, revisionId });
-    expectLookups(Times.Never());
-  });
-
-  test('looks up the ids when the given classic ids do not belong to the data modeling revision', async () => {
-    const options: AddModelOptions<DataSourceType> = {
-      revisionExternalId: `cog_3d_revision_${revisionId + 1}`,
-      revisionSpace,
-      modelId,
-      revisionId
-    };
-
-    await expect(getModelAndRevisionId(options, sdk)).resolves.toEqual({
-      modelId: lookedUpModelId,
-      revisionId: revisionId + 1
-    });
+    await expect(getModelAndRevisionId(options, sdk)).resolves.toEqual({ modelId: lookedUpModelId, revisionId });
     expectLookups(Times.Once());
   });
 });

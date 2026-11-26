@@ -6,9 +6,9 @@ import type { CogniteClient, Revision3D } from '@cognite/sdk';
 import { CdfModelIdentifier } from '../model-identifiers/CdfModelIdentifier';
 import { CdfModelMetadataProvider } from './CdfModelMetadataProvider';
 import { File3dFormat } from '../types';
-import { Mock } from 'moq.ts';
+import type { IMock } from 'moq.ts';
+import { It, Mock, PlayTimes, Times } from 'moq.ts';
 import { Vector3 } from 'three';
-import { vi } from 'vitest';
 
 describe(CdfModelMetadataProvider.name, () => {
   const baseUrl = 'https://api.cognitedata.com';
@@ -16,10 +16,11 @@ describe(CdfModelMetadataProvider.name, () => {
 
   let modelIdentifier: CdfModelIdentifier;
   let provider: CdfModelMetadataProvider;
-  const retrieveRevision = vi.fn<CogniteClient['revisions3D']['retrieve']>();
+  let revisionsMock: IMock<CogniteClient['revisions3D']>;
 
   beforeEach(async () => {
     modelIdentifier = new CdfModelIdentifier(1337, 42);
+    revisionsMock = new Mock<CogniteClient['revisions3D']>();
 
     const mockedClient = new Mock<CogniteClient>()
       .setup(c => c.getBaseUrl())
@@ -27,12 +28,7 @@ describe(CdfModelMetadataProvider.name, () => {
       .setup(c => c.project)
       .returns(project)
       .setup(c => c.revisions3D)
-      .returns(
-        new Mock<CogniteClient['revisions3D']>()
-          .setup(revisions => revisions.retrieve)
-          .returns(retrieveRevision)
-          .object()
-      )
+      .returns(revisionsMock.object())
       .object();
 
     provider = new CdfModelMetadataProvider(mockedClient);
@@ -66,8 +62,12 @@ describe(CdfModelMetadataProvider.name, () => {
       camera: { position: [1, 2, 3], target: [4, 5, 6] }
     };
 
+    function expectRevisionRequests(times: Times): void {
+      revisionsMock.verify(revisions => revisions.retrieve(It.IsAny(), It.IsAny()), times);
+    }
+
     beforeEach(() => {
-      retrieveRevision.mockReset().mockResolvedValue(revision);
+      revisionsMock.setup(revisions => revisions.retrieve(It.IsAny(), It.IsAny())).returnsAsync(revision);
     });
 
     test('getModelMatrix and getModelCamera requested together fetch the revision once', async () => {
@@ -76,7 +76,11 @@ describe(CdfModelMetadataProvider.name, () => {
         provider.getModelCamera(modelIdentifier)
       ]);
 
-      expect(retrieveRevision).toHaveBeenCalledExactlyOnceWith(modelIdentifier.modelId, modelIdentifier.revisionId);
+      revisionsMock.verify(
+        revisions => revisions.retrieve(modelIdentifier.modelId, modelIdentifier.revisionId),
+        Times.Once()
+      );
+      expectRevisionRequests(Times.Once());
       expect(camera).toEqual({ position: new Vector3(1, 2, 3), target: new Vector3(4, 5, 6) });
     });
 
@@ -84,7 +88,7 @@ describe(CdfModelMetadataProvider.name, () => {
       await provider.getModelCamera(modelIdentifier);
       await provider.getModelCamera(modelIdentifier);
 
-      expect(retrieveRevision).toHaveBeenCalledTimes(2);
+      expectRevisionRequests(Times.Exactly(2));
     });
 
     test('does not share the request between different revisions', async () => {
@@ -92,11 +96,14 @@ describe(CdfModelMetadataProvider.name, () => {
 
       await Promise.all([provider.getModelCamera(modelIdentifier), provider.getModelCamera(otherModelIdentifier)]);
 
-      expect(retrieveRevision).toHaveBeenCalledTimes(2);
+      expectRevisionRequests(Times.Exactly(2));
     });
 
     test('fails all the callers of a failed request and fetches again afterwards', async () => {
-      retrieveRevision.mockRejectedValueOnce(new Error('Request failed'));
+      revisionsMock
+        .setup(revisions => revisions.retrieve(It.IsAny(), It.IsAny()))
+        .play(PlayTimes.Once())
+        .throwsAsync(new Error('Request failed'));
 
       const results = await Promise.allSettled([
         provider.getModelMatrix(modelIdentifier, File3dFormat.GltfCadModel),
@@ -104,10 +111,10 @@ describe(CdfModelMetadataProvider.name, () => {
       ]);
 
       expect(results.map(result => result.status)).toEqual(['rejected', 'rejected']);
-      expect(retrieveRevision).toHaveBeenCalledTimes(1);
+      expectRevisionRequests(Times.Once());
 
       await expect(provider.getModelCamera(modelIdentifier)).resolves.toBeDefined();
-      expect(retrieveRevision).toHaveBeenCalledTimes(2);
+      expectRevisionRequests(Times.Exactly(2));
     });
   });
 });

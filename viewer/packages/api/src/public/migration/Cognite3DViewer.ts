@@ -806,7 +806,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       switch (type) {
         case 'cad':
           assert(isClassicIdentifier(options));
-          return this.addCadModelWithSequencer(options, modelLoadSequencer);
+          return this.addCadModelWithSequencer(options, modelLoadSequencer, { modelId, revisionId });
         case 'pointcloud':
           return this.addPointCloudModelWithSequencer(
             { ...options, classicModelRevisionId: { modelId, revisionId } },
@@ -841,12 +841,14 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
 
   private async addCadModelWithSequencer<T extends DataSourceType>(
     options: AddModelOptions<T>,
-    modelLoadSequencer: SequencerFunction<void>
+    modelLoadSequencer: SequencerFunction<void>,
+    classicModelRevisionId?: { modelId: number; revisionId: number }
   ): Promise<CogniteCadModel> {
     try {
       const nodesApiClient = this._dataSource.getNodesApiClient();
 
-      const { modelId, revisionId } = await getModelAndRevisionId(options, this._cdfSdkClient);
+      const { modelId, revisionId } =
+        classicModelRevisionId ?? (await getModelAndRevisionId(options, this._cdfSdkClient));
 
       const cadNode = await this._revealManagerHelper.addCadModel({
         ...options,
