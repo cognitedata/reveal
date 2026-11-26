@@ -9,6 +9,7 @@ import type {
   Image360DescriptorProvider,
   Image360FileDescriptor
 } from '../../../../types';
+import type { LegacyCollectionQueryResult } from './Cdf360DataModelsBatchCollectionLoader';
 import { Cdf360DataModelsBatchCollectionLoader } from './Cdf360DataModelsBatchCollectionLoader';
 import { assert } from '@reveal/utilities/assert';
 import { Euler, Matrix4 } from 'three';
@@ -50,9 +51,7 @@ export type Image360BaseIdentifier = {
   image360CollectionExternalId: string;
 };
 
-type CollectionQueryResult = Awaited<ReturnType<Cdf360DataModelsBatchCollectionLoader['getCollection']>>;
-
-type ImageInstanceResult = CollectionQueryResult['images'][number];
+type ImageInstanceResult = LegacyCollectionQueryResult['images'][number];
 type ImageResultProperties = ImageInstanceResult['properties']['cdf_360_image_schema']['Image360/v1'];
 
 export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorProvider<ClassicDataSourceType> {

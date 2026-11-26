@@ -6,7 +6,7 @@ import type { DMInstanceRef } from '@reveal/utilities';
 
 const cdf360ImageSchemaSpace = 'cdf_360_image_schema';
 
-const Image360CollectionQuery = {
+const IMAGE_360_COLLECTION_QUERY = {
   with: {
     image_collection: {
       nodes: {
@@ -124,13 +124,13 @@ const Image360CollectionQuery = {
   }
 } as const;
 
-export type Cdf360FdmQuery = typeof Image360CollectionQuery;
+export type Cdf360FdmQuery = typeof IMAGE_360_COLLECTION_QUERY;
 
 export function get360CollectionQuery(
   externalId: string,
   space: string
 ): Cdf360FdmQuery & { parameters: { collectionExternalId: string; collectionSpace: string } } {
-  return { ...Image360CollectionQuery, parameters: { collectionExternalId: externalId, collectionSpace: space } };
+  return { ...IMAGE_360_COLLECTION_QUERY, parameters: { collectionExternalId: externalId, collectionSpace: space } };
 }
 
 export type Cdf360FdmBatchQuery = Omit<Cdf360FdmQuery, 'with'> & {
@@ -146,9 +146,9 @@ export type Cdf360FdmBatchQuery = Omit<Cdf360FdmQuery, 'with'> & {
  */
 export function get360CollectionsQuery(collections: DMInstanceRef[]): Cdf360FdmBatchQuery {
   return {
-    ...Image360CollectionQuery,
+    ...IMAGE_360_COLLECTION_QUERY,
     with: {
-      ...Image360CollectionQuery.with,
+      ...IMAGE_360_COLLECTION_QUERY.with,
       image_collection: {
         nodes: {
           filter: { instanceReferences: collections }
