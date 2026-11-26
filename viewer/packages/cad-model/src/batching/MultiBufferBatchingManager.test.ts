@@ -435,10 +435,23 @@ describe(`${MultiBufferBatchingManager.name} compact proxies`, () => {
     vi.useRealTimers();
   });
 
-  const batchMesh = () => geometryGroup.children.find(c => !c.userData.isCompactProxy) as InstancedMesh;
-  const proxyMesh = () => geometryGroup.children.find(c => c.userData.isCompactProxy) as InstancedMesh | undefined;
+  const batchMesh = (): InstancedMesh => {
+    const mesh = geometryGroup.children.find(c => !c.userData.isCompactProxy);
+    assert(mesh instanceof InstancedMesh);
+    return mesh;
+  };
+  const proxyMesh = (): InstancedMesh | undefined => {
+    const mesh = geometryGroup.children.find(c => c.userData.isCompactProxy);
+    assert(mesh === undefined || mesh instanceof InstancedMesh);
+    return mesh;
+  };
+  const requireProxyMesh = (): InstancedMesh => {
+    const mesh = proxyMesh();
+    assert(mesh !== undefined);
+    return mesh;
+  };
   const proxyTreeIndices = () => {
-    const proxy = proxyMesh()!;
+    const proxy = requireProxyMesh();
     const attribute = proxy.geometry.getAttribute('a_treeIndex');
     return Array.from({ length: proxy.count }, (_, i) => attribute.getX(i));
   };
@@ -449,7 +462,7 @@ describe(`${MultiBufferBatchingManager.name} compact proxies`, () => {
     manager.updateCompactProxies();
 
     expect(proxyTreeIndices()).toEqual([2]);
-    expect(proxyMesh()!.layers.mask).not.toBe(0);
+    expect(requireProxyMesh().layers.mask).not.toBe(0);
     expect(batchMesh().layers.mask).toBe(0);
   });
 
@@ -558,7 +571,8 @@ describe(`${MultiBufferBatchingManager.name} compact proxies`, () => {
 
     manager.updateCompactProxies();
 
-    const attribute = proxyMesh()!.geometry.getAttribute('a_treeIndex') as InterleavedBufferAttribute;
+    const attribute = requireProxyMesh().geometry.getAttribute('a_treeIndex');
+    assert(attribute instanceof InterleavedBufferAttribute);
     expect(attribute.data.updateRanges).toEqual([{ start: 0, count: attribute.data.stride }]);
   });
 
@@ -584,13 +598,13 @@ describe(`${MultiBufferBatchingManager.name} compact proxies`, () => {
 
     // Not rebuilt yet: the proxy still holds the visible instance of every sector
     expect(onCompactProxiesRebuilt).not.toHaveBeenCalled();
-    expect(proxyMesh()!.count).toBe(20);
-    expect(proxyMesh()!.layers.mask).not.toBe(0);
+    expect(requireProxyMesh().count).toBe(20);
+    expect(requireProxyMesh().layers.mask).not.toBe(0);
 
     vi.advanceTimersByTime(200);
 
     expect(onCompactProxiesRebuilt).toHaveBeenCalledTimes(1);
-    expect(proxyMesh()!.count).toBe(1);
+    expect(requireProxyMesh().count).toBe(1);
     expect(batchMesh().count).toBe(2);
   });
 
@@ -635,7 +649,7 @@ describe(`${MultiBufferBatchingManager.name} compact proxies`, () => {
     manager.updateCompactProxies();
     // Removing visible instances leaves a rebuild pending
     manager.removeSectorBatches(3);
-    const disposeSpy = vi.spyOn(proxyMesh()!.geometry, 'dispose');
+    const disposeSpy = vi.spyOn(requireProxyMesh().geometry, 'dispose');
 
     manager.dispose();
     vi.advanceTimersByTime(200);
@@ -649,7 +663,7 @@ describe(`${MultiBufferBatchingManager.name} compact proxies`, () => {
   test('a removed proxy releases its geometry', () => {
     manager.batchGeometries([createGeometry([1, 2, 3, 4, 5])], 1);
     manager.updateCompactProxies();
-    const disposeSpy = vi.spyOn(proxyMesh()!.geometry, 'dispose');
+    const disposeSpy = vi.spyOn(requireProxyMesh().geometry, 'dispose');
 
     manager.setCompactProxiesEnabled(false);
 
@@ -664,12 +678,14 @@ describe(`${MultiBufferBatchingManager.name} compact proxies`, () => {
 
     manager.updateCompactProxies();
 
-    const proxyGeometry = proxyMesh()!.geometry;
+    const proxyGeometry = requireProxyMesh().geometry;
     const batchGeometry = batchMesh().geometry;
     expect(proxyGeometry.getAttribute('position')).not.toBe(batchGeometry.getAttribute('position'));
     expect(Array.from(proxyGeometry.getAttribute('position').array)).toEqual([0, 1, 2]);
     expect(proxyGeometry.getIndex()).not.toBe(batchGeometry.getIndex());
-    expect(Array.from(proxyGeometry.getIndex()!.array)).toEqual([0]);
+    const proxyIndex = proxyGeometry.getIndex();
+    assert(proxyIndex !== null);
+    expect(Array.from(proxyIndex.array)).toEqual([0]);
   });
 
   test('a newly filled batch mesh is never in the default render layer', () => {
