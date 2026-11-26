@@ -325,6 +325,10 @@ export function hasStyledNodes(
 export function setModelRenderLayers(rootNode: Object3D, stylingSets: StyledTreeIndexSets): void {
   const { back, ghost, inFront, visible } = stylingSets;
   rootNode.traverse(node => {
+    // The batching manager owns the layers of compact proxies
+    if (node.userData?.isCompactProxy === true) {
+      return;
+    }
     node.layers.disableAll();
     const objectTreeIndices = node.userData?.treeIndices as Map<number, number> | undefined;
     if (objectTreeIndices === undefined) {

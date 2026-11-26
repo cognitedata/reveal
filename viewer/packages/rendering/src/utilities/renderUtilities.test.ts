@@ -1,8 +1,9 @@
 /*!
  * Copyright 2026 Cognite AS
  */
-import { DepthTexture, Texture } from 'three';
-import { getPointCloudPostProcessingMaterial } from './renderUtilities';
+import { DepthTexture, Group, Mesh, Texture } from 'three';
+import { getPointCloudPostProcessingMaterial, RenderLayer, setModelRenderLayers } from './renderUtilities';
+import { IndexSet } from '@reveal/utilities';
 import type { PointCloudPostProcessingOptions } from '../render-passes/types';
 import {
   DEFAULT_EDL_NEIGHBOURS_COUNT,
@@ -92,5 +93,27 @@ describe(getPointCloudPostProcessingMaterial.name, () => {
     expect(material.uniforms.radius.value).toBe(2);
     expect(material.uniforms.screenHeight).toBeDefined();
     expect(material.uniforms['screeHeight']).toBeUndefined();
+  });
+});
+
+describe(setModelRenderLayers.name, () => {
+  test('setModelRenderLayers() does not change the layers of compact proxies', () => {
+    const root = new Group();
+    const mesh = new Mesh();
+    mesh.userData.treeIndices = new Map([[1, 1]]);
+    const proxy = new Mesh();
+    proxy.userData.isCompactProxy = true;
+    proxy.layers.mask = 0b10;
+    root.add(mesh, proxy);
+
+    setModelRenderLayers(root, {
+      back: new IndexSet([1]),
+      ghost: new IndexSet(),
+      inFront: new IndexSet(),
+      visible: new IndexSet([1])
+    });
+
+    expect(proxy.layers.mask).toBe(0b10);
+    expect(mesh.layers.isEnabled(RenderLayer.Back)).toBe(true);
   });
 });
